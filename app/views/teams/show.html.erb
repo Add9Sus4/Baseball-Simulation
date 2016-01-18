@@ -1,0 +1,68 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>City:</strong>
+  <%= @team.city %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @team.name %>
+</p>
+
+<p>
+  <strong>League:</strong>
+  <%= @team.league %>
+</p>
+
+<p>
+  <strong>Division:</strong>
+  <%= @team.division %>
+</p>
+
+<p>
+  <strong>Stadium:</strong>
+  <%= @team.stadium %>
+</p>
+
+<p>
+  <strong>Capacity:</strong>
+  <%= @team.capacity %>
+</p>
+
+<%= link_to 'Edit Team Info', edit_team_path(@team) %> |
+<%= link_to 'Back', teams_path %>
+
+<p/>
+
+<h3>Roster</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Age</th>
+      <th>Height</th>
+      <th>Weight</th>
+      <th>Position</th>
+      <th>Salary</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @team.players.each do |player| %>
+      <tr>
+        <td><%= link_to player.full_name, player %></td>
+        <td><%= player.age %></td>
+        <td><%= player.height %></td>
+        <td><%= player.weight %></td>
+        <td><%= player.position %></td>
+        <td><%= player.salary %></td>
+        <td><%= link_to 'Show', player %></td>
+        <td><%= link_to 'Edit', edit_player_path(player) %></td>
+        <td><%= link_to 'Destroy', player, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
