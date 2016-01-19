@@ -8,8 +8,14 @@
 </head>
 <body>
 
-<%= link_to 'Teams', teams_path %>
-<%= link_to 'Players', players_path %>
+<nav id='main_nav'>
+  <ul>
+    <li><a href="/teams">Teams</a></li>
+    <li><a href="/players">Players</a></li>
+  </ul>
+</nav>
+
+
 
 <%= yield %>
 

@@ -6,8 +6,7 @@
   <thead>
     <tr>
       <th>Team</th>
-      <th>First name</th>
-      <th>Last name</th>
+      <th>Name</th>
       <th>Age</th>
       <th>Height</th>
       <th>Weight</th>
@@ -21,8 +20,7 @@
     <% @players.each do |player| %>
       <tr>
         <td><%= link_to player.team.name, player.team %></td>
-        <td><%= player.first_name %></td>
-        <td><%= player.last_name %></td>
+        <td><%= link_to player.full_name, player %></td>
         <td><%= player.age %></td>
         <td><%= player.height %></td>
         <td><%= player.weight %></td>
