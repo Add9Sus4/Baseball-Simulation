@@ -1,39 +1,62 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
+<%= javascript_include_tag 'moment.min', 'data-turbolinks-track' => true %>
+<%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
+
 <p id="notice"><%= notice %></p>
 
-<h1>List Of Players</h1>
+<div class="container-fluid">
+  <h1>List Of Players</h1>
+</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Team</th>
-      <th>Name</th>
-      <th>Age</th>
-      <th>Height</th>
-      <th>Weight</th>
-      <th>Position</th>
-      <th>Salary</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @players.each do |player| %>
+<div class="container-fluid">
+  <table id="player_table" class="table-condensed table-striped table-bordered table-responsive sortable">
+    <thead>
       <tr>
-        <td><%= link_to player.team.name, player.team %></td>
-        <td><%= link_to player.full_name, player %></td>
-        <td><%= player.age %></td>
-        <td><%= player.height %></td>
-        <td><%= player.weight %></td>
-        <td><%= player.position %></td>
-        <td><%= player.salary %></td>
-        <td><%= link_to 'Show', player %></td>
-        <td><%= link_to 'Edit', edit_player_path(player) %></td>
-        <td><%= link_to 'Destroy', player, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <th id=team_column_header data-defaultsort="desc">Team</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Height</th>
+        <th>Weight</th>
+        <th>Position</th>
+        <th data-defaultsort='disabled'>Salary</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @players.each do |player| %>
+        <tr>
+          <td><%= link_to player.team.name, player.team %></td>
+          <td><%= link_to player.full_name, player %></td>
+          <td><%= player.age %></td>
+          <td><%= player.height %></td>
+          <td><%= player.weight %></td>
+          <td><%= player.position %></td>
+          <td class="salary"><%= player.salary %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
 
 <br>
 
-<%= link_to 'New Player', new_player_path %>
+<script>
+$('.salary').each(function() {
+  var item = $(this).text();
+  var num = Number(item).toLocaleString('en');
+
+  if(Number(item) < 0) {
+    num = num.replace('-','');
+    $(this).addClass('negMoney');
+  } else {
+    $(this).addClass('enMoney');
+  }
+  $(this).text(num);
+});
+</script>
+
+<div class="container-fluid">
+  <%= link_to 'New Player', new_player_path %>
+</div>

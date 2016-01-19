@@ -41,4 +41,5 @@
 </p>
 
 <%= link_to 'Edit Player Info', edit_player_path(@player) %> |
+<%= link_to 'Delete Player', @player, method: :delete, data: { confirm: 'Are you sure?' } %> |
 <%= link_to 'Back', players_path %>

@@ -1,5 +1,14 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
+<%= javascript_include_tag 'moment.min', 'data-turbolinks-track' => true %>
+<%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
+
+
 <p id="notice"><%= notice %></p>
 
+<div class="container-fluid">
 <p>
   <strong>City:</strong>
   <%= @team.city %>
@@ -31,22 +40,24 @@
 </p>
 
 <%= link_to 'Edit Team Info', edit_team_path(@team) %> |
+<%= link_to 'Delete Team', @team, method: :delete, data: { confirm: 'Are you sure?' } %> |
 <%= link_to 'Back', teams_path %>
+</div>
 
 <p/>
 
+<div class="container-fluid">
 <h3>Roster</h3>
 
-<table>
+<table id="roster" class="table-condensed table-striped table-bordered table-responsive sortable">
   <thead>
     <tr>
       <th>Name</th>
       <th>Age</th>
       <th>Height</th>
       <th>Weight</th>
-      <th>Position</th>
-      <th>Salary</th>
-      <th colspan="3"></th>
+      <th id=position_column_header data-defaultsort="desc">Position</th>
+      <th data-defaultsort='disabled'>Salary</th>
     </tr>
   </thead>
 
@@ -58,11 +69,24 @@
         <td><%= player.height %></td>
         <td><%= player.weight %></td>
         <td><%= player.position %></td>
-        <td><%= player.salary %></td>
-        <td><%= link_to 'Show', player %></td>
-        <td><%= link_to 'Edit', edit_player_path(player) %></td>
-        <td><%= link_to 'Destroy', player, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
+        <td class="salary"><%= player.salary %></td>
+        </tr>
     <% end %>
   </tbody>
 </table>
+</div>
+
+<script>
+$('.salary').each(function() {
+  var item = $(this).text();
+  var num = Number(item).toLocaleString('en');
+
+  if(Number(item) < 0) {
+    num = num.replace('-','');
+    $(this).addClass('negMoney');
+  } else {
+    $(this).addClass('enMoney');
+  }
+  $(this).text(num);
+});
+</script>

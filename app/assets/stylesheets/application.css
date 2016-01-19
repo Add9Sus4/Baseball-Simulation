@@ -14,6 +14,14 @@
  *= require_self
  */
 
+.enMoney::before {
+  content: "$ ";
+}
+
+.negMoney {
+  color: red;
+}
+
 nav#main_nav ul {
   list-style-type: none;
   margin: 0;
@@ -24,6 +32,11 @@ nav#main_nav ul {
 
 nav#main_nav li {
   float: left;
+  border-right: 1px solid #bbb;
+}
+
+nav#main_nav li:last-child {
+  border-right: none;
 }
 
 nav#main_nav li a {
