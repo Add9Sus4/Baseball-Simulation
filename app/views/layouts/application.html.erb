@@ -12,7 +12,7 @@
   <%= javascript_include_tag 'moment.min', 'data-turbolinks-track' => true %>
   <%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
   </head>
-<body>
+<body id="app_body">
 
 <nav id='main_nav'>
   <ul>
@@ -39,7 +39,9 @@
 
 </script>
 
-<%= yield %>
+<div class="container-fluid">
+  <%= yield %>
+</div>
 
 </body>
 </html>

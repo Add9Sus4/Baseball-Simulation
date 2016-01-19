@@ -7,15 +7,12 @@
 
 <p id="notice"><%= notice %></p>
 
-<div class="container-fluid">
-  <h1>List Of Teams</h1>
-</div>
 
-<div class="container-fluid">
-<table id="team_table" class="table-condensed table-striped table-bordered table-responsive sortable">
+  <h1>Teams</h1>
+
+<table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive sortable">
   <thead>
     <tr>
-      <th>City</th>
       <th id=team_name_column_header data-defaultsort="desc">Name</th>
       <th>League</th>
       <th>Division</th>
@@ -27,8 +24,7 @@
   <tbody>
     <% @teams.each do |team| %>
       <tr>
-        <td><%= team.city %></td>
-        <td><%= link_to team.name, team %></td>
+        <td><%= link_to team.full_name, team %></td>
         <td><%= team.league %></td>
         <td><%= team.division %></td>
         <td><%= team.stadium %></td>
@@ -37,10 +33,9 @@
     <% end %>
   </tbody>
 </table>
-</div>
+
 
 <br>
 
-<div class="container-fluid">
+
 <%= link_to 'New Team', new_team_path %>
-</div>

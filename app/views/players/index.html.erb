@@ -7,12 +7,13 @@
 
 <p id="notice"><%= notice %></p>
 
-<div class="container-fluid">
-  <h1>List Of Players</h1>
-</div>
 
-<div class="container-fluid">
-  <table id="player_table" class="table-condensed table-striped table-bordered table-responsive sortable">
+  <h1>Players</h1>
+  <br/>
+  <h5>Search: <input type="text" id="player_search" class="search_box" onkeyup="doSearch()" /></h5>
+  <br/>
+
+  <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive sortable">
     <thead>
       <tr>
         <th id=team_column_header data-defaultsort="desc">Team</th>
@@ -27,7 +28,7 @@
     <tbody>
       <% @players.each do |player| %>
         <tr>
-          <td><%= link_to player.team.name, player.team %></td>
+          <td><%= link_to player.team.full_name, player.team %></td>
           <td><%= link_to player.full_name, player %></td>
           <td><%= player.age %></td>
           <td><%= player.height %></td>
@@ -38,11 +39,40 @@
       <% end %>
     </tbody>
   </table>
-</div>
 
 <br>
 
 <script>
+
+function doSearch() {
+  var searchText = document.getElementById('player_search').value;
+  var table = document.getElementById('table_with_custom_border');
+  var numColumns;
+
+  // Loop through all the rows of the table
+  for (var rowIndex=0; rowIndex<table.rows.length; rowIndex++) {
+    var rowData = '';
+
+    // Get column count from header row
+    if (rowIndex==0) {
+      numColumns = table.rows.item(rowIndex).cells.length;
+      continue;
+    }
+
+    // Populate rowData with all cell values
+    for (var colIndex=0; colIndex<numColumns; colIndex++) {
+      rowData += table.rows.item(rowIndex).cells.item(colIndex).textContent;
+    }
+
+    // Hide the row if the search term is not found
+    if (rowData.toLowerCase().indexOf(searchText.toLowerCase()) == -1) {
+      table.rows.item(rowIndex).style.display = 'none';
+    } else {
+      table.rows.item(rowIndex).style.display = 'table-row';
+    }
+  }
+}
+
 $('.salary').each(function() {
   var item = $(this).text();
   var num = Number(item).toLocaleString('en');
@@ -55,8 +85,8 @@ $('.salary').each(function() {
   }
   $(this).text(num);
 });
+
 </script>
 
-<div class="container-fluid">
+
   <%= link_to 'New Player', new_player_path %>
-</div>

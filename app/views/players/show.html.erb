@@ -1,45 +1,46 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Team:</strong>
-  <%= link_to @player.team.name, @player.team %>
-</p>
 
-<p>
-  <strong>First name:</strong>
-  <%= @player.first_name %>
-</p>
+  <p>
+    <h2><%= @player.full_name %></h2>
+  </p>
 
-<p>
-  <strong>Last name:</strong>
-  <%= @player.last_name %>
-</p>
+  </br>
 
-<p>
-  <strong>Age:</strong>
-  <%= @player.age %>
-</p>
+  <div class="player_info_data">
+    <p>
+      <strong>Team:</strong>
+      <%= link_to @player.team.full_name, @player.team %>
+    </p>
 
-<p>
-  <strong>Height:</strong>
-  <%= @player.height %>
-</p>
+    <p>
+      <strong>Age:</strong>
+      <%= @player.age %>
+    </p>
 
-<p>
-  <strong>Weight:</strong>
-  <%= @player.weight %>
-</p>
+    <p>
+      <strong>Height:</strong>
+      <%= @player.height %>
+    </p>
 
-<p>
-  <strong>Position:</strong>
-  <%= @player.position %>
-</p>
+    <p>
+      <strong>Weight:</strong>
+      <%= @player.weight %>
+    </p>
 
-<p>
-  <strong>Salary:</strong>
-  <%= @player.salary %>
-</p>
+    <p>
+      <strong>Position:</strong>
+      <%= @player.position %>
+    </p>
 
-<%= link_to 'Edit Player Info', edit_player_path(@player) %> |
-<%= link_to 'Delete Player', @player, method: :delete, data: { confirm: 'Are you sure?' } %> |
-<%= link_to 'Back', players_path %>
+    <p>
+      <strong>Salary:</strong>
+      <%= @player.salary %>
+    </p>
+  </div>
+
+  </br>
+
+  <%= link_to 'Edit Player Info', edit_player_path(@player) %> |
+  <%= link_to 'Delete Player', @player, method: :delete, data: { confirm: 'Are you sure you want to delete ' + @player.full_name + '?' } %> |
+  <%= link_to 'Back', 'javascript:history.go(-1);' %>

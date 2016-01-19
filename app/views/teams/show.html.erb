@@ -8,16 +8,12 @@
 
 <p id="notice"><%= notice %></p>
 
-<div class="container-fluid">
-<p>
-  <strong>City:</strong>
-  <%= @team.city %>
-</p>
+<h2>
+<%= @team.city %>
+<%= @team.name %>
+</h2>
 
-<p>
-  <strong>Name:</strong>
-  <%= @team.name %>
-</p>
+</br>
 
 <p>
   <strong>League:</strong>
@@ -39,17 +35,18 @@
   <%= @team.capacity %>
 </p>
 
+</br>
+
 <%= link_to 'Edit Team Info', edit_team_path(@team) %> |
-<%= link_to 'Delete Team', @team, method: :delete, data: { confirm: 'Are you sure?' } %> |
-<%= link_to 'Back', teams_path %>
-</div>
+<%= link_to 'Delete Team', @team, method: :delete, data: { confirm: 'Are you sure you want to delete the ' + @team.name + '?' } %> |
+<%= link_to 'Back', 'javascript:history.go(-1);' %>
+
 
 <p/>
 
-<div class="container-fluid">
 <h3>Roster</h3>
 
-<table id="roster" class="table-condensed table-striped table-bordered table-responsive sortable">
+<table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive sortable">
   <thead>
     <tr>
       <th>Name</th>
@@ -74,7 +71,6 @@
     <% end %>
   </tbody>
 </table>
-</div>
 
 <script>
 $('.salary').each(function() {

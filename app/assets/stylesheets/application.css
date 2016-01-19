@@ -14,12 +14,30 @@
  *= require_self
  */
 
+#app_body {
+  background-color: #F2F9FF;
+}
+
+.table-striped>tbody>tr:nth-child(even)>td {
+  background-color: #BDCCDB;
+}
+
+.table-striped>thead>tr>th  {
+  background-color: #9AB2CB;
+}
+
 .enMoney::before {
   content: "$ ";
 }
 
 .negMoney {
   color: red;
+}
+
+#table_with_custom_border {
+  border-collapse: separate;
+  border: 8px solid #54708C;
+  border-radius: 5px;
 }
 
 nav#main_nav ul {
@@ -57,4 +75,8 @@ nav#main_nav li a:not(.active):hover {
 
 .active:hover {
   background-color: #3D475C;
+}
+
+a:hover {
+  background-color: inherit;
 }
