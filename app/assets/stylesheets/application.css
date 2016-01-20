@@ -27,7 +27,7 @@
 }
 
 .enMoney::before {
-  content: "$ ";
+  content: "$";
 }
 
 .negMoney {

@@ -39,6 +39,7 @@
 
 <%= link_to 'Edit Team Info', edit_team_path(@team) %> |
 <%= link_to 'Delete Team', @team, method: :delete, data: { confirm: 'Are you sure you want to delete the ' + @team.name + '?' } %> |
+<%= link_to 'All Teams', teams_path %> |
 <%= link_to 'Back', 'javascript:history.go(-1);' %>
 
 
@@ -53,7 +54,7 @@
       <th>Age</th>
       <th>Height</th>
       <th>Weight</th>
-      <th id=position_column_header data-defaultsort="desc">Position</th>
+      <th id="position_column_header" data-defaultsort="desc">Position</th>
       <th data-defaultsort='disabled'>Salary</th>
     </tr>
   </thead>
@@ -63,9 +64,9 @@
       <tr>
         <td><%= link_to player.full_name, player %></td>
         <td><%= player.age %></td>
-        <td><%= player.height %></td>
-        <td><%= player.weight %></td>
-        <td><%= player.position %></td>
+        <td class="height"><%= player.height %></td>
+        <td><%= player.weight %> lb.</td>
+        <td class="position"><%= player.position %></td>
         <td class="salary"><%= player.salary %></td>
         </tr>
     <% end %>
@@ -73,6 +74,48 @@
 </table>
 
 <script>
+$('.position').each(function() {
+  var positionSymbol = $(this).text();
+  var position = '';
+  switch (positionSymbol.toLowerCase()) {
+    case 'p':
+      position = 'Pitcher';
+      break;
+    case 'c':
+      position = 'Catcher';
+      break;
+    case '1b':
+      position = 'First Base';
+      break;
+    case '2b':
+      position = 'Second Base';
+      break;
+    case '3b':
+      position = 'Third Base';
+      break;
+    case 'ss':
+      position = 'Shortstop';
+      break;
+    case 'lf':
+      position = 'Left Field';
+      break;
+    case 'cf':
+      position = 'Center Field';
+      break;
+    case 'rf':
+      position = 'Right Field';
+      break;
+  }
+  $(this).text(position);
+});
+
+$('.height').each(function() {
+  var height = $(this).text();
+  var feet = Math.floor(Number(height)/12);
+  var inches = Number(height) - feet*12;
+  $(this).text(feet + '\' ' + inches + '\"');
+});
+
 $('.salary').each(function() {
   var item = $(this).text();
   var num = Number(item).toLocaleString('en');

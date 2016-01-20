@@ -11,41 +11,108 @@
     </div>
   <% end %>
 
-
+  <div class="field">
+    <%= f.hidden_field :power, :value => rand(1..100) %>
+    <%= f.hidden_field :contact, :value => rand(1..100) %>
+    <%= f.hidden_field :speed, :value => rand(1..100) %>
+    <%= f.hidden_field :patience, :value => rand(1..100) %>
+    <%= f.hidden_field :plate_vision, :value => rand(1..100) %>
+    <%= f.hidden_field :pull_amount, :value => rand(1..100) %>
+    <%= f.hidden_field :uppercut_amount, :value => rand(1..100) %>
+    <%= f.hidden_field :batting_average, :value => rand(1..100) %>
+    <%= f.hidden_field :movement, :value => rand(1..100) %>
+    <%= f.hidden_field :control, :value => rand(1..100) %>
+    <%= f.hidden_field :location, :value => rand(1..100) %>
+    <%= f.hidden_field :agility, :value => rand(1..100) %>
+    <%= f.hidden_field :reactionTime, :value => rand(1..100) %>
+    <%= f.hidden_field :armStrength, :value => rand(1..100) %>
+    <%= f.hidden_field :fieldGrounder, :value => rand(1..100) %>
+    <%= f.hidden_field :fieldLiner, :value => rand(1..100) %>
+    <%= f.hidden_field :fieldFlyball, :value => rand(1..100) %>
+    <%= f.hidden_field :fieldPopup, :value => rand(1..100) %>
+    <%= f.hidden_field :throwShort, :value => rand(1..100) %>
+    <%= f.hidden_field :throwMedium, :value => rand(1..100) %>
+    <%= f.hidden_field :throwLong, :value => rand(1..100) %>
+    <%= f.hidden_field :intelligence, :value => rand(1..100) %>
+    <%= f.hidden_field :endurance, :value => rand(1..100) %>
+  </div>
 
   <div class="field">
     <%= f.label :team_id %><br>
-    <%= collection_select(:player, :team_id, Team.all, :id, :name) %>
+    <%= collection_select(:player, :team_id, Team.all, :id, :full_name) %>
   </div>
   <div class="field">
     <%= f.label :first_name %><br>
-    <%= f.text_field :first_name %>
+    <%= f.text_field :first_name, :value => Faker::Name.first_name %>
   </div>
   <div class="field">
     <%= f.label :last_name %><br>
-    <%= f.text_field :last_name %>
+    <%= f.text_field :last_name, :value => Faker::Name.last_name %>
   </div>
   <div class="field">
     <%= f.label :age %><br>
-    <%= f.number_field :age %>
+    <%= f.select :age, options_for_select(17..40, rand(17..40)) %>
   </div>
   <div class="field">
     <%= f.label :height %><br>
-    <%= f.number_field :height %>
+    <%= f.number_field :height, :value => rand(66..78) %>
   </div>
   <div class="field">
     <%= f.label :weight %><br>
-    <%= f.number_field :weight %>
+    <%= f.number_field :weight, :value => rand(160..300) %>
   </div>
   <div class="field">
     <%= f.label :position %><br>
-    <%= f.text_field :position %>
+    <%= f.select :position, options_for_select({"Pitcher" => "P", "Catcher" => "C", "First Base" => "1B",
+                                                  "Second Base" => "2B", "Third Base" => "3B", "Shortstop" => "SS",
+                                                      "Left Field" => "LF", "Center Field" => "CF", "Right Field" => "RF"}, ['P','C','1B','2B','3B','SS','LF','CF','RF'].sample) %>
   </div>
   <div class="field">
     <%= f.label :salary %><br>
-    <%= f.number_field :salary %>
+    <%= f.number_field :salary, :value => rand(500000..20000000) %>
   </div>
   <div class="actions">
     <%= f.submit %>
   </div>
 <% end %>
+
+<script>
+  $("#ex8").slider({
+    tooltip: 'always'
+  })
+
+  $('.position').each(function() {
+    var positionSymbol = $(this).text();
+    var position = '';
+    switch (positionSymbol.toLowerCase()) {
+      case 'p':
+        position = 'Pitcher';
+        break;
+      case 'c':
+        position = 'Catcher';
+        break;
+      case '1b':
+        position = 'First Base';
+        break;
+      case '2b':
+        position = 'Second Base';
+        break;
+      case '3b':
+        position = 'Third Base';
+        break;
+      case 'ss':
+        position = 'Shortstop';
+        break;
+      case 'lf':
+        position = 'Left Field';
+        break;
+      case 'cf':
+        position = 'Center Field';
+        break;
+      case 'rf':
+        position = 'Right Field';
+        break;
+    }
+    $(this).text(position);
+  });
+</script>

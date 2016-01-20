@@ -6,4 +6,12 @@ class Player < ActiveRecord::Base
     first_name + ' ' + last_name
   end
 
+  def average_fielding
+    (fieldGrounder + fieldLiner + fieldFlyball + fieldPopup)/4
+  end
+
+  def average_throwing
+    (throwShort + throwMedium + throwLong)/3
+  end
+
 end

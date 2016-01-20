@@ -13,27 +13,27 @@
 
   <div class="field">
     <%= f.label :city %><br>
-    <%= f.text_field :city %>
+    <%= f.text_field :city, :value => Faker::Address.city %>
   </div>
   <div class="field">
     <%= f.label :name %><br>
-    <%= f.text_field :name %>
+    <span id="team_name"><%= f.text_field :name, :value => Faker::Team.creature.capitalize %></span>
   </div>
   <div class="field">
     <%= f.label :league %><br>
-    <%= f.text_field :league %>
+    <%= f.text_field :league, :value => ["NL","AL"].sample %>
   </div>
   <div class="field">
     <%= f.label :division %><br>
-    <%= f.text_field :division %>
+    <%= f.text_field :division, :value => ["East","Central","West"].sample %>
   </div>
   <div class="field">
     <%= f.label :stadium %><br>
-    <%= f.text_field :stadium %>
+    <span id="stadium"><%= f.text_field :stadium, :value => "Unnamed Stadium" %></span>
   </div>
   <div class="field">
     <%= f.label :capacity %><br>
-    <%= f.number_field :capacity %>
+    <%= f.number_field :capacity, :value => 45000 %>
   </div>
   <div class="actions">
     <%= f.submit %>

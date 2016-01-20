@@ -1,46 +1,181 @@
 <p id="notice"><%= notice %></p>
 
 
+<p>
+  <h2><%= @player.full_name %></h2>
+</p>
+
+</br>
+
+<div class="player_info_data">
   <p>
-    <h2><%= @player.full_name %></h2>
+    <strong>Team:</strong>
+    <%= link_to @player.team.full_name, @player.team %>
   </p>
 
-  </br>
+  <p>
+    <strong>Age:</strong>
+    <%= @player.age %>
+  </p>
 
-  <div class="player_info_data">
-    <p>
-      <strong>Team:</strong>
-      <%= link_to @player.team.full_name, @player.team %>
-    </p>
+  <p>
+    <strong>Height:</strong>
+    <span class="height"><%= @player.height %></span>
+  </p>
 
-    <p>
-      <strong>Age:</strong>
-      <%= @player.age %>
-    </p>
+  <p>
+    <strong>Weight:</strong>
+    <%= @player.weight %> lb.
+  </p>
 
-    <p>
-      <strong>Height:</strong>
-      <%= @player.height %>
-    </p>
+  <p>
+    <strong>Position:</strong>
+    <span class="position"><%= @player.position %></span>
+  </p>
 
-    <p>
-      <strong>Weight:</strong>
-      <%= @player.weight %>
-    </p>
+  <p>
+    <strong>Salary:</strong>
+    <span class="salary"><%= @player.salary %></span>
+  </p>
 
-    <p>
-      <strong>Position:</strong>
-      <%= @player.position %>
-    </p>
+</div>
 
-    <p>
-      <strong>Salary:</strong>
-      <%= @player.salary %>
-    </p>
-  </div>
+<h3>Batting Attributes</h3>
 
-  </br>
+<table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Power</th>
+      <th>Contact</th>
+      <th>Speed</th>
+      <th>Patience</th>
+      <th>Plate Vision</th>
+      <th>Pull Amount</th>
+      <th>Uppercut Amount</th>
+      <th>Batting Average</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= @player.power %></td>
+      <td><%= @player.contact %></td>
+      <td><%= @player.speed %></td>
+      <td><%= @player.patience %></td>
+      <td><%= @player.plate_vision %></td>
+      <td><%= @player.pull_amount %></td>
+      <td><%= @player.uppercut_amount %></td>
+      <td><%= @player.batting_average %></td>
+    </tr>
+  </tbody>
+</table>
 
-  <%= link_to 'Edit Player Info', edit_player_path(@player) %> |
-  <%= link_to 'Delete Player', @player, method: :delete, data: { confirm: 'Are you sure you want to delete ' + @player.full_name + '?' } %> |
-  <%= link_to 'Back', 'javascript:history.go(-1);' %>
+<h3>Pitching Attributes</h3>
+
+<table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Pitch Movement</th>
+      <th>Pitch Control</th>
+      <th>Pitch Location</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= @player.movement %></td>
+      <td><%= @player.control %></td>
+      <td><%= @player.location %></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Fielding Attributes</h3>
+
+<table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Agility</th>
+      <th>Reaction Time</th>
+      <th>Arm Strength</th>
+      <th>Fielding</th>
+      <th>Throwing</th>
+      <th>Intelligence</th>
+      <th>Endurance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= @player.agility %></td>
+      <td><%= @player.reactionTime %></td>
+      <td><%= @player.armStrength %></td>
+      <td><%= @player.average_fielding %></td>
+      <td><%= @player.average_throwing %></td>
+      <td><%= @player.intelligence %></td>
+      <td><%= @player.endurance %></td>
+    </tr>
+  </tbody>
+</table>
+
+</br>
+
+<%= link_to 'Edit Player Info', edit_player_path(@player) %> |
+<%= link_to 'Delete Player', @player, method: :delete, data: { confirm: 'Are you sure you want to delete ' + @player.full_name + '?' } %> |
+<%= link_to 'All Players', players_path %> |
+<%= link_to 'Back', 'javascript:history.go(-1);' %>
+
+<script>
+
+  $('.position').each(function() {
+    var positionSymbol = $(this).text();
+    var position = '';
+    switch (positionSymbol.toLowerCase()) {
+      case 'p':
+        position = 'Pitcher';
+        break;
+      case 'c':
+        position = 'Catcher';
+        break;
+      case '1b':
+        position = 'First Base';
+        break;
+      case '2b':
+        position = 'Second Base';
+        break;
+      case '3b':
+        position = 'Third Base';
+        break;
+      case 'ss':
+        position = 'Shortstop';
+        break;
+      case 'lf':
+        position = 'Left Field';
+        break;
+      case 'cf':
+        position = 'Center Field';
+        break;
+      case 'rf':
+        position = 'Right Field';
+        break;
+    }
+    $(this).text(position);
+  });
+
+  $('.height').each(function() {
+    var height = $(this).text();
+    var feet = Math.floor(Number(height)/12);
+    var inches = Number(height) - feet*12;
+    $(this).text(feet + '\' ' + inches + '\"');
+  });
+
+  $('.salary').each(function() {
+    var item = $(this).text();
+    var num = Number(item).toLocaleString('en');
+
+    if(Number(item) < 0) {
+      num = num.replace('-','');
+      $(this).addClass('negMoney');
+    } else {
+      $(this).addClass('enMoney');
+    }
+    $(this).text(num);
+  });
+</script>

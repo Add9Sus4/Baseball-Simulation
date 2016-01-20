@@ -15,7 +15,6 @@ class PlayersController < ApplicationController
   # GET /players/new
   def new
     @player = Player.new
-    @teams = Team.all
   end
 
   # GET /players/1/edit
@@ -70,6 +69,6 @@ class PlayersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def player_params
-      params.require(:player).permit(:team_id, :first_name, :last_name, :age, :height, :weight, :position, :salary)
+      params.require(:player).permit(:team_id, :first_name, :last_name, :age, :height, :weight, :position, :salary, :power, :contact, :speed, :patience, :plate_vision, :pull_amount, :uppercut_amount, :batting_average, :movement, :control, :location, :agility, :reactionTime, :armStrength, :fieldGrounder, :fieldLiner, :fieldFlyball, :fieldPopup, :throwShort, :throwMedium, :throwLong, :intelligence, :endurance)
     end
 end

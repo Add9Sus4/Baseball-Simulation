@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  resources :teams
   resources :players
+  resources :teams
 
   root 'teams#index'
   # The priority is based upon order of creation: first created -> highest priority.

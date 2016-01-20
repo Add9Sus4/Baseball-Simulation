@@ -11,19 +11,42 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160118212444) do
+ActiveRecord::Schema.define(version: 20160120041218) do
 
   create_table "players", force: :cascade do |t|
-    t.integer  "team_id",    limit: 4
-    t.string   "first_name", limit: 255
-    t.string   "last_name",  limit: 255
-    t.integer  "age",        limit: 4
-    t.integer  "height",     limit: 4
-    t.integer  "weight",     limit: 4
-    t.string   "position",   limit: 255
-    t.integer  "salary",     limit: 4
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.integer  "team_id",         limit: 4
+    t.string   "first_name",      limit: 255
+    t.string   "last_name",       limit: 255
+    t.integer  "age",             limit: 4
+    t.integer  "height",          limit: 4
+    t.integer  "weight",          limit: 4
+    t.string   "position",        limit: 255
+    t.integer  "salary",          limit: 4
+    t.integer  "power",           limit: 4
+    t.integer  "contact",         limit: 4
+    t.integer  "speed",           limit: 4
+    t.integer  "patience",        limit: 4
+    t.integer  "plate_vision",    limit: 4
+    t.integer  "pull_amount",     limit: 4
+    t.integer  "uppercut_amount", limit: 4
+    t.integer  "batting_average", limit: 4
+    t.integer  "movement",        limit: 4
+    t.integer  "control",         limit: 4
+    t.integer  "location",        limit: 4
+    t.integer  "agility",         limit: 4
+    t.integer  "reactionTime",    limit: 4
+    t.integer  "armStrength",     limit: 4
+    t.integer  "fieldGrounder",   limit: 4
+    t.integer  "fieldLiner",      limit: 4
+    t.integer  "fieldFlyball",    limit: 4
+    t.integer  "fieldPopup",      limit: 4
+    t.integer  "throwShort",      limit: 4
+    t.integer  "throwMedium",     limit: 4
+    t.integer  "throwLong",       limit: 4
+    t.integer  "intelligence",    limit: 4
+    t.integer  "endurance",       limit: 4
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
   create_table "teams", force: :cascade do |t|

@@ -9,6 +9,29 @@ one:
   weight: 1
   position: MyString
   salary: 1
+  power: 1
+  contact: 1
+  speed: 1
+  patience: 1
+  plate_vision: 1
+  pull_amount: 1
+  uppercut_amount: 1
+  batting_average: 1
+  movement: 1
+  control: 1
+  location: 1
+  agility: 1
+  reactionTime: 1
+  armStrength: 1
+  fieldGrounder: 1
+  fieldLiner: 1
+  fieldFlyball: 1
+  fieldPopup: 1
+  throwShort: 1
+  throwMedium: 1
+  throwLong: 1
+  intelligence: 1
+  endurance: 1
 
 two:
   team_id: 1
@@ -19,3 +42,26 @@ two:
   weight: 1
   position: MyString
   salary: 1
+  power: 1
+  contact: 1
+  speed: 1
+  patience: 1
+  plate_vision: 1
+  pull_amount: 1
+  uppercut_amount: 1
+  batting_average: 1
+  movement: 1
+  control: 1
+  location: 1
+  agility: 1
+  reactionTime: 1
+  armStrength: 1
+  fieldGrounder: 1
+  fieldLiner: 1
+  fieldFlyball: 1
+  fieldPopup: 1
+  throwShort: 1
+  throwMedium: 1
+  throwLong: 1
+  intelligence: 1
+  endurance: 1
