@@ -1,3 +1,10 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
+<%= javascript_include_tag 'moment.min', 'data-turbolinks-track' => true %>
+<%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
+
 <p id="notice"><%= notice %></p>
 
 
@@ -10,7 +17,7 @@
 <div class="player_info_data">
   <p>
     <strong>Team:</strong>
-    <%= link_to @player.team.full_name, @player.team %>
+    <%= link_to @player.team.full_name, @player.team, method: :get %>
   </p>
 
   <p>
@@ -39,10 +46,15 @@
   </p>
 
 </div>
+</br>
+<%= link_to 'Edit Player Info', edit_player_path(@player) %> |
+<%= link_to 'Delete Player', @player, method: :delete, data: { confirm: 'Are you sure you want to delete ' + @player.full_name + '?' } %> |
+<%= link_to 'All Players', players_path %> |
+<%= link_to 'Back', 'javascript:history.go(-1);' %>
 
 <h3>Batting Attributes</h3>
 
-<table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
+<table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
   <thead>
     <tr>
       <th>Power</th>
@@ -116,11 +128,6 @@
 </table>
 
 </br>
-
-<%= link_to 'Edit Player Info', edit_player_path(@player) %> |
-<%= link_to 'Delete Player', @player, method: :delete, data: { confirm: 'Are you sure you want to delete ' + @player.full_name + '?' } %> |
-<%= link_to 'All Players', players_path %> |
-<%= link_to 'Back', 'javascript:history.go(-1);' %>
 
 <script>
 

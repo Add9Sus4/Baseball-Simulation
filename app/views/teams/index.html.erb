@@ -24,7 +24,7 @@
   <tbody>
     <% @teams.each do |team| %>
       <tr>
-        <td><%= link_to team.full_name, team %></td>
+        <td><%= link_to team.full_name, team, method: :get %></td>
         <td><%= team.league %></td>
         <td><%= team.division %></td>
         <td><%= team.stadium %></td>
@@ -33,9 +33,3 @@
     <% end %>
   </tbody>
 </table>
-
-
-<br>
-
-
-<%= link_to 'New Team', new_team_path %>

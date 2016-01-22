@@ -14,4 +14,8 @@ class Player < ActiveRecord::Base
     (throwShort + throwMedium + throwLong)/3
   end
 
+  def to_s
+    full_name
+  end
+
 end

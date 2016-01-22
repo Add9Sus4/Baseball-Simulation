@@ -12,3 +12,5 @@ Rails.application.config.assets.version = '1.0'
 Rails.application.config.assets.precompile += %w( bootstrap-sortable.css )
 Rails.application.config.assets.precompile += %w( bootstrap-sortable.js )
 Rails.application.config.assets.precompile += %w( moment.min.js )
+Rails.application.config.assets.precompile += %w( jquery-ui.min.js )
+Rails.application.config.assets.precompile += %w( jquery-ui.min.css )

@@ -37,7 +37,9 @@
   </div>
   <div class="field">
     <%= f.label :position %><br>
-    <%= f.text_field :position %>
+    <%= f.select :position, options_for_select({"Pitcher" => "P", "Catcher" => "C", "First Base" => "1B",
+                                                  "Second Base" => "2B", "Third Base" => "3B", "Shortstop" => "SS",
+                                                      "Left Field" => "LF", "Center Field" => "CF", "Right Field" => "RF"}, ['P','C','1B','2B','3B','SS','LF','CF','RF'].sample) %>
   </div>
   <div class="field">
     <%= f.label :salary %><br>

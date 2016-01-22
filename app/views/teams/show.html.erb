@@ -1,4 +1,6 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<%= stylesheet_link_tag "jquery-ui.min", 'data-turbolinks-track' => true %>
+<%= javascript_include_tag "jquery-ui.min", 'data-turbolinks-track' =>true %>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
@@ -46,32 +48,84 @@
 <p/>
 
 <h3>Roster</h3>
+<div id="roster_div">
+  <table id="table_with_custom_border" class="table-condensed table-bordered table-responsive">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Height</th>
+        <th>Weight</th>
+        <th id="position_column_header" data-defaultsort="desc">Position</th>
+        <th data-defaultsort='disabled'>Salary</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @team.players.each do |player| %>
+        <tr>
+          <td><div class="ui-state-default ui-corner-all">
+              <span class="ui-icon ui-icon-grip-dotted-vertical"/></div></td>
+          <td><%= link_to player.full_name, player %></td>
+          <td><%= player.age %></td>
+          <td class="height"><%= player.height %></td>
+          <td><%= player.weight %> lb.</td>
+          <td class="position"><%= player.position %></td>
+          <td class="salary"><%= player.salary %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
 
-<table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive sortable">
+<style>
+.ui-sortable tr {
+  cursor: move;
+}
+
+</style>
+
+<script>
+$(document).ready(function() {
+  var fixHelperModified = function(e, tr) {
+    var $originals = tr.children();
+    var $helper = tr.clone();
+    $helper.children().each(function(index) {
+      $(this).width($originals.eq(index).width());
+    });
+    return $helper;
+  };
+
+  $("#table_with_custom_border tbody").sortable({
+    helper: fixHelperModified,
+    containment: "#roster_div",
+  }).disableSelection();
+
+});
+</script>
+
+<h3>Lineup</h3>
+
+<div id="lineup_div">
+<table id="lineup_table" class="table-condensed table-striped table-bordered table-responsive">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Age</th>
-      <th>Height</th>
-      <th>Weight</th>
-      <th id="position_column_header" data-defaultsort="desc">Position</th>
-      <th data-defaultsort='disabled'>Salary</th>
+      <th>Position</th>
+      <th>Player</th>
     </tr>
   </thead>
-
   <tbody>
-    <% @team.players.each do |player| %>
+    <% for i in 0..12 do %>
       <tr>
-        <td><%= link_to player.full_name, player %></td>
-        <td><%= player.age %></td>
-        <td class="height"><%= player.height %></td>
-        <td><%= player.weight %> lb.</td>
-        <td class="position"><%= player.position %></td>
-        <td class="salary"><%= player.salary %></td>
-        </tr>
+        <td>
+          <span class="position_slot"><%= @team.position(i) %></span></br>
+        </td>
+        <td>Drop</td>
+      </tr>
     <% end %>
   </tbody>
 </table>
+</div>
 
 <script>
 $('.position').each(function() {

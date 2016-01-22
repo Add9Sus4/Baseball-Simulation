@@ -16,8 +16,8 @@
   <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive sortable">
     <thead>
       <tr>
-        <th id=team_column_header data-defaultsort="desc">Team</th>
-        <th>Name</th>
+        <th id=name_column_header data-defaultsort="desc">Name</th>
+        <th>Team</th>
         <th>Age</th>
         <th>Height</th>
         <th>Weight</th>
@@ -28,8 +28,8 @@
     <tbody>
       <% @players.each do |player| %>
         <tr>
-          <td><%= link_to player.team.full_name, player.team %></td>
           <td><%= link_to player.full_name, player %></td>
+          <td><%= link_to player.team.full_name, player.team, method: :get %></td>
           <td><%= player.age %></td>
           <td class="height"><%= player.height %></td>
           <td><%= player.weight %> lb.</td>
@@ -39,8 +39,6 @@
       <% end %>
     </tbody>
   </table>
-
-<br>
 
 <script>
 
@@ -129,6 +127,3 @@ $('.salary').each(function() {
 });
 
 </script>
-
-
-  <%= link_to 'New Player', new_player_path %>
