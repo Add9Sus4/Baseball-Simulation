@@ -1,11 +1,6 @@
 class Team < ActiveRecord::Base
-  attr_accessor :position_names, :jajaja
   validates :city, :name, :league, :division, :stadium, :capacity, presence: true
   has_many :players, :dependent => :destroy
-
-  def initialize
-    jajaja = "2"
-  end
 
   def full_name
     city + ' ' + name
