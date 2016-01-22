@@ -1,6 +1,5 @@
 class TeamsController < ApplicationController
   before_action :set_team, only: [:show, :edit, :update, :destroy]
-
   # GET /teams
   # GET /teams.json
   def index
@@ -45,7 +44,11 @@ class TeamsController < ApplicationController
         format.html { redirect_to @team, notice: 'Team was successfully updated.' }
         format.json { render :show, status: :ok, location: @team }
       else
-        format.html { render :edit }
+        if /\/teams\/[0-9]+$/.match(request.referrer) # Editing the lineup
+          format.html { render :_position_form }
+        else
+          format.html { render :edit } # Editing the team info
+        end
         format.json { render json: @team.errors, status: :unprocessable_entity }
       end
     end
@@ -69,6 +72,10 @@ class TeamsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def team_params
-      params.require(:team).permit(:city, :name, :league, :division, :stadium, :capacity)
+      params.require(:team).permit(:city, :name, :league, :division, :stadium,
+                                  :capacity, :catcher, :designated_hitter, :first_base,
+                                  :second_base, :third_base, :shortstop, :left_field,
+                                  :right_field, :center_field, :bench1, :bench2, :bench3,
+                                  :bench4)
     end
 end

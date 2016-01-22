@@ -48,24 +48,22 @@
 <p/>
 
 <h3>Roster</h3>
+
 <div id="roster_div">
-  <table id="table_with_custom_border" class="table-condensed table-bordered table-responsive">
+  <table id="table_with_custom_border" class="">
     <thead>
       <tr>
-        <th></th>
         <th>Name</th>
         <th>Age</th>
         <th>Height</th>
         <th>Weight</th>
-        <th id="position_column_header" data-defaultsort="desc">Position</th>
+        <th id="position_column_header" data-defaultsort="desc">Natural Position</th>
         <th data-defaultsort='disabled'>Salary</th>
       </tr>
     </thead>
     <tbody>
       <% @team.players.each do |player| %>
-        <tr>
-          <td><div class="ui-state-default ui-corner-all">
-              <span class="ui-icon ui-icon-grip-dotted-vertical"/></div></td>
+        <tr class="player_row">
           <td><%= link_to player.full_name, player %></td>
           <td><%= player.age %></td>
           <td class="height"><%= player.height %></td>
@@ -79,8 +77,42 @@
 </div>
 
 <style>
+#table_with_custom_border {
+  padding: 5px;
+}
+
+#table_with_custom_border td {
+  padding: 5px;
+}
+
+#table_with_custom_border tbody {
+
+}
+
+#table_with_custom_border thead > tr > th {
+  padding: 6px;
+  background-color: #d1e2f2;
+  border-bottom: 1px solid #999999;
+  border-top: 1px solid #999999;
+  border-left: 1px solid #999999;
+}
+
+#table_with_custom_border thead > tr > th:last-child {
+  border-right: 1px solid #999999;
+}
+
 .ui-sortable tr {
   cursor: move;
+}
+
+.dragging {
+  background-color: #edf0f8;
+  opacity: 0.5;
+}
+
+.ui-sortable-helper {
+  background-color: #dae2f1;
+  opacity: 1.0;
 }
 
 </style>
@@ -97,17 +129,32 @@ $(document).ready(function() {
   };
 
   $("#table_with_custom_border tbody").sortable({
-    helper: fixHelperModified,
-    containment: "#roster_div",
+    helper: 'clone',
+    delay: 150,
+    tolerance: "pointer",
+
+    start: function(event, ui) {
+      $(this).find("tr").toggleClass('dragging');
+
+    },
+    stop: function(event, ui) {
+      $(this).find("tr").toggleClass('dragging');
+    },
+    // containment: "#roster_div",
   }).disableSelection();
 
 });
 </script>
 
 <h3>Lineup</h3>
+<button id="edit_lineup_button" onClick="toggleLineupEdit()">Edit</button>
+<div id="edit_lineup" style="display: none;">
+  <%= render 'position_form' %>
+</div>
 
-<div id="lineup_div">
-<table id="lineup_table" class="table-condensed table-striped table-bordered table-responsive">
+<div id="view_lineup">
+</br>
+<table id="table_with_custom_border" class="table-condensed table-striped table-bordered">
   <thead>
     <tr>
       <th>Position</th>
@@ -118,9 +165,9 @@ $(document).ready(function() {
     <% for i in 0..12 do %>
       <tr>
         <td>
-          <span class="position_slot"><%= @team.position(i) %></span></br>
+          <span class="position_slot"><%= @team.position_name(i) %></span></br>
         </td>
-        <td>Drop</td>
+        <td><%= @team.player_at_position(i) %></td>
       </tr>
     <% end %>
   </tbody>
@@ -128,6 +175,12 @@ $(document).ready(function() {
 </div>
 
 <script>
+function toggleLineupEdit() {
+  $("#edit_lineup").toggle();
+  $("#view_lineup").toggle();
+  $("#edit_lineup_button").toggle();
+}
+
 $('.position').each(function() {
   var positionSymbol = $(this).text();
   var position = '';

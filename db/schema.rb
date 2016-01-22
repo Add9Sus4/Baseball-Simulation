@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160121223620) do
+ActiveRecord::Schema.define(version: 20160122072043) do
 
   create_table "players", force: :cascade do |t|
     t.integer  "team_id",         limit: 4
@@ -50,27 +50,27 @@ ActiveRecord::Schema.define(version: 20160121223620) do
   end
 
   create_table "teams", force: :cascade do |t|
-    t.string   "city",                 limit: 255
-    t.string   "name",                 limit: 255
-    t.string   "league",               limit: 255
-    t.string   "division",             limit: 255
-    t.string   "stadium",              limit: 255
-    t.integer  "capacity",             limit: 4
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
-    t.integer  "catcher_id",           limit: 4
-    t.integer  "designated_hitter_id", limit: 4
-    t.integer  "first_base_id",        limit: 4
-    t.integer  "second_base_id",       limit: 4
-    t.integer  "third_base_id",        limit: 4
-    t.integer  "shortstop_id",         limit: 4
-    t.integer  "left_field_id",        limit: 4
-    t.integer  "center_field_id",      limit: 4
-    t.integer  "right_field_id",       limit: 4
-    t.integer  "bench1_id",            limit: 4
-    t.integer  "bench2_id",            limit: 4
-    t.integer  "bench3_id",            limit: 4
-    t.integer  "bench4_id",            limit: 4
+    t.string   "city",              limit: 255
+    t.string   "name",              limit: 255
+    t.string   "league",            limit: 255
+    t.string   "division",          limit: 255
+    t.string   "stadium",           limit: 255
+    t.integer  "capacity",          limit: 4
+    t.integer  "catcher",           limit: 4
+    t.integer  "designated_hitter", limit: 4
+    t.integer  "first_base",        limit: 4
+    t.integer  "second_base",       limit: 4
+    t.integer  "third_base",        limit: 4
+    t.integer  "shortstop",         limit: 4
+    t.integer  "left_field",        limit: 4
+    t.integer  "center_field",      limit: 4
+    t.integer  "right_field",       limit: 4
+    t.integer  "bench1",            limit: 4
+    t.integer  "bench2",            limit: 4
+    t.integer  "bench3",            limit: 4
+    t.integer  "bench4",            limit: 4
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
   end
 
 end
