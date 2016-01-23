@@ -1,8 +1,16 @@
 Rails.application.routes.draw do
+  get 'users/new'
+
+  get 'pages/home'
+
+  get 'pages/about'
+
+  get 'pages/login'
+
   resources :players
   resources :teams
 
-  root 'teams#index'
+  root 'pages#home'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
