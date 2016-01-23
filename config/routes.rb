@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   resources :players
   resources :teams
+  resources :users
 
   root 'pages#home'
   # The priority is based upon order of creation: first created -> highest priority.
