@@ -17,10 +17,16 @@
 <nav id='main_nav'>
   <ul>
     <li><%= link_to "Home", "/", method: :get %></li>
-    <li><%= link_to "Teams", "/teams", method: :get %></li>
-    <li><a href="/players">Players</a></li>
-    <li><a href="/teams/new">New Team</a></li>
-    <li><a href="/players/new">New Player</a></li>
+    <% if logged_in? %>
+      <li><%= link_to "Profile", current_user, method: :get %></li>
+      <li><%= link_to "Log out", logout_path, method: :delete %></li>
+      <li><%= link_to "Teams", "/teams", method: :get %></li>
+      <li><a href="/players">Players</a></li>
+      <li><a href="/teams/new">New Team</a></li>
+      <li><a href="/players/new">New Player</a></li>
+    <% else %>
+      <li><%= link_to "Log in", login_path, method: :get %></li>
+    <% end %>
   </ul>
 </nav>
 

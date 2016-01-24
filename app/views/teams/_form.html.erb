@@ -17,7 +17,8 @@
   </div>
   <div class="field">
     <%= f.label :name %><br>
-    <span id="team_name"><%= f.text_field :name, :value => Faker::Team.creature.capitalize %></span>
+    <% @team_name = Faker::Team.creature.capitalize %>
+    <span id="team_name"><%= f.text_field :name, :value => @team_name %></span>
   </div>
   <div class="field">
     <%= f.label :league %><br>
@@ -29,7 +30,7 @@
   </div>
   <div class="field">
     <%= f.label :stadium %><br>
-    <span id="stadium"><%= f.text_field :stadium, :value => "Unnamed Stadium" %></span>
+    <span id="stadium"><%= f.text_field :stadium, :value =>  @team_name + " " + ["Stadium","Field","Park","Coliseum","Center"].sample %></span>
   </div>
   <div class="field">
     <%= f.label :capacity %><br>
