@@ -40,7 +40,7 @@
   border-radius: 5px;
 }
 
-nav#main_nav ul {
+/*nav#main_nav ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -67,15 +67,15 @@ nav#main_nav li a {
 
 nav#main_nav li a:not(.active):hover {
   background-color: #494B50;
-}
+}*/
 
-.active {
+/*.active {
   background-color: #3D475C;
 }
 
 .active:hover {
   background-color: #3D475C;
-}
+}*/
 
 a:hover {
   background-color: inherit;

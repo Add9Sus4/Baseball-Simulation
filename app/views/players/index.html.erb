@@ -1,4 +1,3 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
@@ -28,7 +27,7 @@
     <tbody>
       <% @players.each do |player| %>
         <tr>
-          <td><%= link_to player.full_name, player %></td>
+          <td><%= link_to player.full_name, player, method: :get %></td>
           <td><%= link_to player.team.full_name, player.team, method: :get %></td>
           <td><%= player.age %></td>
           <td class="height"><%= player.height %></td>

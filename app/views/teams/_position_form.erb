@@ -1,6 +1,8 @@
 <%= form_for(@team) do |f| %>
 </br>
   <% if @team.errors.any? %>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <div id="error_explanation">
       <h2><%= pluralize(@team.errors.count, "error") %> prohibited this team from being saved:</h2>
 

@@ -1,12 +1,7 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<%= stylesheet_link_tag "jquery-ui.min", 'data-turbolinks-track' => true %>
-<%= javascript_include_tag "jquery-ui.min", 'data-turbolinks-track' =>true %>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
-<%= javascript_include_tag 'moment.min', 'data-turbolinks-track' => true %>
-<%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
-
+<%= stylesheet_link_tag "jquery-ui.min", 'data-turbolinks-track' => true %>
+<%= javascript_include_tag "jquery-ui.min", 'data-turbolinks-track' =>true %>
 
 <p id="notice"><%= notice %></p>
 
@@ -64,7 +59,7 @@
     <tbody>
       <% @team.players.each do |player| %>
         <tr class="player_row">
-          <td><%= link_to player.full_name, player %></td>
+          <td><%= link_to player.full_name, player, method: :get %></td>
           <td><%= player.age %></td>
           <td class="height"><%= player.height %></td>
           <td><%= player.weight %> lb.</td>

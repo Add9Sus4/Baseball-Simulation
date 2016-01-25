@@ -1,0 +1,26 @@
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<% provide(:title, 'All users') %>
+<h1>All users</h1>
+
+<%= will_paginate %>
+
+<ul class="users">
+    <%= render @users %>
+</ul>
+
+<%= will_paginate %>
+
+<style>
+.users {
+  list-style: none;
+  margin: 0;
+}
+
+.users li {
+  overflow: auto;
+  padding: 10px 0;
+  border-bottom: 1px solid $gray-lighter;
+}
+</style>

@@ -5,3 +5,79 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+numUsers = 100 # How many users to add to database
+numTeams = 10 # How many teams to add to database
+numPlayersPerTeam = 8 # How many players on each team to add to database
+teams = []
+
+# Create initial user
+User.create!(name: "Example User",
+              email: "example@railstutorial.org",
+              password: "foobar",
+              password_confirmation: "foobar",
+              admin: true)
+
+# Create additional users
+(numUsers-1).times do |n|
+  name = Faker::Name.name
+  email = "example-#{n+1}@railstutorial.org"
+  password = "password"
+  User.create!(name: name,
+                email: email,
+                password: password,
+                password_confirmation: password)
+end
+
+# Create teams
+numTeams.times do
+  city = Faker::Address.city
+  name = Faker::Team.creature.capitalize
+  league = ["NL","AL"].sample
+  division = ["East","Central","West"].sample
+  stadium = name + " " + ["Stadium","Field","Park","Coliseum","Center"].sample
+  capacity = 45000
+  newTeam = Team.create!(city: city,
+                name: name,
+                league: league,
+                division: division,
+                stadium: stadium,
+                capacity: capacity)
+  teams.unshift(newTeam)
+end
+
+# Create players for each team
+teams.each do |team|
+  numPlayersPerTeam.times do
+    Player.create!(team_id: team.id,
+                    first_name: Faker::Name.first_name,
+                    last_name: Faker::Name.last_name,
+                    age: rand(17..40),
+                    height: rand(66..78),
+                    weight: rand(160..300),
+                    position: ['P','C','1B','2B','3B','SS','LF','CF','RF'].sample,
+                    salary: rand(500000..20000000),
+                    power: rand(1..100),
+                    contact: rand(1..100),
+                    speed: rand(1..100),
+                    patience: rand(1..100),
+                    plate_vision: rand(1..100),
+                    uppercut_amount: rand(1..100),
+                    batting_average: rand(1..100),
+                    movement: rand(1..100),
+                    control: rand(1..100),
+                    location: rand(1..100),
+                    agility: rand(1..100),
+                    reactionTime: rand(1..100),
+                    armStrength: rand(1..100),
+                    fieldGrounder: rand(1..100),
+                    fieldLiner: rand(1..100),
+                    fieldFlyball: rand(1..100),
+                    fieldPopup: rand(1..100),
+                    throwShort: rand(1..100),
+                    throwMedium: rand(1..100),
+                    throwLong: rand(1..100),
+                    intelligence: rand(1..100),
+                    endurance: rand(1..100))
+  end
+end
