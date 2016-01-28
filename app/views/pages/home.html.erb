@@ -3,10 +3,21 @@
 <div class="center jumbotron">
   <h1>Home</h1>
   <h2>This is the home page</h2>
-  <%= link_to "Sign up now!", "/users/new", class: "sign-up btn btn-sm btn-primary" %>
+  <% if logged_in? %>
+    <%= link_to "View my profile", current_user, class: "sign-up btn btn-sm btn-primary", method: :get %>
+  <% else %>
+    <%= link_to "Sign up now!", "/users/new", class: "sign-up btn btn-sm btn-primary", method: :get %>
+  <% end %>
 </div>
 
 <style>
+
+.home_link {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+
 .jumbotron {
   background-color: #cee0f2;
   padding: 10px;

@@ -12,7 +12,7 @@
 <table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive sortable">
   <thead>
     <tr>
-      <th id=team_name_column_header data-defaultsort="desc">Name</th>
+      <th id=team_name_column_header data-defaultsort="asc">Name</th>
       <th>League</th>
       <th>Division</th>
       <th>Stadium</th>
@@ -32,3 +32,10 @@
     <% end %>
   </tbody>
 </table>
+
+<style>
+.teams {
+  pointer-events: none;
+  opacity: 0.5;
+}
+</style>

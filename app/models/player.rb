@@ -4,10 +4,11 @@ class Player < ActiveRecord::Base
   belongs_to :team
 
   def team_cannot_have_more_than_13_players
-    totalPlayers = Team.find(team_id).players.length
+    team = Team.find(team_id);
+    totalPlayers = team.players.length
 
     if totalPlayers >= 13
-      errors.add(:base, "This team already has the maximum number of players allowed")
+      errors.add(:base, "The " + team.city + " " + team.name + " already have the maximum number of players allowed.")
     end
   end
 

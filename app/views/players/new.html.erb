@@ -3,5 +3,12 @@
 <h1>New Player</h1>
 
 <%= render 'form' %>
-
+<%= link_to "Randomize", "/players/new", method: :get %> |
 <%= link_to 'Back', players_path %>
+
+<style>
+.new_player_link {
+  pointer-events: none;
+  opacity: 0.5;
+}
+</style>

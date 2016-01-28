@@ -5,4 +5,13 @@
 
 <%= render 'form' %>
 
+<%= link_to "Randomize", "/teams/new", method: :get %> |
+
 <%= link_to 'Back', 'javascript:history.go(-1);' %>
+
+<style>
+.new_team_link {
+  pointer-events: none;
+  opacity: 0.5;
+}
+</style>

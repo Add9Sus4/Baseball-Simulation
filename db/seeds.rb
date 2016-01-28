@@ -6,9 +6,9 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-numUsers = 100 # How many users to add to database
+numUsers = 50 # How many users to add to database
 numTeams = 10 # How many teams to add to database
-numPlayersPerTeam = 8 # How many players on each team to add to database
+numPlayersPerTeam = 13 # How many players on each team to add to database
 teams = []
 
 # Create initial user
@@ -66,6 +66,7 @@ teams.each do |team|
                     speed: rand(1..100),
                     patience: rand(1..100),
                     plate_vision: rand(1..100),
+                    pull_amount: rand(1..100),
                     uppercut_amount: rand(1..100),
                     batting_average: rand(1..100),
                     movement: rand(1..100),

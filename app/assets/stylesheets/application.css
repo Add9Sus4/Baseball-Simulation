@@ -38,6 +38,24 @@
   border-collapse: separate;
   border: 8px solid #54708C;
   border-radius: 5px;
+  padding: 5px;
+}
+
+#table_with_custom_border td {
+  padding: 5px;
+}
+
+#table_with_custom_border thead > tr > th {
+  padding: 6px;
+  background-color: #d1e2f2;
+  border-bottom: 1px solid #999999;
+  border-top: 1px solid #999999;
+  border-left: 1px solid #999999;
+  padding-right: 18px;
+}
+
+#table_with_custom_border thead > tr > th:last-child {
+  border-right: 1px solid #999999;
 }
 
 /*nav#main_nav ul {
@@ -71,9 +89,9 @@ nav#main_nav li a:not(.active):hover {
 
 /*.active {
   background-color: #3D475C;
-}
+}*/
 
-.active:hover {
+/*.active:hover {
   background-color: #3D475C;
 }*/
 

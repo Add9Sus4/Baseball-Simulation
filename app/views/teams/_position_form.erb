@@ -91,7 +91,7 @@
 </br>
 <div class="actions">
   <%= f.submit "Save Changes" %>
-  <%= button_to 'Back', 'javascript:history.go(-1);' %>
+  <%= button_to 'Back', 'javascript:history.go(-1);', method: :get %>
 </div>
 
 <% end %>

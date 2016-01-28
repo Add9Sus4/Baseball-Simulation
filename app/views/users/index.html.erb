@@ -4,15 +4,22 @@
 <% provide(:title, 'All users') %>
 <h1>All users</h1>
 
-<%= will_paginate %>
+<!-- <%= will_paginate %> -->
 
 <ul class="users">
     <%= render @users %>
 </ul>
 
-<%= will_paginate %>
+<!-- <%= will_paginate %> -->
 
 <style>
+
+.users_link {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+
 .users {
   list-style: none;
   margin: 0;

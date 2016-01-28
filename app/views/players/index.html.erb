@@ -6,42 +6,115 @@
 
 <p id="notice"><%= notice %></p>
 
+<h1>Players</h1>
+<br/>
+<h5>Search: <input type="text" id="player_search" class="search_box" onkeyup="doSearch()" /></h5>
+<br/>
 
-  <h1>Players</h1>
-  <br/>
-  <h5>Search: <input type="text" id="player_search" class="search_box" onkeyup="doSearch()" /></h5>
-  <br/>
-
-  <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive sortable">
-    <thead>
+<table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive sortable">
+  <thead>
+    <tr>
+      <th id=name_column_header data-defaultsort="asc">Name</th>
+      <th>Team</th>
+      <th>Age</th>
+      <th>Height</th>
+      <th>Weight</th>
+      <th>Position</th>
+      <th>Salary</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @players.each do |player| %>
       <tr>
-        <th id=name_column_header data-defaultsort="desc">Name</th>
-        <th>Team</th>
-        <th>Age</th>
-        <th>Height</th>
-        <th>Weight</th>
-        <th>Position</th>
-        <th data-defaultsort='disabled'>Salary</th>
+        <td><%= link_to player.full_name, player, method: :get %></td>
+        <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+        <td><%= player.age %></td>
+        <td class="height"><%= player.height %></td>
+        <td><%= player.weight %> lb.</td>
+        <td class="position"><%= player.position %></td>
+        <td class="salary"><%= number_to_currency(player.salary) %></td>
       </tr>
-    </thead>
-    <tbody>
-      <% @players.each do |player| %>
-        <tr>
-          <td><%= link_to player.full_name, player, method: :get %></td>
-          <td><%= link_to player.team.full_name, player.team, method: :get %></td>
-          <td><%= player.age %></td>
-          <td class="height"><%= player.height %></td>
-          <td><%= player.weight %> lb.</td>
-          <td class="position"><%= player.position %></td>
-          <td class="salary"><%= player.salary %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+    <% end %>
+  </tbody>
+</table>
+
+<style>
+
+.players {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+</style>
+
+<script type="text/javascript" src="position.js"></script>
 
 <script>
 
+$('.salary').each(function() {
+  $(this).attr('data-value',salaryToInteger($(this).text()));
+});
+
+function salaryToInteger(salary) {
+  var condensedSalary = salary.replace(/[$,.]/g,''); // Get rid of dollar signs and commas
+  return parseInt(condensedSalary);
+}
+
+$('.position').each(function() {
+  var positionSymbol = $(this).text();
+  var position = '';
+  switch (positionSymbol.toLowerCase()) {
+    case 'p':
+      $(this).attr('data-value',1);
+      position = 'Pitcher';
+      break;
+    case 'c':
+    $(this).attr('data-value',2);
+      position = 'Catcher';
+      break;
+    case '1b':
+      $(this).attr('data-value',3);
+      position = 'First Base';
+      break;
+    case '2b':
+      $(this).attr('data-value',4);
+      position = 'Second Base';
+      break;
+    case '3b':
+      $(this).attr('data-value',5);
+      position = 'Third Base';
+      break;
+    case 'ss':
+      $(this).attr('data-value',6);
+      position = 'Shortstop';
+      break;
+    case 'lf':
+      $(this).attr('data-value',7);
+      position = 'Left Field';
+      break;
+    case 'cf':
+      $(this).attr('data-value',8);
+      position = 'Center Field';
+      break;
+    case 'rf':
+      $(this).attr('data-value',9);
+      position = 'Right Field';
+      break;
+  }
+  $(this).text(position);
+});
+
+$('.height').each(function() {
+  var height = $(this).text();
+  var feet = Math.floor(Number(height)/12);
+  var inches = Number(height) - feet*12;
+  var text = $(this).text();
+  $(this).text(feet + '\' ' + inches + '\"');
+  $(this).attr('data-value', height);
+});
+
 function doSearch() {
+  console.log("doSearch just got called");
   var searchText = document.getElementById('player_search').value;
   var table = document.getElementById('table_with_custom_border');
   var numColumns;
@@ -69,60 +142,5 @@ function doSearch() {
     }
   }
 }
-
-$('.position').each(function() {
-  var positionSymbol = $(this).text();
-  var position = '';
-  switch (positionSymbol.toLowerCase()) {
-    case 'p':
-      position = 'Pitcher';
-      break;
-    case 'c':
-      position = 'Catcher';
-      break;
-    case '1b':
-      position = 'First Base';
-      break;
-    case '2b':
-      position = 'Second Base';
-      break;
-    case '3b':
-      position = 'Third Base';
-      break;
-    case 'ss':
-      position = 'Shortstop';
-      break;
-    case 'lf':
-      position = 'Left Field';
-      break;
-    case 'cf':
-      position = 'Center Field';
-      break;
-    case 'rf':
-      position = 'Right Field';
-      break;
-  }
-  $(this).text(position);
-});
-
-$('.height').each(function() {
-  var height = $(this).text();
-  var feet = Math.floor(Number(height)/12);
-  var inches = Number(height) - feet*12;
-  $(this).text(feet + '\' ' + inches + '\"');
-});
-
-$('.salary').each(function() {
-  var item = $(this).text();
-  var num = Number(item).toLocaleString('en');
-
-  if(Number(item) < 0) {
-    num = num.replace('-','');
-    $(this).addClass('negMoney');
-  } else {
-    $(this).addClass('enMoney');
-  }
-  $(this).text(num);
-});
 
 </script>

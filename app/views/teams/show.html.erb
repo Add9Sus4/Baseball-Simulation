@@ -2,8 +2,10 @@
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <%= stylesheet_link_tag "jquery-ui.min", 'data-turbolinks-track' => true %>
 <%= javascript_include_tag "jquery-ui.min", 'data-turbolinks-track' =>true %>
-
-<p id="notice"><%= notice %></p>
+<%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
+<%= javascript_include_tag 'moment.min', 'data-turbolinks-track' => true %>
+<%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
+<!-- <p id="notice"><%= notice %></p> -->
 
 <h2>
 <%= @team.city %>
@@ -34,10 +36,10 @@
 
 </br>
 
-<%= link_to 'Edit Team Info', edit_team_path(@team) %> |
+<%= link_to 'Edit Team Info', edit_team_path(@team), method: :get %> |
 <%= link_to 'Delete Team', @team, method: :delete, data: { confirm: 'Are you sure you want to delete the ' + @team.name + '?' } %> |
-<%= link_to 'All Teams', teams_path %> |
-<%= link_to 'Back', 'javascript:history.go(-1);' %>
+<%= link_to 'All Teams', teams_path, method: :get %> |
+<%= link_to 'Back', 'javascript:history.go(-1);', method: :get %>
 
 
 <p/>
@@ -45,15 +47,15 @@
 <h3>Roster</h3>
 
 <div id="roster_div">
-  <table id="table_with_custom_border" class="">
+  <table id="table_with_custom_border" class="sortable">
     <thead>
       <tr>
         <th>Name</th>
         <th>Age</th>
         <th>Height</th>
         <th>Weight</th>
-        <th id="position_column_header" data-defaultsort="desc">Natural Position</th>
-        <th data-defaultsort='disabled'>Salary</th>
+        <th id="position_column_header" data-defaultsort="asc">Natural Position</th>
+        <th>Salary</th>
       </tr>
     </thead>
     <tbody>
@@ -72,29 +74,6 @@
 </div>
 
 <style>
-#table_with_custom_border {
-  padding: 5px;
-}
-
-#table_with_custom_border td {
-  padding: 5px;
-}
-
-#table_with_custom_border tbody {
-
-}
-
-#table_with_custom_border thead > tr > th {
-  padding: 6px;
-  background-color: #d1e2f2;
-  border-bottom: 1px solid #999999;
-  border-top: 1px solid #999999;
-  border-left: 1px solid #999999;
-}
-
-#table_with_custom_border thead > tr > th:last-child {
-  border-right: 1px solid #999999;
-}
 
 .ui-sortable tr {
   cursor: move;
@@ -113,6 +92,16 @@
 </style>
 
 <script>
+
+$('.salary').each(function() {
+  $(this).attr('data-value', salaryToInteger($(this).text()));
+});
+
+function salaryToInteger(salary) {
+  var condensedSalary = salary.replace(/[$,.]/g,''); // Get rid of dollar signs and commas
+  return parseInt(condensedSalary);
+}
+
 $(document).ready(function() {
   var fixHelperModified = function(e, tr) {
     var $originals = tr.children();
@@ -181,30 +170,39 @@ $('.position').each(function() {
   var position = '';
   switch (positionSymbol.toLowerCase()) {
     case 'p':
+      $(this).attr('data-value',1);
       position = 'Pitcher';
       break;
     case 'c':
+    $(this).attr('data-value',2);
       position = 'Catcher';
       break;
     case '1b':
+      $(this).attr('data-value',3);
       position = 'First Base';
       break;
     case '2b':
+      $(this).attr('data-value',4);
       position = 'Second Base';
       break;
     case '3b':
+      $(this).attr('data-value',5);
       position = 'Third Base';
       break;
     case 'ss':
+      $(this).attr('data-value',6);
       position = 'Shortstop';
       break;
     case 'lf':
+      $(this).attr('data-value',7);
       position = 'Left Field';
       break;
     case 'cf':
+      $(this).attr('data-value',8);
       position = 'Center Field';
       break;
     case 'rf':
+      $(this).attr('data-value',9);
       position = 'Right Field';
       break;
   }
@@ -215,7 +213,9 @@ $('.height').each(function() {
   var height = $(this).text();
   var feet = Math.floor(Number(height)/12);
   var inches = Number(height) - feet*12;
+  var text = $(this).text();
   $(this).text(feet + '\' ' + inches + '\"');
+  $(this).attr('data-value', height);
 });
 
 $('.salary').each(function() {
