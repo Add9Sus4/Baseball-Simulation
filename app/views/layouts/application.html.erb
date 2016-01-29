@@ -19,7 +19,6 @@ $(window).load(function() {
 $(document).click(function(event) {
   if($(event.target).closest("div").attr("class") === 'pagination') {
     paginate_clicked = true;
-    console.log('You clicked on ' + $(event.target).closest("div").attr("class") + ".");
   }
 });
 

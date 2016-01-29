@@ -10,6 +10,8 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
+ *= require jquery-ui
+ *= require jquery-ui/slider
  *= require_tree .
  *= require_self
  */
@@ -34,18 +36,18 @@
   color: red;
 }
 
-#table_with_custom_border {
+.table_with_custom_border {
   border-collapse: separate;
   border: 8px solid #54708C;
   border-radius: 5px;
   padding: 5px;
 }
 
-#table_with_custom_border td {
+.table_with_custom_border td {
   padding: 5px;
 }
 
-#table_with_custom_border thead > tr > th {
+.table_with_custom_border thead > tr > th {
   padding: 6px;
   background-color: #d1e2f2;
   border-bottom: 1px solid #999999;
@@ -54,7 +56,7 @@
   padding-right: 18px;
 }
 
-#table_with_custom_border thead > tr > th:last-child {
+.table_with_custom_border thead > tr > th:last-child {
   border-right: 1px solid #999999;
 }
 

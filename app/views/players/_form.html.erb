@@ -1,3 +1,6 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <%= form_for(@player) do |f| %>
   <% if @player.errors.any? %>
     <div id="error_explanation">
@@ -57,10 +60,11 @@
     <%= f.label :height %><br>
     <%= f.number_field :height, :value => rand(66..78) %>
   </div>
-  <div class="field">
+  <div class="weight-field field">
     <%= f.label :weight %><br>
     <%= f.number_field :weight, :value => rand(160..300) %>
   </div>
+  <div id="weight-slider"></div>
   <div class="field">
     <%= f.label :position %><br>
     <%= f.select :position, options_for_select({"Pitcher" => "P", "Catcher" => "C", "First Base" => "1B",
@@ -76,7 +80,42 @@
   </div>
 <% end %>
 
+<style>
+#weight-slider {
+  width: 150px
+}
+</style>
+
 <script>
+
+$(".weight-field :input[type='number']").focusout(function() {
+  var min_weight = 160;
+  var max_weight = 300;
+  var toInteger = parseInt($(this).val());
+  $(this).val(toInteger);
+  if ($(this).val() < min_weight) {
+    $(this).val(min_weight);
+  }
+  if ($(this).val() > max_weight) {
+    $(this).val(max_weight);
+  }
+  $("#weight-slider").slider('value',toInteger);
+});
+
+$(function() {
+    $( "#weight-slider" ).slider({
+      min: 160,
+      max: 300,
+      animate: true,
+      value: $(".weight-field :input[type='number']").val(),
+      step: 1,
+      slide: function( event, ui ) {
+        $( "#amount" ).val( ui.value);
+        $(".weight-field :input[type='number']").val(ui.value);
+      }
+    });
+  });
+
   $('.position').each(function() {
     var positionSymbol = $(this).text();
     var position = '';

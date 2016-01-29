@@ -1,5 +1,6 @@
 class Player < ActiveRecord::Base
   validates :team, :first_name, :last_name, :age, :height, :weight, :position, :salary, presence: true
+  validates_numericality_of :weight, greater_than_or_equal_to: 160, less_than_or_equal_to: 300
   validate :team_cannot_have_more_than_13_players
   belongs_to :team
 

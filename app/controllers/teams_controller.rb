@@ -79,6 +79,7 @@ class TeamsController < ApplicationController
                                   :capacity, :catcher, :designated_hitter, :first_base,
                                   :second_base, :third_base, :shortstop, :left_field,
                                   :right_field, :center_field, :bench1, :bench2, :bench3,
-                                  :bench4)
+                                  :bench4, :lineup1, :lineup2, :lineup3, :lineup4, :lineup5,
+                                  :lineup6, :lineup7, :lineup8, :lineup9)
     end
 end

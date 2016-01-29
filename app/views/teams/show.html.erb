@@ -47,7 +47,7 @@
 <h3>Roster</h3>
 
 <div id="roster_div">
-  <table id="table_with_custom_border" class="sortable">
+  <table class="table_with_custom_border roster sortable">
     <thead>
       <tr>
         <th>Name</th>
@@ -89,6 +89,10 @@
   opacity: 1.0;
 }
 
+.bench {
+  cursor: default !important;
+}
+
 </style>
 
 <script>
@@ -112,10 +116,18 @@ $(document).ready(function() {
     return $helper;
   };
 
-  $("#table_with_custom_border tbody").sortable({
+  $(".lineup > tbody > tr").each(function() {
+    var span = $(this).find("span");
+    if (span.text().indexOf('BN') > -1) {
+      $(this).addClass("bench");
+    }
+  });
+
+  $(".roster tbody").sortable({
     helper: 'clone',
     delay: 150,
     tolerance: "pointer",
+    cancel: ".bench",
 
     start: function(event, ui) {
       $(this).find("tr").toggleClass('dragging');
@@ -127,8 +139,50 @@ $(document).ready(function() {
     // containment: "#roster_div",
   }).disableSelection();
 
+  $(".lineup tbody").sortable({
+    helper: 'clone',
+    delay: 150,
+    tolerance: "pointer",
+    cancel: ".bench",
+
+    start: function(event, ui) {
+      $(this).find("tr").toggleClass('dragging');
+
+    },
+    stop: function(event, ui) {
+      $('#lineup_changed').show();
+      $(this).find("tr").toggleClass('dragging');
+    },
+    containment: "#view_lineup"
+  }).disableSelection();
+
 });
 </script>
+
+
+<style>
+
+#lineup_changed {
+  padding-top: 10px;
+}
+
+.lineup > thead > tr > th:nth-child(1) {
+  width: 75px;
+}
+
+.lineup > thead > tr > th:nth-child(2) {
+  width: 150px;
+}
+
+#lineup_bench > tbody > tr > td:nth-child(1) {
+  width: 138px;
+}
+
+#lineup_bench > tbody > tr > td:nth-child(2) {
+  width: 150px;
+}
+</style>
+
 
 <h3>Lineup</h3>
 <button id="edit_lineup_button" onClick="toggleLineupEdit()">Edit</button>
@@ -136,9 +190,42 @@ $(document).ready(function() {
   <%= render 'position_form' %>
 </div>
 
+<style>
+.order {
+  float: left;
+}
+</style>
+
 <div id="view_lineup">
 </br>
-<table id="table_with_custom_border" class="table-condensed table-striped table-bordered">
+<table class="order table_with_custom_border table-condensed table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>
+        Order
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for i in 1..9 do %>
+    <tr>
+      <td>
+        <%= i %>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+<% @battingOrder = [Player.find(@team.lineup1),
+                    Player.find(@team.lineup2),
+                    Player.find(@team.lineup3),
+                    Player.find(@team.lineup4),
+                    Player.find(@team.lineup5),
+                    Player.find(@team.lineup6),
+                    Player.find(@team.lineup7),
+                    Player.find(@team.lineup8),
+                    Player.find(@team.lineup9)]%>
+<table class="lineup table_with_custom_border table-condensed table-striped table-bordered">
   <thead>
     <tr>
       <th>Position</th>
@@ -146,19 +233,55 @@ $(document).ready(function() {
     </tr>
   </thead>
   <tbody>
-    <% for i in 0..12 do %>
+    <% for i in 0..8 do %>
       <tr>
-        <td>
-          <span class="position_slot"><%= @team.position_name(i) %></span></br>
-        </td>
-        <td><%= @team.player_at_position(i) %></td>
+        <td><%= @team.find_position(@battingOrder[i].id)%></td>
+        <td><%= @battingOrder[i] %><span "hidden_id" hidden><%= @battingOrder[i].id %></span></td>
       </tr>
     <% end %>
   </tbody>
 </table>
+
+<table id="lineup_bench" class="table_with_custom_border table-condensed table-striped table-bordered">
+  <tbody>
+    <tr><td>Bench 1</td><td><%= Player.find(@team.bench1) %></td></tr>
+    <tr><td>Bench 2</td><td><%= Player.find(@team.bench2) %></td></tr>
+    <tr><td>Bench 3</td><td><%= Player.find(@team.bench3) %></td></tr>
+    <tr><td>Bench 4</td><td><%= Player.find(@team.bench4) %></td></tr>
+  </tbody>
+</table>
+</div>
+
+<div id="lineup_changed" hidden>
+  <button id="save_lineup_changes" onclick="saveLineupChanges()">Save Lineup Changes</button>
 </div>
 
 <script>
+
+function saveLineupChanges() {
+  player_ids = $.map($(".lineup tbody").find("tr"), function(element) {
+    return $(element).find("td:nth-child(2) span").text();
+  })
+
+  $.ajax({
+    url: window.location.href,
+    type: 'PATCH',
+    dataType: 'json',
+    data: { "team": { "lineup1": player_ids[0],
+                      "lineup2": player_ids[1],
+                      "lineup3": player_ids[2],
+                      "lineup4": player_ids[3],
+                      "lineup5": player_ids[4],
+                      "lineup6": player_ids[5],
+                      "lineup7": player_ids[6],
+                      "lineup8": player_ids[7],
+                      "lineup9": player_ids[8]
+                    }
+          },
+  });
+  $("#lineup_changed").hide();
+}
+
 function toggleLineupEdit() {
   $("#edit_lineup").toggle();
   $("#view_lineup").toggle();
