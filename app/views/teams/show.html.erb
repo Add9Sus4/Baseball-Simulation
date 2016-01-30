@@ -8,6 +8,7 @@
 <!-- <p id="notice"><%= notice %></p> -->
 
 <style>
+
 .order {
   float: left;
   border-top: 4px solid #54708C;
@@ -38,12 +39,13 @@
   padding-top: 10px;
 }
 
-.lineup > thead > tr > th:nth-child(1) {
-  width: 75px;
+#lineup_div {
+  float: left;
+  width: 275px;
 }
 
-.lineup > thead > tr > th:nth-child(2) {
-  width: 150px;
+#roster_div {
+  padding-top: 20px;
 }
 
 </style>
@@ -85,9 +87,76 @@
 
 <p/>
 
-<h3>Roster</h3>
+<div id="lineup_div">
+  <h3>Lineup</h3>
+
+  <div id="view_lineup">
+    </br>
+    <table class="multi-table order table-condensed table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>
+            Order
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for i in 1..9 do %>
+        <tr><td><%= i %></td></tr>
+        <% end %>
+        <% for i in 0..3 do %>
+        <tr><td>Bench <%= (i+1) %></td></tr>
+        <% end %>
+      </tbody>
+    </table>
+    <table id="batting_order" class="multi-table lineup table-condensed table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Player</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for i in 0..8 do %>
+          <tr>
+            <td>
+                <% if @team.find_batting_order(i).is_a? Player %>
+                  <%= link_to @team.find_batting_order(i).full_name, @team.find_batting_order(i), method: :get %>
+                  <span class="hidden_id" hidden><%= @team.find_batting_order_id(i) %></span>
+                  <span class="hidden_row_number" hidden><%= "lineup#{(i+1)}" %></span>
+                <% else %>
+                  <%= '--' %>
+                  <span class="hidden_id" hidden><%= nil %></span>
+                  <span class="hidden_row_number" hidden><%= "lineup#{(i+1)}" %></span>
+                <% end %>
+              </td>
+          </tr>
+        <% end %>
+        <% for i in 0..3 do %>
+          <tr>
+            <td>
+              <% if @team.find_bench(i).is_a? Player %>
+                <%= link_to @team.find_bench(i).full_name, @team.find_bench(i), method: :get %>
+                <span class="hidden_id" hidden><%= @team.find_bench_id(i) %></span>
+                <span class="hidden_row_number" hidden><%= "bench#{(i+1)}" %></span>
+              <% else %>
+                <%= '--' %>
+                <span class="hidden_id" hidden><%= nil %></span>
+                <span class="hidden_row_number" hidden><%= "bench#{(i+1)}" %></span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="lineup_changed" hidden>
+    <button id="save_lineup_changes" onclick="saveLineupChanges()">Save Lineup Changes</button>
+  </div>
+</div>
 
 <div id="roster_div">
+  <h3>Roster</h3>
   <table class="table_with_custom_border roster sortable">
     <thead>
       <tr>
@@ -112,76 +181,6 @@
       <% end %>
     </tbody>
   </table>
-</div>
-
-<h3>Lineup</h3>
-<button id="edit_lineup_button" onClick="toggleLineupEdit()">Edit</button>
-<div id="edit_lineup" style="display: none;">
-  <%= render 'position_form' %>
-</div>
-
-<div id="view_lineup">
-  </br>
-  <table class="multi-table order table-condensed table-striped table-bordered">
-    <thead>
-      <tr>
-        <th>
-          Order
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <% for i in 1..9 do %>
-      <tr><td><%= i %></td></tr>
-      <% end %>
-      <% for i in 0..3 do %>
-      <tr><td>Bench <%= (i+1) %></td></tr>
-      <% end %>
-    </tbody>
-  </table>
-  <table id="batting_order" class="multi-table lineup table-condensed table-striped table-bordered">
-    <thead>
-      <tr>
-        <th>Player</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% for i in 0..8 do %>
-        <tr>
-          <td>
-              <% if @team.find_batting_order(i).is_a? Player %>
-                <%= link_to @team.find_batting_order(i).full_name, @team.find_batting_order(i), method: :get %>
-                <span class="hidden_id" hidden><%= @team.find_batting_order_id(i) %></span>
-                <span class="hidden_row_number" hidden><%= "lineup#{(i+1)}" %></span>
-              <% else %>
-                <%= '--' %>
-                <span class="hidden_id" hidden><%= nil %></span>
-                <span class="hidden_row_number" hidden><%= "lineup#{(i+1)}" %></span>
-              <% end %>
-            </td>
-        </tr>
-      <% end %>
-      <% for i in 0..3 do %>
-        <tr>
-          <td>
-            <% if @team.find_bench(i).is_a? Player %>
-              <%= link_to @team.find_bench(i).full_name, @team.find_bench(i), method: :get %>
-              <span class="hidden_id" hidden><%= @team.find_bench_id(i) %></span>
-              <span class="hidden_row_number" hidden><%= "bench#{(i+1)}" %></span>
-            <% else %>
-              <%= '--' %>
-              <span class="hidden_id" hidden><%= nil %></span>
-              <span class="hidden_row_number" hidden><%= "bench#{(i+1)}" %></span>
-            <% end %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
-
-<div id="lineup_changed" hidden>
-  <button id="save_lineup_changes" onclick="saveLineupChanges()">Save Lineup Changes</button>
 </div>
 
 <script>
@@ -239,12 +238,6 @@ function saveLineupChanges() {
           },
   });
   $("#lineup_changed").hide();
-}
-
-function toggleLineupEdit() {
-  $("#edit_lineup").toggle();
-  $("#view_lineup").toggle();
-  $("#edit_lineup_button").toggle();
 }
 
 $('.position').each(function() {
