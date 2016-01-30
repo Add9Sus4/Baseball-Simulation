@@ -7,6 +7,61 @@
 <%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
 <!-- <p id="notice"><%= notice %></p> -->
 
+<style>
+.order {
+  float: left;
+  border-top: 4px solid #54708C;
+  border-left: 4px solid #54708C;
+}
+.lineup {
+  border-top: 4px solid #54708C;
+  border-right: 4px solid #54708C;
+}
+#lineup_bench {
+  border-bottom: 4px solid #54708C;
+  border-right: 4px solid #54708C;
+  border-left: 4px solid #54708C;
+}
+
+.ui-sortable tr {
+  cursor: move;
+}
+
+.dragging {
+  background-color: #edf0f8;
+  opacity: 0.5;
+}
+
+.ui-sortable-helper {
+  background-color: #dae2f1;
+  opacity: 1.0;
+}
+
+.bench {
+  cursor: default !important;
+}
+
+#lineup_changed {
+  padding-top: 10px;
+}
+
+.lineup > thead > tr > th:nth-child(1) {
+  width: 75px;
+}
+
+.lineup > thead > tr > th:nth-child(2) {
+  width: 150px;
+}
+
+#lineup_bench > tbody > tr > td:nth-child(1) {
+  width: 127px;
+}
+
+#lineup_bench > tbody > tr > td:nth-child(2) {
+  width: 150px;
+}
+</style>
+
 <h2>
 <%= @team.city %>
 <%= @team.name %>
@@ -61,7 +116,7 @@
     <tbody>
       <% @team.players.each do |player| %>
         <tr class="player_row">
-          <td><%= link_to player.full_name, player, method: :get %></td>
+          <td><%= link_to player.full_name, player, method: :get %><span "hidden_id" hidden><%= player.id %></span></td>
           <td><%= player.age %></td>
           <td class="height"><%= player.height %></td>
           <td><%= player.weight %> lb.</td>
@@ -73,190 +128,90 @@
   </table>
 </div>
 
-<style>
-
-.ui-sortable tr {
-  cursor: move;
-}
-
-.dragging {
-  background-color: #edf0f8;
-  opacity: 0.5;
-}
-
-.ui-sortable-helper {
-  background-color: #dae2f1;
-  opacity: 1.0;
-}
-
-.bench {
-  cursor: default !important;
-}
-
-</style>
-
-<script>
-
-$('.salary').each(function() {
-  $(this).attr('data-value', salaryToInteger($(this).text()));
-});
-
-function salaryToInteger(salary) {
-  var condensedSalary = salary.replace(/[$,.]/g,''); // Get rid of dollar signs and commas
-  return parseInt(condensedSalary);
-}
-
-$(document).ready(function() {
-  var fixHelperModified = function(e, tr) {
-    var $originals = tr.children();
-    var $helper = tr.clone();
-    $helper.children().each(function(index) {
-      $(this).width($originals.eq(index).width());
-    });
-    return $helper;
-  };
-
-  $(".lineup > tbody > tr").each(function() {
-    var span = $(this).find("span");
-    if (span.text().indexOf('BN') > -1) {
-      $(this).addClass("bench");
-    }
-  });
-
-  $(".roster tbody").sortable({
-    helper: 'clone',
-    delay: 150,
-    tolerance: "pointer",
-    cancel: ".bench",
-
-    start: function(event, ui) {
-      $(this).find("tr").toggleClass('dragging');
-
-    },
-    stop: function(event, ui) {
-      $(this).find("tr").toggleClass('dragging');
-    },
-    // containment: "#roster_div",
-  }).disableSelection();
-
-  $(".lineup tbody").sortable({
-    helper: 'clone',
-    delay: 150,
-    tolerance: "pointer",
-    cancel: ".bench",
-
-    start: function(event, ui) {
-      $(this).find("tr").toggleClass('dragging');
-
-    },
-    stop: function(event, ui) {
-      $('#lineup_changed').show();
-      $(this).find("tr").toggleClass('dragging');
-    },
-    containment: "#view_lineup"
-  }).disableSelection();
-
-});
-</script>
-
-
-<style>
-
-#lineup_changed {
-  padding-top: 10px;
-}
-
-.lineup > thead > tr > th:nth-child(1) {
-  width: 75px;
-}
-
-.lineup > thead > tr > th:nth-child(2) {
-  width: 150px;
-}
-
-#lineup_bench > tbody > tr > td:nth-child(1) {
-  width: 138px;
-}
-
-#lineup_bench > tbody > tr > td:nth-child(2) {
-  width: 150px;
-}
-</style>
-
-
 <h3>Lineup</h3>
 <button id="edit_lineup_button" onClick="toggleLineupEdit()">Edit</button>
 <div id="edit_lineup" style="display: none;">
   <%= render 'position_form' %>
 </div>
 
-<style>
-.order {
-  float: left;
-}
-</style>
-
 <div id="view_lineup">
-</br>
-<table class="order table_with_custom_border table-condensed table-striped table-bordered">
-  <thead>
-    <tr>
-      <th>
-        Order
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <% for i in 1..9 do %>
-    <tr>
-      <td>
-        <%= i %>
-      </td>
-    </tr>
-    <% end %>
-  </tbody>
-</table>
-<% @battingOrder = [Player.find(@team.lineup1),
-                    Player.find(@team.lineup2),
-                    Player.find(@team.lineup3),
-                    Player.find(@team.lineup4),
-                    Player.find(@team.lineup5),
-                    Player.find(@team.lineup6),
-                    Player.find(@team.lineup7),
-                    Player.find(@team.lineup8),
-                    Player.find(@team.lineup9)]%>
-<table class="lineup table_with_custom_border table-condensed table-striped table-bordered">
-  <thead>
-    <tr>
-      <th>Position</th>
-      <th>Player</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% for i in 0..8 do %>
+  </br>
+  <table class="multi-table order table-condensed table-striped table-bordered">
+    <thead>
       <tr>
-        <td><%= @team.find_position(@battingOrder[i].id)%></td>
-        <td><%= @battingOrder[i] %><span "hidden_id" hidden><%= @battingOrder[i].id %></span></td>
+        <th>
+          Order
+        </th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<table id="lineup_bench" class="table_with_custom_border table-condensed table-striped table-bordered">
-  <tbody>
-    <tr><td>Bench 1</td><td><%= Player.find(@team.bench1) %></td></tr>
-    <tr><td>Bench 2</td><td><%= Player.find(@team.bench2) %></td></tr>
-    <tr><td>Bench 3</td><td><%= Player.find(@team.bench3) %></td></tr>
-    <tr><td>Bench 4</td><td><%= Player.find(@team.bench4) %></td></tr>
-  </tbody>
-</table>
-</div>
+    </thead>
+    <tbody>
+      <% for i in 1..9 do %>
+      <tr>
+        <td>
+          <%= i %>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <table id="batting_order" class="multi-table lineup table-condensed table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Position</th>
+        <th>Player</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for i in 0..8 do %>
+        <tr>
+          <td><%= @team.find_position(i) %><span id="hidden_row_number" hidden><%= i + 1 %></span></td>
+          <td><%= @team.find_batting_order(i) %><span id="hidden_id" hidden><%= @team.find_batting_order_id(i) %></span></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <table id="lineup_bench" class="multi-table table-condensed table-striped table-bordered">
+    <tbody>
+      <tr><td>Bench 1</td><td><%= @team.find_bench(0) %></td></tr>
+      <tr><td>Bench 2</td><td><%= @team.find_bench(1) %></td></tr>
+      <tr><td>Bench 3</td><td><%= @team.find_bench(2) %></td></tr>
+      <tr><td>Bench 4</td><td><%= @team.find_bench(3) %></td></tr>
+    </tbody>
+  </table>
+  </div>
 
 <div id="lineup_changed" hidden>
   <button id="save_lineup_changes" onclick="saveLineupChanges()">Save Lineup Changes</button>
 </div>
 
 <script>
+
+var initial_player_ids;
+
+$(document).ready(function() {
+  initial_player_ids = $.map($(".lineup tbody").find("tr"), function(element) {
+    return $(element).find("td:nth-child(2) span").text();
+  })
+  console.log(initial_player_ids);
+})
+
+function battingOrderChanged() {
+  player_ids = $.map($(".lineup tbody").find("tr"), function(element) {
+    return $(element).find("td:nth-child(2) span").text();
+  })
+  console.log(initial_player_ids);
+  console.log(player_ids);
+  if(player_ids.length !== initial_player_ids.length) {
+    return true;
+  }
+  var i;
+  for (i=0; i<player_ids.length; i++) {
+    if (player_ids[i] !== initial_player_ids[i]) {
+      return true;
+    }
+  }
+  return false;
+}
 
 function saveLineupChanges() {
   player_ids = $.map($(".lineup tbody").find("tr"), function(element) {
@@ -352,5 +307,92 @@ $('.salary').each(function() {
     $(this).addClass('enMoney');
   }
   $(this).text(num);
+});
+
+$('.salary').each(function() {
+  $(this).attr('data-value', salaryToInteger($(this).text()));
+});
+
+function salaryToInteger(salary) {
+  var condensedSalary = salary.replace(/[$,.]/g,''); // Get rid of dollar signs and commas
+  return parseInt(condensedSalary);
+}
+
+$(document).ready(function() {
+
+  var fixHelperModified = function(e, tr) {
+    var $originals = tr.children();
+    var $helper = tr.clone();
+    $helper.children().each(function(index) {
+      $(this).width($originals.eq(index).width());
+    });
+    return $helper;
+  };
+
+  $(".lineup > tbody > tr").each(function() {
+    var span = $(this).find("span");
+    if (span.text().indexOf('BN') > -1) {
+      $(this).addClass("bench");
+    }
+  });
+
+  $(".roster tbody tr").draggable({
+    helper: 'clone',
+    delay: 150,
+    revert: true,
+
+    start: function(event, ui) {
+      $(this).find("tr").toggleClass('dragging');
+      console.log("I am dragging " + $(this).find("span").text());
+    },
+    stop: function(event, ui) {
+      $(this).find("tr").toggleClass('dragging');
+    },
+    // containment: "#roster_div",
+  }).disableSelection();
+
+  $(".lineup tbody").sortable({
+    helper: 'clone',
+    delay: 150,
+    tolerance: "pointer",
+    cancel: ".bench",
+
+    start: function(event, ui) {
+      $(this).find("tr").toggleClass('dragging');
+
+    },
+    stop: function(event, ui) {
+      if (battingOrderChanged()) {
+        $('#lineup_changed').show();
+      } else {
+        $('#lineup_changed').hide();
+      }
+      $(this).find("tr").toggleClass('dragging');
+    },
+    containment: "#view_lineup"
+  }).disableSelection();
+
+  $(".lineup tbody tr").droppable({
+    drop: function(event, ui) {
+      var player = ui.draggable.find("span");
+      var slot = $(this).find("span#hidden_row_number");
+      console.log("I have dropped player " + player.text() + " in slot " + slot.text());
+
+      var lineupData = { };
+      lineupData["lineup" + slot.text()] = parseInt(player.text());
+      var teamData = { };
+      teamData["team"] = lineupData;
+      console.log(teamData);
+      $.ajax({
+        url: window.location.href,
+        type: 'PATCH',
+        dataType: 'json',
+        data: teamData,
+      });
+      location.reload();
+
+    },
+  })
+
 });
 </script>
