@@ -389,8 +389,9 @@ $(document).ready(function() {
         dataType: 'json',
         data: teamData,
       });
-      location.reload();
-
+      if (player.closest("div").is("#roster_div")) {
+        location.reload();
+      }
     },
   })
 
