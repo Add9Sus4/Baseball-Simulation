@@ -64,6 +64,15 @@ class Team < ActiveRecord::Base
     end
   end
 
+  def find_bench_id(bench_position)
+    bench_ids = [bench1, bench2, bench3, bench4]
+    if Player.exists?(bench_ids[bench_position])
+      Player.find(bench_ids[bench_position]).id
+    else
+      nil
+    end
+  end
+
   def find_batting_order_id(lineup_position)
     lineup_ids = [lineup1, lineup2, lineup3, lineup4,
                   lineup5, lineup6, lineup7, lineup8,
