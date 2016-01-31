@@ -11,8 +11,7 @@ class Team < ActiveRecord::Base
   def players_must_not_be_at_same_position
     positions = [designated_hitter, catcher, first_base,
                     second_base, third_base, shortstop,
-                    left_field, center_field, right_field,
-                    bench1, bench2, bench3, bench4].compact
+                    left_field, center_field, right_field].compact
     if positions.uniq.length != positions.length
       errors.add(:base, "You have more than one player at the same position!")
     end
@@ -20,16 +19,14 @@ class Team < ActiveRecord::Base
   end
 
   def position_name(index)
-    position_names = ['DH', 'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF',
-                      'BN', 'BN', 'BN', 'BN']
+    position_names = ['DH', 'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF']
     position_names[index]
   end
 
   def player_at_position(index)
     positions = [designated_hitter, catcher, first_base,
                     second_base, third_base, shortstop,
-                    left_field, center_field, right_field,
-                    bench1, bench2, bench3, bench4]
+                    left_field, center_field, right_field]
     if index.nil?
       '--'
     else
@@ -55,19 +52,23 @@ class Team < ActiveRecord::Base
     end
   end
 
-  def find_bench(bench_position)
-    bench_ids = [bench1, bench2, bench3, bench4]
-    if Player.exists?(bench_ids[bench_position])
-      Player.find(bench_ids[bench_position])
+  def find_player_at_position(position)
+    position_ids = [designated_hitter, catcher, first_base, second_base,
+                  third_base, shortstop, left_field, center_field,
+                  right_field]
+    if Player.exists?(position_ids[position])
+      Player.find(position_ids[position])
     else
       nil
     end
   end
 
-  def find_bench_id(bench_position)
-    bench_ids = [bench1, bench2, bench3, bench4]
-    if Player.exists?(bench_ids[bench_position])
-      Player.find(bench_ids[bench_position]).id
+  def find_position_id(position)
+    position_ids = [designated_hitter, catcher, first_base, second_base,
+                  third_base, shortstop, left_field, center_field,
+                  right_field]
+    if Player.exists?(position_ids[position])
+      Player.find(position_ids[position]).id
     else
       nil
     end
@@ -97,10 +98,8 @@ class Team < ActiveRecord::Base
     else
       position_ids = [designated_hitter, catcher, first_base,
                       second_base, third_base, shortstop,
-                      left_field, center_field, right_field,
-                      bench1, bench2, bench3, bench4]
-      position_names = ['DH', 'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF',
-                        'BN', 'BN', 'BN', 'BN']
+                      left_field, center_field, right_field]
+      position_names = ['DH', 'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF']
       player_id = position_ids.index(id)
       if player_id.nil?
         '--'

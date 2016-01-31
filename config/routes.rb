@@ -20,7 +20,11 @@ Rails.application.routes.draw do
   delete 'logout' => 'sessions#destroy'
 
   resources :players
-  resources :teams
+  resources :teams do
+    member do
+      get 'edit_position'
+    end
+  end
   resources :users
   resources :account_activations, only: [:edit]
   resources :password_resets, only: [:new, :create, :edit, :update]

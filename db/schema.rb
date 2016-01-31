@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160129062456) do
+ActiveRecord::Schema.define(version: 20160130045100) do
 
   create_table "players", force: :cascade do |t|
     t.integer  "team_id",         limit: 4
@@ -67,10 +67,6 @@ ActiveRecord::Schema.define(version: 20160129062456) do
     t.integer  "left_field",        limit: 4
     t.integer  "center_field",      limit: 4
     t.integer  "right_field",       limit: 4
-    t.integer  "bench1",            limit: 4
-    t.integer  "bench2",            limit: 4
-    t.integer  "bench3",            limit: 4
-    t.integer  "bench4",            limit: 4
     t.integer  "lineup1",           limit: 4
     t.integer  "lineup2",           limit: 4
     t.integer  "lineup3",           limit: 4

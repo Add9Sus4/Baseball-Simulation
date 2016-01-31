@@ -5,24 +5,42 @@
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
+
+  <style>
+    .open > .dropdown-menu {
+      -webkit-transform: scale(1,1);
+      transform: scale(1,1);
+      opacity: 1;
+    }
+
+    .dropdown-menu {
+      opacity: .3;
+      -webkit-transform-origin: top;
+      transform-origin: top;
+      -webkit-animation-fill-mode: forwards;
+      animation-fill-mode: forwards;
+      -webkit-transform: scale(1,0);
+      transition: all 0.3s linear;
+      -webkit-transition: all 0.3s linear;
+    }
+
+    .caret-up {
+      width: 0;
+      height: 0;
+      border-left: 4px solid rgba(0,0,0,0);
+      border-right: 4px solid rgba(0,0,0,0);
+      border-bottom: 4px solid;
+      display: inline-block;
+      margin-left: 2px;
+      vertical-align: middle;
+    }
+
+    /*.dropdown:hover ul.dropdown-menu {
+      display: block;
+    }*/
+  </style>
+
 </head>
-
-<script>
-
-
-var paginate_clicked = false;
-
-$(window).load(function() {
-  $("#app_body").fadeIn('fast');
-});
-
-$(document).click(function(event) {
-  if($(event.target).closest("div").attr("class") === 'pagination') {
-    paginate_clicked = true;
-  }
-});
-
-</script>
 
 <body id="app_body" hidden>
 <div class="content">
@@ -39,7 +57,6 @@ $(document).click(function(event) {
       <ul class="nav navbar-nav">
         <li class="home_link"><%= link_to "Home", root_url, method: :get %></li>
         <% if logged_in? %>
-        <li class="users_link"><%= link_to "Users", users_path, method: :get %></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             Account <b class="caret"></b>
@@ -49,9 +66,6 @@ $(document).click(function(event) {
             <li class="settings_link"><%= link_to "Settings", edit_user_path(current_user), method: :get %></li>
           </ul>
         </li>
-        <li><%= link_to "Log out", logout_path, method: :delete %></li>
-        <li class="teams"><%= link_to "Teams", "/teams", method: :get %></li>
-        <li class="players"><%= link_to "Players", "/players", method: :get %></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             Create <b class="caret"></b>
@@ -61,6 +75,10 @@ $(document).click(function(event) {
             <li class="new_player_link"><%= link_to "Player", "/players/new", method: :get %></li>
           </ul>
         </li>
+        <li class="teams"><%= link_to "Teams", "/teams", method: :get %></li>
+        <li class="players"><%= link_to "Players", "/players", method: :get %></li>
+        <li class="users_link"><%= link_to "Users", users_path, method: :get %></li>
+        <li><%= link_to "Log out", logout_path, method: :delete %></li>
         <% else %>
         <li><%= link_to "Log in", login_path, method: :get %></li>
         <% end %>
@@ -74,7 +92,7 @@ $(document).click(function(event) {
     <% flash.each do |message_type, message| %>
       <div class="alert alert-<%= message_type %>"><%= message %></div>
     <% end %>
-    <div class="content">
+    <div class="main_content">
       <%= yield %>
     </div>
   </br>
@@ -91,6 +109,37 @@ $(document).click(function(event) {
 
 $(document).ready(function() {
   setNavigation();
+});
+
+$('.dropdown').click(function() {
+    $('b', this).toggleClass("caret caret-up");
+});
+
+$(function() {
+  $(".dropdown").hover(function() {
+    $('.dropdown-menu', this).stop(true, true).fadeIn("fast");
+    $(this).addClass("open");
+    $('b', this).toggleClass("caret caret-up");
+  },
+  function() {
+    $('.dropdown-menu', this).stop(true, true).fadeOut("fast");
+    $(this).removeClass("open");
+    $('b', this).removeClass("caret-up");
+    $('b', this).addClass("caret");
+  });
+})
+
+
+var paginate_clicked = false;
+
+$(window).load(function() {
+  $("#app_body").fadeIn('fast');
+});
+
+$(document).click(function(event) {
+  if($(event.target).closest("div").attr("class") === 'pagination') {
+    paginate_clicked = true;
+  }
 });
 
 function setNavigation() {

@@ -6,6 +6,10 @@ class TeamsController < ApplicationController
     @teams = Team.all
   end
 
+  def edit_position
+    @team = Team.find(params[:id])
+  end
+
   # GET /teams/1
   # GET /teams/1.json
   def show

@@ -1,11 +1,8 @@
-<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <%= stylesheet_link_tag "jquery-ui.min", 'data-turbolinks-track' => true %>
 <%= javascript_include_tag "jquery-ui.min", 'data-turbolinks-track' =>true %>
 <%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
 <%= javascript_include_tag 'moment.min', 'data-turbolinks-track' => true %>
 <%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
-<!-- <p id="notice"><%= notice %></p> -->
 
 <style>
 
@@ -15,7 +12,7 @@
   border-left: 4px solid #54708C;
   border-bottom: 4px solid #54708C;
 }
-.lineup {
+.position_table {
   border-top: 4px solid #54708C;
   border-right: 4px solid #54708C;
   border-bottom: 4px solid #54708C;
@@ -43,98 +40,66 @@
   padding-top: 1px;
 }
 
-#lineup_div {
+#position_div {
   padding-top: 3px;
   float: left;
   width: 225px;
 }
 </style>
-
-<h2>
-<%= @team.city %>
-<%= @team.name %>
-</h2>
-<p>
-  <%= link_to 'Edit Team Info', edit_team_path(@team), method: :get %> |
-  <%= link_to 'Delete Team', @team, method: :delete, data: { confirm: 'Are you sure you want to delete the ' + @team.name + '?' } %> |
-  <%= link_to 'All Teams', teams_path, method: :get %> |
-  <%= link_to 'Back', 'javascript:history.go(-1);', method: :get %>
-</p>
-
-
-<div id="lineup_div">
-  <p>
-    <strong>League:</strong>
-    <%= @team.league %>
-  </p>
-
-  <p>
-    <strong>Division:</strong>
-    <%= @team.division %>
-  </p>
-
-  <p>
-    <strong>Stadium:</strong>
-    <%= @team.stadium %>
-  </p>
-
-  <p>
-    <strong>Capacity:</strong>
-    <%= @team.capacity %>
-  </p>
-
-  <h3>Lineup</h3>
-
-  <div id="view_lineup">
-    </br>
-    <table class="multi-table order table-condensed table-striped table-bordered">
-      <thead>
+<span id="team_path" hidden><%= team_path(@team) %></span>
+<div id="position_div">
+  </br>
+  <h3>Positions</h3>
+  <table class="multi-table order table-condensed table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>
+          Pos.
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>DH</td></tr>
+      <tr><td>C</td></tr>
+      <tr><td>1B</td></tr>
+      <tr><td>2B</td></tr>
+      <tr><td>3B</td></tr>
+      <tr><td>SS</td></tr>
+      <tr><td>RF</td></tr>
+      <tr><td>CF</td></tr>
+      <tr><td>LF</td></tr>
+    </tbody>
+  </table>
+  <table id="position_table" class="multi-table position_table table-condensed table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Player</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @position_names = ['designated_hitter','catcher','first_base','second_base',
+                            'third_base','shortstop','left_field','center_field','right_field'] %>
+      <% for i in 0..8 do %>
         <tr>
-          <th>
-            Order
-          </th>
+          <td>
+              <% if @team.find_player_at_position(i).is_a? Player %>
+                <%= link_to @team.find_player_at_position(i).full_name, @team.find_player_at_position(i), method: :get %>
+                <span class="hidden_id" hidden><%= @team.find_position_id(i) %></span>
+                <span class="hidden_position_name" hidden><%= @position_names[i] %></span>
+              <% else %>
+                <%= '--' %>
+                <span class="hidden_id" hidden><%= nil %></span>
+                <span class="hidden_position_name" hidden><%= @position_names[i] %></span>
+              <% end %>
+            </td>
         </tr>
-      </thead>
-      <tbody>
-        <% for i in 1..9 do %>
-        <tr><td><%= i %></td></tr>
-        <% end %>
-      </tbody>
-    </table>
-    <table id="batting_order" class="multi-table lineup table-condensed table-striped table-bordered">
-      <thead>
-        <tr>
-          <th>Player</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% for i in 0..8 do %>
-          <tr>
-            <td>
-                <% if @team.find_batting_order(i).is_a? Player %>
-                  <%= link_to @team.find_batting_order(i).full_name, @team.find_batting_order(i), method: :get %>
-                  <span class="hidden_id" hidden><%= @team.find_batting_order_id(i) %></span>
-                  <span class="hidden_row_number" hidden><%= "lineup#{(i+1)}" %></span>
-                <% else %>
-                  <%= '--' %>
-                  <span class="hidden_id" hidden><%= nil %></span>
-                  <span class="hidden_row_number" hidden><%= "lineup#{(i+1)}" %></span>
-                <% end %>
-              </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-
-  <div id="lineup_changed" hidden>
-    <button id="save_lineup_changes" onclick="saveLineupChanges()">Save Lineup Changes</button>
-  </div>
+      <% end %>
+    </tbody>
+  </table>
 </div>
 
 <div id="roster_div">
   <h3>Roster</h3>
-  <%= link_to 'Edit Positions', edit_position_team_path(@team), method: :get %>
   <table class="table_with_custom_border roster sortable">
     <thead>
       <tr>
@@ -161,59 +126,7 @@
   </table>
 </div>
 
-
 <script>
-
-var initial_player_ids;
-
-$(document).ready(function() {
-  initial_player_ids = $.map($(".lineup tbody").find("tr"), function(element) {
-    return $(element).find("td span.hidden_id").text();
-  })
-  console.log(initial_player_ids);
-});
-
-function battingOrderChanged() {
-  player_ids = $.map($(".lineup tbody").find("tr"), function(element) {
-    return $(element).find("td span.hidden_id").text();
-  })
-  console.log(initial_player_ids);
-  console.log(player_ids);
-  if(player_ids.length !== initial_player_ids.length) {
-    return true;
-  }
-  var i;
-  for (i=0; i<player_ids.length; i++) {
-    if (player_ids[i] !== initial_player_ids[i]) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function saveLineupChanges() {
-  player_ids = $.map($(".lineup tbody").find("tr"), function(element) {
-    return $(element).find("td span.hidden_id").text();
-  })
-
-  $.ajax({
-    url: window.location.href,
-    type: 'PATCH',
-    dataType: 'json',
-    data: { "team": { "lineup1": player_ids[0],
-                      "lineup2": player_ids[1],
-                      "lineup3": player_ids[2],
-                      "lineup4": player_ids[3],
-                      "lineup5": player_ids[4],
-                      "lineup6": player_ids[5],
-                      "lineup7": player_ids[6],
-                      "lineup8": player_ids[7],
-                      "lineup9": player_ids[8]
-                    }
-          },
-  });
-  $("#lineup_changed").hide();
-}
 
 $('.position').each(function() {
   var positionSymbol = $(this).text();
@@ -320,30 +233,10 @@ $(document).ready(function() {
     // containment: "#roster_div",
   }).disableSelection();
 
-  $(".lineup tbody").sortable({
-    helper: 'clone',
-    delay: 150,
-    tolerance: "pointer",
-
-    start: function(event, ui) {
-      $(this).toggleClass('dragging');
-
-    },
-    stop: function(event, ui) {
-      if (battingOrderChanged()) {
-        $('#lineup_changed').show();
-      } else {
-        $('#lineup_changed').hide();
-      }
-      $(this).toggleClass('dragging');
-    },
-    // containment: "#view_lineup"
-  }).disableSelection();
-
-  $("#batting_order tbody tr").droppable({
+  $("#position_table tbody tr").droppable({
     drop: function(event, ui) {
       var player = ui.draggable.find("span");
-      var slot = $(this).find("span.hidden_row_number");
+      var slot = $(this).find("span.hidden_position_name");
       console.log("I have dropped player " + player.text() + " in slot " + slot.text());
 
       var lineupData = { };
@@ -351,7 +244,7 @@ $(document).ready(function() {
       var teamData = { };
       teamData["team"] = lineupData;
       $.ajax({
-        url: window.location.href,
+        url: $("#team_path").text(),
         type: 'PATCH',
         dataType: 'json',
         data: teamData,
@@ -360,7 +253,7 @@ $(document).ready(function() {
         location.reload();
       }
     },
-  })
+  });
 
 });
 </script>
