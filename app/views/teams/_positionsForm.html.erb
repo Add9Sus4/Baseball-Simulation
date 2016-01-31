@@ -43,31 +43,45 @@
 #position_div {
   padding-top: 3px;
   float: left;
-  width: 225px;
+  width: 250px;
 }
+
+#on_top_of_table {
+  position: absolute;
+  left: 20px;
+  top: 225px;
+}
+
+.switchable {
+  background-color: green !important;
+}
+
+.selected {
+  background-color: red !important;
+}
+
 </style>
 <span id="team_path" hidden><%= team_path(@team) %></span>
+<div id="on_top_of_table" hidden>Player cannot be added to <br> multiple positions at once!</div>
 <div id="position_div">
   </br>
   <h3>Positions</h3>
-  <table class="multi-table order table-condensed table-striped table-bordered">
+  <table id="position_name_table" class="multi-table order table-condensed table-striped table-bordered">
     <thead>
       <tr>
-        <th>
-          Pos.
-        </th>
+        <th>Pos.</th><th>Switch</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td>DH</td></tr>
-      <tr><td>C</td></tr>
-      <tr><td>1B</td></tr>
-      <tr><td>2B</td></tr>
-      <tr><td>3B</td></tr>
-      <tr><td>SS</td></tr>
-      <tr><td>RF</td></tr>
-      <tr><td>CF</td></tr>
-      <tr><td>LF</td></tr>
+      <tr><td>DH</td><td><button class="switch_position"></button></td></tr>
+      <tr><td>C</td><td><button class="switch_position"></button></td></tr>
+      <tr><td>1B</td><td><button class="switch_position"></button></td></tr>
+      <tr><td>2B</td><td><button class="switch_position"></button></td></tr>
+      <tr><td>3B</td><td><button class="switch_position"></button></td></tr>
+      <tr><td>SS</td><td><button class="switch_position"></button></td></tr>
+      <tr><td>RF</td><td><button class="switch_position"></button></td></tr>
+      <tr><td>CF</td><td><button class="switch_position"></button></td></tr>
+      <tr><td>LF</td><td><button class="switch_position"></button></td></tr>
     </tbody>
   </table>
   <table id="position_table" class="multi-table position_table table-condensed table-striped table-bordered">
@@ -84,11 +98,11 @@
           <td>
               <% if @team.find_player_at_position(i).is_a? Player %>
                 <%= link_to @team.find_player_at_position(i).full_name, @team.find_player_at_position(i), method: :get %>
-                <span class="hidden_id" hidden><%= @team.find_position_id(i) %></span>
+                <span class="hidden_position_id" hidden><%= @team.find_position_id(i) %></span>
                 <span class="hidden_position_name" hidden><%= @position_names[i] %></span>
               <% else %>
                 <%= '--' %>
-                <span class="hidden_id" hidden><%= nil %></span>
+                <span class="hidden_position_id" hidden><%= nil %></span>
                 <span class="hidden_position_name" hidden><%= @position_names[i] %></span>
               <% end %>
             </td>
@@ -127,6 +141,62 @@
 </div>
 
 <script>
+
+var first_id = null;
+var second_id = null;
+var first_position_name = null;
+var second_position_name = null;
+
+$(".switch_position").click(function(event) {
+  // If you click on the selected button twice, it closes the option to switch positions
+  if ($(event.target).closest("td").hasClass("selected")) {
+    $(".switch_position").closest("td").removeClass("switchable").removeClass("selected");
+    first_id = null;
+    second_id = null;
+    return;
+  }
+  var row = parseInt($(event.target).closest("tr").index()+1);
+  var selected_position_id = $("#position_table tbody tr:nth-child(" + row + ") span.hidden_position_id").text();
+  var selected_position_name = $("#position_table tbody tr:nth-child(" + row + ") span.hidden_position_name").text();
+  second_id = first_id;
+  second_position_name = first_position_name;
+  first_id = selected_position_id;
+  first_position_name = selected_position_name;
+
+  if (first_id !== null && second_id !== null) {
+    console.log("first id: " + first_id + ", second id: " + second_id);
+    console.log("first position: " + first_position_name + ", second position: " + second_position_name);
+    var positionData = { };
+    positionData[first_position_name] = parseInt(second_id);
+    positionData[second_position_name] = parseInt(first_id);
+    var teamData = { };
+    teamData["team"] = positionData;
+    $.ajax({
+      url: $("#team_path").text(),
+      type: 'PATCH',
+      dataType: 'json',
+      data: teamData,
+    });
+    location.reload();
+  }
+  // Otherwise, proceed
+  $(".switch_position").closest("td").addClass("switchable").removeClass("selected");
+  $(event.target).closest("td").removeClass("switchable");
+  $(event.target).closest("td").addClass("selected");
+});
+
+function checkIfPlayerHasPositionOnTeam(player_id) {
+  ids = $(".hidden_position_id").map( function() {
+    return $(this).text();
+  });
+  var i;
+  for (i=0; i<ids.length; i++) {
+    if (ids[i] === player_id) {
+      return true;
+    }
+  }
+  return false;
+}
 
 $('.position').each(function() {
   var positionSymbol = $(this).text();
@@ -226,9 +296,18 @@ $(document).ready(function() {
     start: function(event, ui) {
       $(this).toggleClass('dragging');
       console.log("I am dragging " + $(this).find("span").text());
+      console.log("Player has position? " + checkIfPlayerHasPositionOnTeam($(this).find("span").text()));
+      if (checkIfPlayerHasPositionOnTeam($(this).find("span").text())) {
+        $("#position_table tbody tr").droppable("option", "disabled", true);
+        $("#position_table, #position_name_table").css("opacity", "0.2");
+        $("#on_top_of_table").show();
+      }
     },
     stop: function(event, ui) {
       $(this).toggleClass('dragging');
+      $("#position_table tbody tr").droppable("option", "disabled", false);
+      $("#position_table, #position_name_table").css("opacity", "1.0");
+      $("#on_top_of_table").hide();
     },
     // containment: "#roster_div",
   }).disableSelection();

@@ -46,7 +46,16 @@ numTeams.times do
                 league: league,
                 division: division,
                 stadium: stadium,
-                capacity: capacity)
+                capacity: capacity,
+                lineup1: 0,
+                lineup2: 1,
+                lineup3: 2,
+                lineup4: 3,
+                lineup5: 4,
+                lineup6: 5,
+                lineup7: 6,
+                lineup8: 7,
+                lineup9: 8)
   teams.unshift(newTeam)
 end
 

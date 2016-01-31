@@ -12,6 +12,18 @@
   <% end %>
 
   <div class="field">
+    <%= f.hidden_field :lineup1, :value => 0 %>
+    <%= f.hidden_field :lineup2, :value => 1 %>
+    <%= f.hidden_field :lineup3, :value => 2 %>
+    <%= f.hidden_field :lineup4, :value => 3 %>
+    <%= f.hidden_field :lineup5, :value => 4 %>
+    <%= f.hidden_field :lineup6, :value => 5 %>
+    <%= f.hidden_field :lineup7, :value => 6 %>
+    <%= f.hidden_field :lineup8, :value => 7 %>
+    <%= f.hidden_field :lineup9, :value => 8 %>
+  </div>
+
+  <div class="field">
     <%= f.label :city %><br>
     <%= f.text_field :city, :value => Faker::Address.city %>
   </div>

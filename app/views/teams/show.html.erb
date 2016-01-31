@@ -46,7 +46,7 @@
 #lineup_div {
   padding-top: 3px;
   float: left;
-  width: 225px;
+  width: 275px;
 }
 </style>
 
@@ -104,6 +104,7 @@
     <table id="batting_order" class="multi-table lineup table-condensed table-striped table-bordered">
       <thead>
         <tr>
+          <th>Position</th>
           <th>Player</th>
         </tr>
       </thead>
@@ -111,9 +112,14 @@
         <% for i in 0..8 do %>
           <tr>
             <td>
-                <% if @team.find_batting_order(i).is_a? Player %>
-                  <%= link_to @team.find_batting_order(i).full_name, @team.find_batting_order(i), method: :get %>
-                  <span class="hidden_id" hidden><%= @team.find_batting_order_id(i) %></span>
+              <%= @team.find_position(i) %>
+            </td>
+            <td>
+              <span class="hidden_position_name" hidden><%= @team.find_position_name(i) %></span>
+              <span class="hidden_position_index" hidden><%= @team.find_lineup_index(i) %></span>
+                <% if @team.find_player_by_position(i).is_a? Player %>
+                  <%= link_to @team.find_player_by_position(i).full_name, @team.find_batting_order(i), method: :get %>
+                  <span class="hidden_id" hidden><%= @team.find_player_by_position_id(i) %></span>
                   <span class="hidden_row_number" hidden><%= "lineup#{(i+1)}" %></span>
                 <% else %>
                   <%= '--' %>
@@ -134,7 +140,6 @@
 
 <div id="roster_div">
   <h3>Roster</h3>
-  <%= link_to 'Edit Positions', edit_position_team_path(@team), method: :get %>
   <table class="table_with_custom_border roster sortable">
     <thead>
       <tr>
@@ -168,17 +173,20 @@ var initial_player_ids;
 
 $(document).ready(function() {
   initial_player_ids = $.map($(".lineup tbody").find("tr"), function(element) {
-    return $(element).find("td span.hidden_id").text();
+    return $(element).find("td span.hidden_position_index").text();
   })
-  console.log(initial_player_ids);
+  // console.log(initial_player_ids);
 });
 
 function battingOrderChanged() {
   player_ids = $.map($(".lineup tbody").find("tr"), function(element) {
-    return $(element).find("td span.hidden_id").text();
-  })
-  console.log(initial_player_ids);
-  console.log(player_ids);
+    return $(element).find("td span.hidden_position_index").text();
+  });
+
+  // defense_ids = $.map($(".lineup tbody").find("tr"), function(element) {
+  //   return $(element).find("td span.hidden_position_name").text();
+  // });
+  // console.log(defense_ids);
   if(player_ids.length !== initial_player_ids.length) {
     return true;
   }
@@ -192,23 +200,25 @@ function battingOrderChanged() {
 }
 
 function saveLineupChanges() {
-  player_ids = $.map($(".lineup tbody").find("tr"), function(element) {
-    return $(element).find("td span.hidden_id").text();
-  })
+  lineup_indices = $.map($(".lineup tbody").find("tr"), function(element) {
+    return $(element).find("td span.hidden_position_index").text();
+  });
+
+  console.log(lineup_indices);
 
   $.ajax({
     url: window.location.href,
     type: 'PATCH',
     dataType: 'json',
-    data: { "team": { "lineup1": player_ids[0],
-                      "lineup2": player_ids[1],
-                      "lineup3": player_ids[2],
-                      "lineup4": player_ids[3],
-                      "lineup5": player_ids[4],
-                      "lineup6": player_ids[5],
-                      "lineup7": player_ids[6],
-                      "lineup8": player_ids[7],
-                      "lineup9": player_ids[8]
+    data: { "team": { "lineup1": lineup_indices[0],
+                      "lineup2": lineup_indices[1],
+                      "lineup3": lineup_indices[2],
+                      "lineup4": lineup_indices[3],
+                      "lineup5": lineup_indices[4],
+                      "lineup6": lineup_indices[5],
+                      "lineup7": lineup_indices[6],
+                      "lineup8": lineup_indices[7],
+                      "lineup9": lineup_indices[8]
                     }
           },
   });
@@ -342,21 +352,20 @@ $(document).ready(function() {
 
   $("#batting_order tbody tr").droppable({
     drop: function(event, ui) {
-      var player = ui.draggable.find("span");
-      var slot = $(this).find("span.hidden_row_number");
-      console.log("I have dropped player " + player.text() + " in slot " + slot.text());
-
-      var lineupData = { };
-      lineupData[slot.text()] = parseInt(player.text());
-      var teamData = { };
-      teamData["team"] = lineupData;
-      $.ajax({
-        url: window.location.href,
-        type: 'PATCH',
-        dataType: 'json',
-        data: teamData,
-      });
-      if (player.closest("div").is("#roster_div")) {
+      var player_id = ui.draggable.find("span");
+      if (player_id.closest("div").is("#roster_div")) {
+        var defense_position = $(this).find("span.hidden_position_name");
+        console.log("player " + player_id.text() + " is now at " + defense_position.text());
+        var lineupData = { };
+        lineupData[defense_position.text()] = parseInt(player_id.text());
+        var teamData = { };
+        teamData["team"] = lineupData;
+        $.ajax({
+          url: window.location.href,
+          type: 'PATCH',
+          dataType: 'json',
+          data: teamData,
+        });
         location.reload();
       }
     },

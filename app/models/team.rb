@@ -89,26 +89,59 @@ class Team < ActiveRecord::Base
     lineup_ids = [lineup1, lineup2, lineup3, lineup4,
                   lineup5, lineup6, lineup7, lineup8,
                   lineup9]
-                  puts "lineup_ids: #{lineup_ids}"
-    id = lineup_ids[lineup_position]
-    puts "finding player at lineup position #{lineup_position}"
-    puts "#{id} is the id "
-    if id.nil?
-      '--'
-    else
-      position_ids = [designated_hitter, catcher, first_base,
-                      second_base, third_base, shortstop,
-                      left_field, center_field, right_field]
-      position_names = ['DH', 'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF']
-      player_id = position_ids.index(id)
-      if player_id.nil?
-        '--'
-      else
-        position_names[player_id]
-      end
-    end
 
+    position_names = ['C', 'DH', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF']
+
+    position_names[lineup_ids[lineup_position]]
   end
 
+  def find_player_by_position(lineup_position)
+    lineup_ids = [lineup1, lineup2, lineup3, lineup4,
+                  lineup5, lineup6, lineup7, lineup8,
+                  lineup9]
+
+    position_ids = [catcher, designated_hitter, first_base, second_base,
+                  third_base, shortstop, left_field, center_field,
+                  right_field]
+    if Player.exists?(position_ids[lineup_ids[lineup_position]])
+      Player.find(position_ids[lineup_ids[lineup_position]])
+    else
+      nil
+    end
+  end
+
+  def find_player_by_position_id(lineup_position)
+    lineup_ids = [lineup1, lineup2, lineup3, lineup4,
+                  lineup5, lineup6, lineup7, lineup8,
+                  lineup9]
+
+    position_ids = [catcher, designated_hitter, first_base, second_base,
+                  third_base, shortstop, left_field, center_field,
+                  right_field]
+    if Player.exists?(position_ids[lineup_ids[lineup_position]])
+      Player.find(position_ids[lineup_ids[lineup_position]]).id
+    else
+      nil
+    end
+  end
+
+  def find_lineup_index(lineup_position)
+    lineup_ids = [lineup1, lineup2, lineup3, lineup4,
+                  lineup5, lineup6, lineup7, lineup8,
+                  lineup9]
+
+    lineup_ids[lineup_position]
+  end
+
+  def find_position_name(lineup_position)
+    lineup_ids = [lineup1, lineup2, lineup3, lineup4,
+                  lineup5, lineup6, lineup7, lineup8,
+                  lineup9]
+
+    position_names = ['catcher', 'designated_hitter', 'first_base', 'second_base',
+                      'third_base', 'shortstop', 'left_field', 'center_field',
+                      'right_field']
+    position_names[lineup_ids[lineup_position]]
+  end
 
 end

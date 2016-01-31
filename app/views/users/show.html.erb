@@ -2,18 +2,15 @@
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 
 <% provide(:title, @user.name) %>
-<div class="row">
-  <aside class="col-md-4">
-    <section class="user_info">
-      <h1>
-      <%= gravatar_for @user %>
-      <%= @user.name %>
-      </h1>
-    </section>
-  </aside>
+<div class="row container-fluid">
+  <h1>
+  <%= gravatar_for @user %>
+  <%= @user.name %>
+  </h1>
 </div>
 
 <style>
+
 .profile_link {
   pointer-events: none;
   opacity: 0.5;
