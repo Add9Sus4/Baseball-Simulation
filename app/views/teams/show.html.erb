@@ -48,6 +48,12 @@
   float: left;
   width: 275px;
 }
+
+#lineup_title:hover {
+  cursor: help;
+  width: 0px;
+}
+
 </style>
 
 <h2>
@@ -83,7 +89,8 @@
     <%= @team.capacity %>
   </p>
 
-  <h3>Lineup</h3>
+  <h3 id="lineup_title" data-toggle="tooltip" data-placement="top" title="Drag from roster to set positions.
+                                    Reorder table to set lineup.">Lineup</h3>
 
   <div id="view_lineup">
     </br>
@@ -118,7 +125,7 @@
               <span class="hidden_position_name" hidden><%= @team.find_position_name(i) %></span>
               <span class="hidden_position_index" hidden><%= @team.find_lineup_index(i) %></span>
                 <% if @team.find_player_by_position(i).is_a? Player %>
-                  <%= link_to @team.find_player_by_position(i).full_name, @team.find_batting_order(i), method: :get %>
+                  <%= link_to @team.find_player_by_position(i).full_name, @team.find_player_by_position(i), method: :get %>
                   <span class="hidden_id" hidden><%= @team.find_player_by_position_id(i) %></span>
                   <span class="hidden_row_number" hidden><%= "lineup#{(i+1)}" %></span>
                 <% else %>
@@ -172,6 +179,8 @@
 var initial_player_ids;
 
 $(document).ready(function() {
+  $('#lineup_title').tooltip();
+
   initial_player_ids = $.map($(".lineup tbody").find("tr"), function(element) {
     return $(element).find("td span.hidden_position_index").text();
   })
