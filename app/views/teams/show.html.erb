@@ -184,7 +184,6 @@ $(document).ready(function() {
   initial_player_ids = $.map($(".lineup tbody").find("tr"), function(element) {
     return $(element).find("td span.hidden_position_index").text();
   })
-  // console.log(initial_player_ids);
 });
 
 function battingOrderChanged() {
@@ -192,10 +191,6 @@ function battingOrderChanged() {
     return $(element).find("td span.hidden_position_index").text();
   });
 
-  // defense_ids = $.map($(".lineup tbody").find("tr"), function(element) {
-  //   return $(element).find("td span.hidden_position_name").text();
-  // });
-  // console.log(defense_ids);
   if(player_ids.length !== initial_player_ids.length) {
     return true;
   }

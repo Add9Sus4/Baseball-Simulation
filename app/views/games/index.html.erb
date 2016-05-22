@@ -1,0 +1,164 @@
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Games</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Home team</th>
+      <th>Away team</th>
+      <th>Attendance</th>
+      <th>Stadium name</th>
+      <th>Home lineup</th>
+      <th>Away lineup</th>
+      <th>Home atbats</th>
+      <th>Home runs scored</th>
+      <th>Home hits</th>
+      <th>Home doubles</th>
+      <th>Home triples</th>
+      <th>Home home runs</th>
+      <th>Home rbi</th>
+      <th>Home walks</th>
+      <th>Home strikeouts</th>
+      <th>Home stolen bases</th>
+      <th>Home caught stealing</th>
+      <th>Home errors</th>
+      <th>Home assists</th>
+      <th>Home putouts</th>
+      <th>Home chances</th>
+      <th>Away atbats</th>
+      <th>Away runs scored</th>
+      <th>Away hits</th>
+      <th>Away doubles</th>
+      <th>Away triples</th>
+      <th>Away home runs</th>
+      <th>Away rbi</th>
+      <th>Away walks</th>
+      <th>Away strikeouts</th>
+      <th>Away caught stealing</th>
+      <th>Away errors</th>
+      <th>Away assists</th>
+      <th>Away putouts</th>
+      <th>Away chances</th>
+      <th>Home pitchers</th>
+      <th>Away pitchers</th>
+      <th>Home innings pitched</th>
+      <th>Home hits allowed</th>
+      <th>Home runs allowed</th>
+      <th>Home earned runs allowed</th>
+      <th>Home walks allowed</th>
+      <th>Home strikeouts recorded</th>
+      <th>Home home runs allowed</th>
+      <th>Home total pitches</th>
+      <th>Home strikes thrown</th>
+      <th>Home balls thrown</th>
+      <th>Home intentional walks allowed</th>
+      <th>Away innings pitched</th>
+      <th>Away hits allowed</th>
+      <th>Away runs allowed</th>
+      <th>Away earned runs allowed</th>
+      <th>Away walks allowed</th>
+      <th>Away strikeouts recorded</th>
+      <th>Away home runs allowed</th>
+      <th>Away total pitches</th>
+      <th>Away strikes thrown</th>
+      <th>Away balls thrown</th>
+      <th>Away intentional walks allowed</th>
+      <th>Player of the game</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @games.each do |game| %>
+      <tr>
+        <td><% if (game.home_team_id != nil) %>
+          <%= Team.find(game.home_team_id).name %>
+          <% else %>
+          <%= game.home_team_id %>
+        <% end %></td>
+        <td><% if (game.away_team_id != nil) %>
+          <%= Team.find(game.away_team_id).name %>
+          <% else %>
+          <%= game.away_team_id %>
+        <% end %></td>
+        <td><%= game.attendance %></td>
+        <td><%= game.stadium_name %></td>
+        <td><%= game.home_lineup %></td>
+        <td><%= game.away_lineup %></td>
+        <td><%= game.home_atbats %></td>
+        <td><%= game.home_runs_scored %></td>
+        <td><%= game.home_hits %></td>
+        <td><%= game.home_doubles %></td>
+        <td><%= game.home_triples %></td>
+        <td><%= game.home_home_runs %></td>
+        <td><%= game.home_RBI %></td>
+        <td><%= game.home_walks %></td>
+        <td><%= game.home_strikeouts %></td>
+        <td><%= game.home_stolen_bases %></td>
+        <td><%= game.home_caught_stealing %></td>
+        <td><%= game.home_errors %></td>
+        <td><%= game.home_assists %></td>
+        <td><%= game.home_putouts %></td>
+        <td><%= game.home_chances %></td>
+        <td><%= game.away_atbats %></td>
+        <td><%= game.away_runs_scored %></td>
+        <td><%= game.away_hits %></td>
+        <td><%= game.away_doubles %></td>
+        <td><%= game.away_triples %></td>
+        <td><%= game.away_home_runs %></td>
+        <td><%= game.away_RBI %></td>
+        <td><%= game.away_walks %></td>
+        <td><%= game.away_strikeouts %></td>
+        <td><%= game.away_caught_stealing %></td>
+        <td><%= game.away_errors %></td>
+        <td><%= game.away_assists %></td>
+        <td><%= game.away_putouts %></td>
+        <td><%= game.away_chances %></td>
+        <td><%= game.home_pitchers %></td>
+        <td><%= game.away_pitchers %></td>
+        <td><%= game.home_innings_pitched %></td>
+        <td><%= game.home_hits_allowed %></td>
+        <td><%= game.home_runs_allowed %></td>
+        <td><%= game.home_earned_runs_allowed %></td>
+        <td><%= game.home_walks_allowed %></td>
+        <td><%= game.home_strikeouts_recorded %></td>
+        <td><%= game.home_home_runs_allowed %></td>
+        <td><%= game.home_total_pitches %></td>
+        <td><%= game.home_strikes_thrown %></td>
+        <td><%= game.home_balls_thrown %></td>
+        <td><%= game.home_intentional_walks_allowed %></td>
+        <td><%= game.away_innings_pitched %></td>
+        <td><%= game.away_hits_allowed %></td>
+        <td><%= game.away_runs_allowed %></td>
+        <td><%= game.away_earned_runs_allowed %></td>
+        <td><%= game.away_walks_allowed %></td>
+        <td><%= game.away_strikeouts_recorded %></td>
+        <td><%= game.away_home_runs_allowed %></td>
+        <td><%= game.away_total_pitches %></td>
+        <td><%= game.away_strikes_thrown %></td>
+        <td><%= game.away_balls_thrown %></td>
+        <td><%= game.away_intentional_walks_allowed %></td>
+        <td><%= game.player_of_the_game %></td>
+        <td><%= link_to 'Show', game, method: :get %></td>
+        <td><%= link_to 'Edit', edit_game_path(game), method: :get %></td>
+        <td><%= link_to 'Destroy', game, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Game', new_game_path, method: :get %>
+
+<style>
+
+.games {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+</style>

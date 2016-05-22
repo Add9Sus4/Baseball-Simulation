@@ -1,15 +1,15 @@
 class Player < ActiveRecord::Base
   validates :team, :first_name, :last_name, :age, :height, :weight, :position, :salary, presence: true
   validates_numericality_of :weight, greater_than_or_equal_to: 160, less_than_or_equal_to: 300
-  validate :team_cannot_have_more_than_13_players
+  validate :team_cannot_have_more_than_max_players
   belongs_to :team
 
-  def team_cannot_have_more_than_13_players
+  def team_cannot_have_more_than_max_players
     team = Team.find(team_id);
     totalPlayers = team.players.length
 
-    if totalPlayers >= 13
-      errors.add(:base, "The " + team.city + " " + team.name + " already have the maximum number of players allowed.")
+    if totalPlayers >= Team::MAX_PLAYERS
+      errors.add(:base, "The " + team.city + " " + team.name + " already have the maximum number of players allowed(" + Team::MAX_PLAYERS.to_s + ").")
     end
   end
 

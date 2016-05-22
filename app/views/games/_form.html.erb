@@ -1,0 +1,87 @@
+<%= form_for(@game) do |f| %>
+<% if @game.errors.any? %>
+<div id="error_explanation">
+  <h2><%= pluralize(@game.errors.count, "error") %> prohibited this game from being saved:</h2>
+
+  <ul>
+    <% @game.errors.full_messages.each do |message| %>
+    <li><%= message %></li>
+    <% end %>
+  </ul>
+</div>
+<% end %>
+
+<div class="field">
+  <%= f.label :home_team_id %><br>
+  <%= collection_select(:game, :home_team_id, Team.all, :id, :full_name) %>
+</div>
+<div class="field">
+  <%= f.label :away_team_id %><br>
+  <%= collection_select(:game, :away_team_id, Team.all, :id, :full_name) %>
+</div>
+<div class="field">
+  <%= f.hidden_field :attendance %>
+  <%= f.hidden_field :stadium_name %>
+  <%= f.hidden_field :home_lineup %>
+  <%= f.hidden_field :away_lineup %>
+  <%= f.hidden_field :home_atbats %>
+  <%= f.hidden_field :home_runs_scored %>
+  <%= f.hidden_field :home_hits %>
+  <%= f.hidden_field :home_doubles %>
+  <%= f.hidden_field :home_triples %>
+  <%= f.hidden_field :home_home_runs %>
+  <%= f.hidden_field :home_RBI %>
+  <%= f.hidden_field :home_walks %>
+  <%= f.hidden_field :home_strikeouts %>
+  <%= f.hidden_field :home_stolen_bases %>
+  <%= f.hidden_field :home_caught_stealing %>
+  <%= f.hidden_field :home_errors %>
+  <%= f.hidden_field :home_assists %>
+  <%= f.hidden_field :home_putouts %>
+  <%= f.hidden_field :home_chances %>
+  <%= f.hidden_field :away_atbats %>
+  <%= f.hidden_field :away_runs_scored %>
+  <%= f.hidden_field :away_hits %>
+  <%= f.hidden_field :away_doubles %>
+  <%= f.hidden_field :away_triples %>
+  <%= f.hidden_field :away_home_runs %>
+  <%= f.hidden_field :away_RBI %>
+  <%= f.hidden_field :away_walks %>
+  <%= f.hidden_field :away_strikeouts %>
+  <%= f.hidden_field :away_caught_stealing %>
+  <%= f.hidden_field :away_errors %>
+  <%= f.hidden_field :away_assists %>
+  <%= f.hidden_field :away_putouts %>
+  <%= f.hidden_field :away_chances %>
+  <%= f.hidden_field :home_pitchers %>
+  <%= f.hidden_field :away_pitchers %>
+  <%= f.hidden_field :home_innings_pitched %>
+  <%= f.hidden_field :home_hits_allowed %>
+  <%= f.hidden_field :home_runs_allowed %>
+  <%= f.hidden_field :home_earned_runs_allowed %>
+  <%= f.hidden_field :home_walks_allowed %>
+  <%= f.hidden_field :home_strikeouts_recorded %>
+  <%= f.hidden_field :home_home_runs_allowed %>
+  <%= f.hidden_field :home_total_pitches %>
+  <%= f.hidden_field :home_strikes_thrown %>
+  <%= f.hidden_field :home_balls_thrown %>
+  <%= f.hidden_field :home_intentional_walks_allowed %>
+  <%= f.hidden_field :away_innings_pitched %>
+  <%= f.hidden_field :away_hits_allowed %>
+  <%= f.hidden_field :away_runs_allowed %>
+  <%= f.hidden_field :away_earned_runs_allowed %>
+  <%= f.hidden_field :away_walks_allowed %>
+  <%= f.hidden_field :away_strikeouts_recorded %>
+  <%= f.hidden_field :away_home_runs_allowed %>
+  <%= f.hidden_field :away_total_pitches %>
+  <%= f.hidden_field :away_strikes_thrown %>
+  <%= f.hidden_field :away_balls_thrown %>
+  <%= f.hidden_field :away_intentional_walks_allowed %>
+  <%= f.hidden_field :player_of_the_game %>
+</div>
+
+<div class="actions">
+  <%= f.submit %>
+</div>
+<%= submit_tag "Play", :type => 'button' %>
+<% end %>

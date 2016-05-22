@@ -11,7 +11,102 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160130045100) do
+ActiveRecord::Schema.define(version: 20160519205808) do
+
+  create_table "called_strike_percentages", force: :cascade do |t|
+    t.integer "zone_id",                  limit: 4
+    t.decimal "called_strike_percentage",             precision: 10
+    t.string  "pitcher_hand",             limit: 255
+    t.string  "batter_hand",              limit: 255
+    t.integer "balls",                    limit: 4
+    t.integer "strikes",                  limit: 4
+    t.string  "pitch_type",               limit: 255
+  end
+
+  create_table "contact_percentages", force: :cascade do |t|
+    t.integer "zone_id",            limit: 4
+    t.decimal "contact_percentage",             precision: 10
+    t.string  "pitcher_hand",       limit: 255
+    t.string  "batter_hand",        limit: 255
+    t.integer "balls",              limit: 4
+    t.integer "strikes",            limit: 4
+    t.string  "pitch_type",         limit: 255
+  end
+
+  create_table "games", force: :cascade do |t|
+    t.integer  "home_team_id",                   limit: 4
+    t.integer  "away_team_id",                   limit: 4
+    t.integer  "attendance",                     limit: 4
+    t.string   "stadium_name",                   limit: 255
+    t.string   "home_lineup",                    limit: 255
+    t.string   "away_lineup",                    limit: 255
+    t.string   "home_atbats",                    limit: 255
+    t.string   "home_runs_scored",               limit: 255
+    t.string   "home_hits",                      limit: 255
+    t.string   "home_doubles",                   limit: 255
+    t.string   "home_triples",                   limit: 255
+    t.string   "home_home_runs",                 limit: 255
+    t.string   "home_RBI",                       limit: 255
+    t.string   "home_walks",                     limit: 255
+    t.string   "home_strikeouts",                limit: 255
+    t.string   "home_stolen_bases",              limit: 255
+    t.string   "home_caught_stealing",           limit: 255
+    t.string   "home_errors",                    limit: 255
+    t.string   "home_assists",                   limit: 255
+    t.string   "home_putouts",                   limit: 255
+    t.string   "home_chances",                   limit: 255
+    t.string   "away_atbats",                    limit: 255
+    t.string   "away_runs_scored",               limit: 255
+    t.string   "away_hits",                      limit: 255
+    t.string   "away_doubles",                   limit: 255
+    t.string   "away_triples",                   limit: 255
+    t.string   "away_home_runs",                 limit: 255
+    t.string   "away_RBI",                       limit: 255
+    t.string   "away_walks",                     limit: 255
+    t.string   "away_strikeouts",                limit: 255
+    t.string   "away_caught_stealing",           limit: 255
+    t.string   "away_errors",                    limit: 255
+    t.string   "away_assists",                   limit: 255
+    t.string   "away_putouts",                   limit: 255
+    t.string   "away_chances",                   limit: 255
+    t.string   "home_pitchers",                  limit: 255
+    t.string   "away_pitchers",                  limit: 255
+    t.string   "home_innings_pitched",           limit: 255
+    t.string   "home_hits_allowed",              limit: 255
+    t.string   "home_runs_allowed",              limit: 255
+    t.string   "home_earned_runs_allowed",       limit: 255
+    t.string   "home_walks_allowed",             limit: 255
+    t.string   "home_strikeouts_recorded",       limit: 255
+    t.string   "home_home_runs_allowed",         limit: 255
+    t.string   "home_total_pitches",             limit: 255
+    t.string   "home_strikes_thrown",            limit: 255
+    t.string   "home_balls_thrown",              limit: 255
+    t.string   "home_intentional_walks_allowed", limit: 255
+    t.string   "away_innings_pitched",           limit: 255
+    t.string   "away_hits_allowed",              limit: 255
+    t.string   "away_runs_allowed",              limit: 255
+    t.string   "away_earned_runs_allowed",       limit: 255
+    t.string   "away_walks_allowed",             limit: 255
+    t.string   "away_strikeouts_recorded",       limit: 255
+    t.string   "away_home_runs_allowed",         limit: 255
+    t.string   "away_total_pitches",             limit: 255
+    t.string   "away_strikes_thrown",            limit: 255
+    t.string   "away_balls_thrown",              limit: 255
+    t.string   "away_intentional_walks_allowed", limit: 255
+    t.integer  "player_of_the_game",             limit: 4
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
+  end
+
+  create_table "pitch_locations", force: :cascade do |t|
+    t.integer "zone_id",          limit: 4
+    t.float   "pitch_percentage", limit: 53
+    t.string  "pitcher_hand",     limit: 255
+    t.string  "batter_hand",      limit: 255
+    t.integer "balls",            limit: 4
+    t.integer "strikes",          limit: 4
+    t.string  "pitch_type",       limit: 255
+  end
 
   create_table "players", force: :cascade do |t|
     t.integer  "team_id",         limit: 4
@@ -47,6 +142,16 @@ ActiveRecord::Schema.define(version: 20160130045100) do
     t.integer  "endurance",       limit: 4
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
+  end
+
+  create_table "swing_percentages", force: :cascade do |t|
+    t.integer "zone_id",          limit: 4
+    t.decimal "swing_percentage",             precision: 10
+    t.string  "pitcher_hand",     limit: 255
+    t.string  "batter_hand",      limit: 255
+    t.integer "balls",            limit: 4
+    t.integer "strikes",          limit: 4
+    t.string  "pitch_type",       limit: 255
   end
 
   create_table "teams", force: :cascade do |t|
