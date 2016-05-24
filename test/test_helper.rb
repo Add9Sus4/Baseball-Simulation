@@ -24,6 +24,61 @@ class ActiveSupport::TestCase
     end
   end
 
+  # Creates a new game
+  def new_game
+    game = Game.new(game_params)
+    game.prepare
+
+    # set positions (for tests)
+    game.home_team.catcher = game.home_team.players[0].id
+    game.home_team.designated_hitter = game.home_team.players[1].id
+    game.home_team.first_base = game.home_team.players[2].id
+    game.home_team.second_base = game.home_team.players[3].id
+    game.home_team.third_base = game.home_team.players[4].id
+    game.home_team.shortstop = game.home_team.players[5].id
+    game.home_team.left_field = game.home_team.players[6].id
+    game.home_team.center_field = game.home_team.players[7].id
+    game.home_team.right_field = game.home_team.players[8].id
+    game.away_team.catcher = game.away_team.players[0].id
+    game.away_team.designated_hitter = game.away_team.players[1].id
+    game.away_team.first_base = game.away_team.players[2].id
+    game.away_team.second_base = game.away_team.players[3].id
+    game.away_team.third_base = game.away_team.players[4].id
+    game.away_team.shortstop = game.away_team.players[5].id
+    game.away_team.left_field = game.away_team.players[6].id
+    game.away_team.center_field = game.away_team.players[7].id
+    game.away_team.right_field = game.away_team.players[8].id
+
+    game
+  end
+
+  # Test params for a new game
+  def game_params
+    {:home_team_id => Team.first.id, :away_team_id => Team.last.id,
+      :attendance => 45000, :stadium_name => "", :home_lineup => "",
+      :away_lineup => "", :home_atbats => "", :home_runs_scored => "",
+      :home_hits => "", :home_doubles => "", :home_triples => "",
+      :home_home_runs => "", :home_RBI => "", :home_walks => "",
+      :home_strikeouts => "", :home_stolen_bases => "", :home_caught_stealing => "",
+      :home_errors => "", :home_assists => "", :home_putouts => "",
+      :home_chances => "", :away_atbats => "", :away_runs_scored => "",
+      :away_hits => "", :away_doubles => "", :away_triples => "",
+      :away_home_runs => "", :away_RBI => "", :away_walks => "",
+      :away_strikeouts => "", :away_caught_stealing => "", :away_errors => "",
+      :away_assists => "", :away_putouts => "", :away_chances => "",
+      :home_pitchers => "", :away_pitchers => "", :home_innings_pitched => "",
+      :home_hits_allowed => "", :home_runs_allowed => "", :home_earned_runs_allowed => "",
+      :home_walks_allowed => "", :home_strikeouts_recorded => "",
+      :home_home_runs_allowed => "", :home_total_pitches => "",
+      :home_strikes_thrown => "", :home_balls_thrown => "",
+      :home_intentional_walks_allowed => "", :away_innings_pitched => "",
+      :away_hits_allowed => "", :away_runs_allowed => "", :away_earned_runs_allowed => "",
+      :away_walks_allowed => "", :away_strikeouts_recorded => "",
+      :away_home_runs_allowed => "", :away_total_pitches => "",
+      :away_strikes_thrown => "", :away_balls_thrown => "",
+      :away_intentional_walks_allowed => "", :player_of_the_game => ""}
+  end
+
   private
 
     # Returns true inside an integration test.

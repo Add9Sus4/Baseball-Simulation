@@ -1,12 +1,17 @@
 class Game < ActiveRecord::Base
   validate :teams_must_be_different
+  attr_accessor :home_team, :away_team, :pitch_locations, :heat_maps
 
   def teams_must_be_different
     errors.add(:base, "Teams cannot be the same") if home_team_id == away_team_id
   end
 
+  def atBat
+    atBat = AtBat.new(@home_team.players[0], @away_team.players[0], @heat_maps)
+  end
+
   # Plays a game
-  def play()
+  def play
     prepare
   end
 
@@ -36,6 +41,10 @@ class Game < ActiveRecord::Base
     @contact_percentages = ContactPercentage.all
     @pitch_locations = PitchLocation.all
     @swing_percentages = SwingPercentage.all
+    @heat_maps = {:called_strike_percentages => @called_strike_percentages,
+                  :contact_percentages => @contact_percentages,
+                  :pitch_locations => @pitch_locations,
+                  :swing_percentages => @swing_percentages}
 
     # stadium data
     self.stadium_name = @home_team.stadium
@@ -43,43 +52,83 @@ class Game < ActiveRecord::Base
 
   end
 
-  # Retrieve called strike percentage
-  def called_strike_percentage(zone_id, pitcher_hand, batter_hand, balls, strikes, pitch_type)
-    @called_strike_percentages.where(zone_id: zone_id, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
-  end
+  def randomGaussian
+		((rand() +
+		rand() + rand() +
+		rand() + rand() +
+		rand()) - 3) / 3;
+	end
 
-  # Retrieve contact percentage
-  def contact_percentage(zone_id, pitcher_hand, batter_hand, balls, strikes, pitch_type)
-    @contact_percentages.where(zone_id: zone_id, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
-  end
-
-  # Retrieve pitch location (which zone the pitch will be in)
-  # NOTE: random_between_0_and_1 is a variable that holds a random number between 0 and 1 (use rand() to generate)
-  def pitch_location(random_between_0_and_1, pitcher_hand, batter_hand, balls, strikes, pitch_type)
-    zone_percentages = Array.new(72)
-    count = 1
-    sum = 0
-    # Get the pitch location percentages for each zone
-    72.times do
-      zone_percentages[count] = @pitch_locations.where(zone_id: count, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
-      sum += zone_percentages[count]
-      count = count + 1
+  def generateDistribution(min, max, mean, stdev)
+    counter = 0
+    idealMean = mean
+    idealStdev = stdev
+    numDataPts = 100
+    bias = 0
+    skew = 1
+    randomData = calculateData(bias, skew, min, max, mean, stdev, numDataPts)
+    newMean = calculateMean(randomData)
+    newStdev = calculateStDev(randomData)
+    meanError = idealMean/newMean
+    stdevError = idealStdev/newStdev
+    while meanError > 1.01 || meanError < 0.99 || stdevError > 1.01 || stdevError < 0.99 do
+      if meanError > 1.01
+        bias += 0.1
+      elsif meanError < 0.99
+        bias -= 0.1
+      end
+      if stdevError > 1.1
+        skew *= 0.9
+      elsif stdevError < 0.9
+        skew *= 1.1
+      end
+      randomData = calculateData(bias, skew, min, max, mean, stdev, numDataPts)
+      newMean = calculateMean(randomData)
+      newStdev = calculateStDev(randomData)
+      meanError = idealMean/newMean
+      stdevError = idealStdev/newStdev
+      counter = counter + 1
+      if counter > 99
+        break
+      end
     end
-
-    # Calculate which zone the pitch will be in, based on the percentages
-    random_val = random_between_0_and_1 * sum
-    count = 1
-    sum = 0
-    while random_val > sum do
-      sum += zone_percentages[count]
-      count = count + 1
-    end
-    count - 1 # Return the correct zone
+    randomData
   end
 
-  # Retrieve swing percentage
-  def swing_percentage(zone_id, pitcher_hand, batter_hand, balls, strikes, pitch_type)
-    @swing_percentages.where(zone_id: zone_id, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
+  # random values from a distribution with a given min, max, mean, stdev
+  def getRandomValue(bias, skew, min, max, mean, stdev)
+    range = max - min
+    mid = min + range/2
+    unitGaussian = randomGaussian
+    biasFactor = Math.exp(bias)
+    value = (mid + (range * (biasFactor / (biasFactor + Math.exp(-unitGaussian / skew)) - 0.5)))
+  end
+
+  def calculateData(bias, skew, min, max, mean, stdev, numDataPts)
+    randomData = Array.new(numDataPts)
+    for i in 0..numDataPts-1
+      randomData[i] = getRandomValue(bias, skew, min, max, mean, stdev)
+    end
+    randomData
+  end
+
+  def calculateMean(randomData)
+    numDataPts = randomData.length
+    sum = 0
+    for i in 0..numDataPts-1
+      sum += randomData[i]
+    end
+    mean = sum/numDataPts
+  end
+
+  def calculateStDev(randomData)
+    numDataPts = randomData.length
+    mean = calculateMean(randomData)
+    sum = 0
+    for i in 0..numDataPts-1
+      sum += (randomData[i] - mean) ** 2
+    end
+    stdev = Math.sqrt(sum/numDataPts)
   end
 
 end
