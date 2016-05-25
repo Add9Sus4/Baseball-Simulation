@@ -13,6 +13,7 @@ class Inning
     while !@over do
       atBat = AtBat.new(@fielding_team.players[0], @hitting_team.players[0], @heat_maps)
       play = Play.new(atBat)
+      puts "#{Player.find(@fielding_team.shortstop).full_name}"
       if play.result == PlayResult::OUT
         puts "Out recorded"
         @outs = @outs + 1

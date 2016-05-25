@@ -14,4 +14,8 @@ class GameTest < ActiveSupport::TestCase
     assert_equal Team::MAX_PLAYERS, @game.away_team.players.count
   end
 
+  test "game test" do
+    @game.play
+  end
+
 end

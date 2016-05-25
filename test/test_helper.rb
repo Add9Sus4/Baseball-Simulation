@@ -30,24 +30,24 @@ class ActiveSupport::TestCase
     game.prepare
 
     # set positions (for tests)
-    game.home_team.catcher = game.home_team.players[0].id
-    game.home_team.designated_hitter = game.home_team.players[1].id
-    game.home_team.first_base = game.home_team.players[2].id
-    game.home_team.second_base = game.home_team.players[3].id
-    game.home_team.third_base = game.home_team.players[4].id
-    game.home_team.shortstop = game.home_team.players[5].id
-    game.home_team.left_field = game.home_team.players[6].id
-    game.home_team.center_field = game.home_team.players[7].id
-    game.home_team.right_field = game.home_team.players[8].id
-    game.away_team.catcher = game.away_team.players[0].id
-    game.away_team.designated_hitter = game.away_team.players[1].id
-    game.away_team.first_base = game.away_team.players[2].id
-    game.away_team.second_base = game.away_team.players[3].id
-    game.away_team.third_base = game.away_team.players[4].id
-    game.away_team.shortstop = game.away_team.players[5].id
-    game.away_team.left_field = game.away_team.players[6].id
-    game.away_team.center_field = game.away_team.players[7].id
-    game.away_team.right_field = game.away_team.players[8].id
+    game.home_team.update_attribute(:catcher, game.home_team.players[0].id)
+    game.home_team.update_attribute(:designated_hitter, game.home_team.players[1].id)
+    game.home_team.update_attribute(:first_base, game.home_team.players[2].id)
+    game.home_team.update_attribute(:second_base, game.home_team.players[3].id)
+    game.home_team.update_attribute(:third_base, game.home_team.players[4].id)
+    game.home_team.update_attribute(:shortstop, game.home_team.players[5].id)
+    game.home_team.update_attribute(:left_field, game.home_team.players[6].id)
+    game.home_team.update_attribute(:center_field, game.home_team.players[7].id)
+    game.home_team.update_attribute(:right_field, game.home_team.players[8].id)
+    game.away_team.update_attribute(:catcher, game.away_team.players[0].id)
+    game.away_team.update_attribute(:designated_hitter, game.away_team.players[1].id)
+    game.away_team.update_attribute(:first_base, game.away_team.players[2].id)
+    game.away_team.update_attribute(:second_base, game.away_team.players[3].id)
+    game.away_team.update_attribute(:third_base, game.away_team.players[4].id)
+    game.away_team.update_attribute(:shortstop, game.away_team.players[5].id)
+    game.away_team.update_attribute(:left_field, game.away_team.players[6].id)
+    game.away_team.update_attribute(:center_field, game.away_team.players[7].id)
+    game.away_team.update_attribute(:right_field, game.away_team.players[8].id)
 
     game
   end

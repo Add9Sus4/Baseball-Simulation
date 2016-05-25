@@ -13,6 +13,23 @@ class Game < ActiveRecord::Base
   # Plays a game
   def play
     prepare
+    @over = false
+    @inning_number = 1
+    @inning_status = InningStatus::TOP
+
+    # Simulate game
+    while @inning_number < 10 do
+      # Top of inning
+      puts "Top of inning #{@inning_number}:"
+      @inning_status = InningStatus::TOP
+      inning = Inning.new(@away_team, @home_team, @heat_maps)
+      # Bottom of inning
+      puts "Bottom of inning #{@inning_number}:"
+      @inning_status = InningStatus::BOTTOM
+      inning = Inning.new(@home_team, @away_team, @heat_maps)
+      @inning_number = @inning_number + 1
+    end
+    puts "Game over"
   end
 
   # Creates instance variables to use in the game

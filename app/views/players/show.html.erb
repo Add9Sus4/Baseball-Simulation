@@ -65,14 +65,14 @@
   </thead>
   <tbody>
     <tr>
-      <td><%= @player.power %></td>
-      <td><%= @player.contact %></td>
-      <td><%= @player.speed %></td>
-      <td><%= @player.patience %></td>
-      <td><%= @player.plate_vision %></td>
-      <td><%= @player.pull_amount %></td>
-      <td><%= @player.uppercut_amount %></td>
-      <td><%= @player.batting_average %></td>
+      <td class="hotcold"><%= @player.power %></td>
+      <td class="hotcold"><%= @player.contact %></td>
+      <td class="hotcold"><%= @player.speed %></td>
+      <td class="hotcold"><%= @player.patience %></td>
+      <td class="hotcold"><%= @player.plate_vision %></td>
+      <td class="hotcold"><%= @player.pull_amount %></td>
+      <td class="hotcold"><%= @player.uppercut_amount %></td>
+      <td class="hotcold"><%= @player.batting_average %></td>
     </tr>
   </tbody>
 </table>
@@ -89,9 +89,9 @@
   </thead>
   <tbody>
     <tr>
-      <td><%= @player.movement %></td>
-      <td><%= @player.control %></td>
-      <td><%= @player.location %></td>
+      <td class="hotcold"><%= @player.movement %></td>
+      <td class="hotcold"><%= @player.control %></td>
+      <td class="hotcold"><%= @player.location %></td>
     </tr>
   </tbody>
 </table>
@@ -112,13 +112,13 @@
   </thead>
   <tbody>
     <tr>
-      <td><%= @player.agility %></td>
-      <td><%= @player.reactionTime %></td>
-      <td><%= @player.armStrength %></td>
-      <td><%= @player.average_fielding %></td>
-      <td><%= @player.average_throwing %></td>
-      <td><%= @player.intelligence %></td>
-      <td><%= @player.endurance %></td>
+      <td class="hotcold"><%= @player.agility %></td>
+      <td class="hotcold"><%= @player.reactionTime %></td>
+      <td class="hotcold"><%= @player.armStrength %></td>
+      <td class="hotcold"><%= @player.average_fielding %></td>
+      <td class="hotcold"><%= @player.average_throwing %></td>
+      <td class="hotcold"><%= @player.intelligence %></td>
+      <td class="hotcold"><%= @player.endurance %></td>
     </tr>
   </tbody>
 </table>
@@ -126,6 +126,24 @@
 </br>
 
 <script>
+
+  $('.hotcold').each(function() {
+    var val = $(this).text();
+    var red;
+    var blue;
+    var green;
+    if (val > 50) {
+      green = 0;
+      blue = 0;
+      red = (val - 50)*255/50;
+    } else {
+      green = 0;
+      red = 0;
+      blue = (50 - val)*255/50
+    }
+    var rgb = "rgb(" + Math.floor(red) + "," + Math.floor(green) + "," + Math.floor(blue) + ")";
+    $(this).css({"color":rgb});
+  })
 
   $('.position').each(function() {
     var positionSymbol = $(this).text();
