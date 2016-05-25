@@ -1,12 +1,11 @@
 class Play
-  attr_accessor :result
+  attr_accessor :result, :hit_result
   def initialize(atBat)
     case atBat.result
     when AtBatResult::WALK
       puts "walk"
       @result = PlayResult::SAFE
     when AtBatResult::PUT_IN_PLAY
-      puts "put in play"
       ballPutInPlay(atBat)
     when AtBatResult::STRIKEOUT
       puts "strikeout"
@@ -23,9 +22,10 @@ class Play
     hit = Hit.new(atBat)
     if hit.result == HitResult::FIELDED
       @result = PlayResult::OUT
-    elsif hit.result == HitResult::NOT_FIELDED
+    else
       @result = PlayResult::SAFE
     end
+    @hit_result = hit.result
   end
 
 end

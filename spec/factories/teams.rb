@@ -1,15 +1,13 @@
 require 'faker'
 
-name1 = Faker::Team.creature.capitalize
-
 FactoryGirl.define do
 
   factory :team do
     city {Faker::Address.city}
-    name {name1}
+    name {Faker::Team.creature.capitalize}
     league {["NL","AL"].sample}
     division {["East","Central","West"].sample}
-    stadium {name1 + " " + ["Stadium","Field","Park","Coliseum","Center"].sample}
+    stadium {name + " " + ["Stadium","Field","Park","Coliseum","Center"].sample}
     capacity {45000}
     lineup1 {0}
     lineup2 {1}
@@ -24,7 +22,8 @@ FactoryGirl.define do
     factory :team_with_players do
       after(:create) do |team|
         13.times do
-          create(:player, team: team)
+          player = create(:player, team: team)
+          player.set_initial_stats
         end
         team.update_attributes(catcher: team.players[0].id)
         team.update_attributes(designated_hitter: team.players[1].id)

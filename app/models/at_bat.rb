@@ -9,11 +9,12 @@ class AtBat
     @heat_maps = heat_maps
     @result = AtBatResult::IN_PROGRESS
 
-    puts "Now batting: #{@batter.full_name}"
+    puts "\nNow batting: #{@batter.full_name}"
     # Simulate at-bat
     while !@over do
       pitch = Pitch.new(@pitcher, @batter, @balls, @strikes, @heat_maps)
       if batterSwingsAt(pitch)
+        @pitcher.throws_strike
         if batterMakesContactWith(pitch)
           if ballIsHitFair
             fairBall
@@ -47,6 +48,7 @@ class AtBat
 
   # Batter hits the ball in fair territory
   def fairBall
+    @batter.logs_at_bat
     @over = true
     @result = AtBatResult::PUT_IN_PLAY
   end
@@ -71,8 +73,10 @@ class AtBat
   def batterDoesntSwingAt(pitch)
     if isStrike(pitch)
       batterTakesStrike
+      @pitcher.throws_strike
     else
       batterTakesBall
+      @pitcher.throws_ball
     end
   end
 
@@ -96,12 +100,18 @@ class AtBat
 
   # Batter walks
   def walk
+    @pitcher.allows_walk
+    @batter.receives_walk
     @over = true
     @result = AtBatResult::WALK
   end
 
   # Batter strikes out
   def strikeout
+    @pitcher.records_strikeout
+    @pitcher.records_out(1)
+    @batter.strikes_out
+    @batter.logs_at_bat
     @over = true
     @result = AtBatResult::STRIKEOUT
   end

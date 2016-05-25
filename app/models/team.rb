@@ -25,6 +25,29 @@ class Team < ActiveRecord::Base
     position_names[index]
   end
 
+  def find_player_by_lineup_index(lineup_index)
+    case lineup_index
+    when lineup1
+      players[0]
+    when lineup2
+      players[1]
+    when lineup3
+      players[2]
+    when lineup4
+      players[3]
+    when lineup5
+      players[4]
+    when lineup6
+      players[5]
+    when lineup7
+      players[6]
+    when lineup8
+      players[7]
+    when lineup9
+      players[8]
+    end
+  end
+
   def player_at_position(index)
     positions = [designated_hitter, catcher, first_base,
                     second_base, third_base, shortstop,

@@ -14,6 +14,7 @@ class Pitch
     @contact_percentage = determine_contact_percentage(@location, "LEFT", "RIGHT", @balls, @strikes, "FA")
     # Will the pitch be called a strike?
     @called_strike_percentage = determine_called_strike_percentage(@location, "LEFT", "RIGHT", @balls, @strikes, "FA")
+    @pitcher.throws_pitch
   end
 
   # Retrieve called strike percentage

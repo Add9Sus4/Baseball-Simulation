@@ -47,7 +47,7 @@ class Hit
 
   # How likely is it that the fielder will reach the ball?
   def chanceOfReachingBall
-    0.90
+    0.60
   end
 
   # Result of the play
@@ -55,7 +55,16 @@ class Hit
     if rand() < chanceOfReachingBall
       @result = HitResult::FIELDED
     else
-      @result = HitResult::NOT_FIELDED
+      random = rand()
+      if random < 0.50
+        @result = HitResult::SINGLE
+      elsif random < 0.80
+        @result = HitResult::DOUBLE
+      elsif random < 0.95
+        @result = HitResult::HOME_RUN
+      else
+        @result = HitResult::TRIPLE
+      end
     end
     puts "#{@type} hit to #{@location}, #{@result}"
   end

@@ -1,4 +1,7 @@
 module HitResult
   FIELDED = "fielded"
-  NOT_FIELDED = "not fielded"
+  SINGLE = "single"
+  DOUBLE = "double"
+  TRIPLE = "triple"
+  HOME_RUN = "home run"
 end
