@@ -1,25 +1,24 @@
 class Play
   attr_accessor :result, :hit_result
-  def initialize(atBat)
+  def initialize(atBat, game)
+    @game = game
     case atBat.result
     when AtBatResult::WALK
-      # puts "walk"
       @result = PlayResult::SAFE
     when AtBatResult::PUT_IN_PLAY
       ballPutInPlay(atBat)
     when AtBatResult::STRIKEOUT
-      # puts "strikeout"
       @result = PlayResult::OUT
     when AtBatResult::HBP
-      # puts "hit by pitch"
+      @game.pbp += "\nhit by pitch\n"
       @result = PlayResult::SAFE
     else
-      puts "this should never be reached"
+      puts "\nthis should never be reached\n"
     end
   end
 
   def ballPutInPlay(atBat)
-    hit = Hit.new(atBat)
+    hit = Hit.new(atBat, @game)
     if hit.result == HitResult::FIELDED
       @result = PlayResult::OUT
     else

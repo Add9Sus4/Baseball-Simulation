@@ -1,6 +1,6 @@
 class Game < ActiveRecord::Base
   validate :teams_must_be_different
-  attr_accessor :home_team, :away_team, :pitch_locations, :heat_maps, :inning_status, :inning_number, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score, :home_team_inning_scores, :away_team_inning_scores
+  attr_accessor :pbp, :bad, :good, :home_team, :away_team, :pitch_locations, :heat_maps, :inning_status, :inning_number, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score, :home_team_inning_scores, :away_team_inning_scores, :over
 
   def teams_must_be_different
     errors.add(:base, "Teams cannot be the same") if home_team_id == away_team_id
@@ -18,31 +18,38 @@ class Game < ActiveRecord::Base
     @away_team_score = 0
     @home_team_inning_scores = ""
     @away_team_inning_scores = ""
+    @pbp = ""
+    @good = "#267373"
+    @bad = "#854747"
 
     # Simulate game
     while !@over do
       # Top of inning
-      puts "\nTop of inning #{@inning_number} (#{@away_team.full_name} batting):\n"
+      unless @inning_number == 1 && @inning_status == InningStatus::TOP
+        @pbp += "\n____________________________________________________________________________\n"
+      end
+      @pbp += "\n<h4><strong>Top of inning #{@inning_number} (#{@away_team.full_name} batting):</strong></h4>\n"
       @inning_status = InningStatus::TOP
       inning = Inning.new(self)
       # Bottom of inning
       if @inning_number == 9 && @home_team_score > @away_team_score
         @over = true
       end
-      puts "\nBottom of inning #{@inning_number} (#{@home_team.full_name} batting):"
+      @pbp += "\n____________________________________________________________________________\n"
+      @pbp += "\n<h4><strong>Bottom of inning #{@inning_number} (#{@home_team.full_name} batting):</strong></h4>\n"
       @inning_status = InningStatus::BOTTOM
       inning = Inning.new(self)
-      @inning_number = @inning_number + 1
-      if @inning_number > 9 && @home_team_score != @away_team_score
+      if @inning_number > 8 && @home_team_score != @away_team_score
         @over = true
       end
+      @inning_number = @inning_number + 1
     end
 
-    puts "Game over"
     collect_stats
   end
 
   def collect_stats
+
     # home batting stats
     home_at_bats_string = ""
     home_runs_scored_string = ""
@@ -290,6 +297,13 @@ class Game < ActiveRecord::Base
     self.update_attributes(home_strikes_thrown: home_strikes_thrown_string)
     self.update_attributes(home_balls_thrown: home_balls_thrown_string)
     self.update_attributes(home_intentional_walks_allowed: home_intentional_walks_allowed_string)
+
+    # play by play
+    puts "setting play by play"
+    # self.update_attributes(pbp: "lol")
+    # self.update_attributes(test: "lol")
+    self.update_attributes(play_by_play: @pbp)
+    puts "play by play set"
   end
 
   # Creates instance variables to use in the game

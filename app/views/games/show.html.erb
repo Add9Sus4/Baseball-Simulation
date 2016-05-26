@@ -342,6 +342,14 @@
     </table>
   </div>
 </div>
+<p>
+<div class="accordion">
+  <h2><strong>Play by play:</strong></h2>
+  <div>
+    <%= simple_format(@game.play_by_play) %>
+  </div>
+</div>
+</p>
 
 <style>
 #away_team_box_score {
@@ -367,3 +375,11 @@
 }
 
 </style>
+
+<script type="text/javascript">
+$('.accordion').accordion({
+  collapsible: true,
+  heightStyle: "content",
+  active: false
+});
+</script>

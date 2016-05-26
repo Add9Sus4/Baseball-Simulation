@@ -13,11 +13,11 @@
 
 <div class="field">
   <%= f.label :home_team_id %><br>
-  <%= collection_select(:game, :home_team_id, Team.all, :id, :full_name) %>
+  <%= collection_select(:game, :home_team_id, Team.all, :id, :full_name, {:selected => Team.first.id}) %>
 </div>
 <div class="field">
   <%= f.label :away_team_id %><br>
-  <%= collection_select(:game, :away_team_id, Team.all, :id, :full_name) %>
+  <%= collection_select(:game, :away_team_id, Team.all, :id, :full_name, {:selected => Team.last.id}) %>
 </div>
 <div class="field">
   <%= f.hidden_field :attendance %>
@@ -79,6 +79,7 @@
   <%= f.hidden_field :away_balls_thrown %>
   <%= f.hidden_field :away_intentional_walks_allowed %>
   <%= f.hidden_field :player_of_the_game %>
+  <%= f.hidden_field :pbp %>
 </div>
 
 <div class="actions">

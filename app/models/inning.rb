@@ -2,6 +2,7 @@ class Inning
 
   def initialize(game)
     @game = game
+    @pbp = @game.pbp
     @outs = 0
     @bases = Bases.new(game)
     @over = false
@@ -22,16 +23,16 @@ class Inning
     while !@over do
       @batter = @hitting_team.find_player_by_lineup_index(@lineup_position)
       @pitcher = @fielding_team.players[0]
-      atBat = AtBat.new(@pitcher, @batter, @heat_maps)
-      play = Play.new(atBat)
+      atBat = AtBat.new(@pitcher, @batter, @heat_maps, @game)
+      play = Play.new(atBat, @game)
       if play.result == PlayResult::OUT
         @pitcher.records_out(1)
         @outs = @outs + 1
       elsif play.result == PlayResult::DOUBLE_PLAY
-        # puts "Double play"
+        @game.pbp += "\nDouble play\n"
         @outs = @outs + 2
       elsif play.result == PlayResult::TRIPLE_PLAY
-        # puts "Triple play"
+        @game.pbp += "\nTriple play\n"
         @outs = @outs + 3
       else
         if play.hit_result == HitResult::SINGLE
@@ -62,7 +63,6 @@ class Inning
         @lineup_position = 0
       end
       if @outs == 3
-        # puts "\nInning over\n"
         @over = true
       end
     end
@@ -82,7 +82,7 @@ class Inning
       game.home_team_inning_scores += "_"
     end
 
-    # puts "\nScore: #{@game.away_team.full_name}: #{@game.away_team_score}, #{@game.home_team.full_name}: #{@game.home_team_score}\n"
+    @game.pbp += "\n<h5><strong>Score: #{@game.away_team.full_name}: #{@game.away_team_score}, #{@game.home_team.full_name}: #{@game.home_team_score}</strong></h5>\n"
   end
 
 end

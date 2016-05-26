@@ -24,7 +24,7 @@ def game_params(home_team, away_team)
     :away_walks_allowed => "", :away_strikeouts_recorded => "",
     :away_home_runs_allowed => "", :away_total_pitches => "",
     :away_strikes_thrown => "", :away_balls_thrown => "",
-    :away_intentional_walks_allowed => "", :player_of_the_game => ""}
+    :away_intentional_walks_allowed => "", :player_of_the_game => "", :pbp => ""}
 end
 
 describe Game do

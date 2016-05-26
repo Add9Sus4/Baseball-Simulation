@@ -1,6 +1,6 @@
 class AtBat
-  attr_accessor :result, :balls, :strikes, :over
-  def initialize(pitcher, batter, heat_maps)
+  attr_accessor :result, :balls, :strikes, :over, :batter
+  def initialize(pitcher, batter, heat_maps, game)
     @balls = 0
     @strikes = 0
     @over = false
@@ -8,8 +8,9 @@ class AtBat
     @batter = batter
     @heat_maps = heat_maps
     @result = AtBatResult::IN_PROGRESS
+    @game = game
 
-    # puts "\nNow batting: #{@batter.full_name}"
+    # @game.pbp += "\nNow batting: #{@batter.full_name}"
     # Simulate at-bat
     while !@over do
       pitch = Pitch.new(@pitcher, @batter, @balls, @strikes, @heat_maps)
@@ -100,6 +101,7 @@ class AtBat
 
   # Batter walks
   def walk
+    @game.pbp += "\n<span style=\"color:" + @game.good + "\">#{@batter.full_name} walks.</span>\n"
     @pitcher.allows_walk
     @batter.receives_walk
     @over = true
@@ -108,6 +110,7 @@ class AtBat
 
   # Batter strikes out
   def strikeout
+    @game.pbp += "\n<span style=\"color:" + @game.bad + "\">#{@batter.full_name} strikes out.</span>\n"
     @pitcher.records_strikeout
     @batter.strikes_out
     @batter.logs_at_bat

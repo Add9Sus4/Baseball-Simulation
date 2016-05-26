@@ -239,7 +239,7 @@ class Bases
   end
 
   def batter_scores
-    # puts "#{@batter.full_name} scores!"
+    @game.pbp += "<span style=\"color:" + @game.good + "\"><strong><em>#{@batter.full_name} scores!</strong></em></span>\n"
     @batter.scores
     @runs_scored += 1
     @batter.records_rbi(1)
@@ -247,7 +247,7 @@ class Bases
   end
 
   def runner_on_first_scores
-    # puts "#{@runner_on_first.full_name} scores!"
+    @game.pbp += "<span style=\"color:" + @game.good + "\"><strong><em>#{@runner_on_first.full_name} scores!</strong></em></span>\n"
     @runner_on_first.scores
     @runs_scored += 1
     @batter.records_rbi(1)
@@ -256,7 +256,7 @@ class Bases
   end
 
   def runner_on_second_scores
-    # puts "#{@runner_on_second.full_name} scores!"
+    @game.pbp += "<span style=\"color:" + @game.good + "\"><strong><em>#{@runner_on_second.full_name} scores!</strong></em></span>\n"
     @runner_on_second.scores
     @runs_scored += 1
     @batter.records_rbi(1)
@@ -265,7 +265,7 @@ class Bases
   end
 
   def runner_on_third_scores
-    # puts "#{@runner_on_third.full_name} scores!"
+    @game.pbp += "<span style=\"color:" + @game.good + "\"><strong><em>#{@runner_on_third.full_name} scores!</strong></em></span>\n"
     @runner_on_third.scores
     @runs_scored += 1
     @batter.records_rbi(1)
@@ -295,32 +295,32 @@ class Bases
   end
 
   def runner_on_first_advances_to_second
-    # puts "#{@runner_on_first.full_name} advances to second."
+    # @game.pbp += "#{@runner_on_first.full_name} advances to second.\n"
     @runner_on_second = @runner_on_first
   end
 
   def runner_on_first_advances_to_third
-    # puts "#{@runner_on_first.full_name} advances to third."
+    # @game.pbp += "#{@runner_on_first.full_name} advances to third.\n"
     @runner_on_third = @runner_on_first
   end
 
   def runner_on_second_advances_to_third
-    # puts "#{@runner_on_second.full_name} advances to third."
+    # @game.pbp += "#{@runner_on_second.full_name} advances to third.\n"
     @runner_on_third = @runner_on_second
   end
 
   def batter_advances_to_first
-    # puts "#{@batter.full_name} advances to first."
+    # @game.pbp += "#{@batter.full_name} advances to first.\n"
     @runner_on_first = @batter
   end
 
   def batter_advances_to_second
-    # puts "#{@batter.full_name} advances to second."
+    # @game.pbp += "#{@batter.full_name} advances to second.\n"
     @runner_on_second = @batter
   end
 
   def batter_advances_to_third
-    # puts "#{@batter.full_name} advances to third."
+    # @game.pbp += "#{@batter.full_name} advances to third.\n"
     @runner_on_third = @batter
   end
 

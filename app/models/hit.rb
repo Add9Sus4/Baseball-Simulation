@@ -1,6 +1,7 @@
 class Hit
   attr_accessor :result, :type, :location
-  def initialize(atbat)
+  def initialize(atbat, game)
+    @game = game
     @atbat = atbat
     hitType
     hitLocation
@@ -66,7 +67,12 @@ class Hit
         @result = HitResult::TRIPLE
       end
     end
-    # puts "#{@type} hit to #{@location}, #{@result}"
+    if @result == HitResult::FIELDED
+      @game.pbp += "\n<span style=\"color:" + @game.bad + "\">#{@atbat.batter.full_name} hits a #{@type} to #{@location}, #{@result}</span>\n"
+    else
+      @game.pbp += "\n<span style=\"color:" + @game.good + "\">#{@atbat.batter.full_name} hits a #{@type} to #{@location}, #{@result}</span>\n"
+    end
+
   end
 
 end
