@@ -1,17 +1,19 @@
 class Bases
-
+  attr_accessor :runs_scored
   def initialize(game)
     @game = game
     @status = BaseStatus::EMPTY
     @runner_on_first = nil
     @runner_on_second = nil
     @runner_on_third = nil
+    @runs_scored = 0
   end
 
   # Update the bases on a hit
   def updateStatusOnHit(hit_result, batter, pitcher)
     @batter = batter
     @pitcher = pitcher
+    @runs_scored = 0
     case hit_result
     when HitResult::SINGLE
       single
@@ -189,6 +191,7 @@ class Bases
 
   # Update the bases on a walk or hit by pitch
   def updateStatusOnWalkOrHBP(batter, pitcher)
+    @runs_scored = 0
     @batter = batter
     @pitcher = pitcher
     case @status
@@ -236,31 +239,35 @@ class Bases
   end
 
   def batter_scores
-    puts "#{@batter.full_name} scores!"
+    # puts "#{@batter.full_name} scores!"
     @batter.scores
+    @runs_scored += 1
     @batter.records_rbi(1)
     increase_score(1)
   end
 
   def runner_on_first_scores
-    puts "#{@runner_on_first.full_name} scores!"
+    # puts "#{@runner_on_first.full_name} scores!"
     @runner_on_first.scores
+    @runs_scored += 1
     @batter.records_rbi(1)
     @runner_on_first = nil
     increase_score(1)
   end
 
   def runner_on_second_scores
-    puts "#{@runner_on_second.full_name} scores!"
+    # puts "#{@runner_on_second.full_name} scores!"
     @runner_on_second.scores
+    @runs_scored += 1
     @batter.records_rbi(1)
     @runner_on_second = nil
     increase_score(1)
   end
 
   def runner_on_third_scores
-    puts "#{@runner_on_third.full_name} scores!"
+    # puts "#{@runner_on_third.full_name} scores!"
     @runner_on_third.scores
+    @runs_scored += 1
     @batter.records_rbi(1)
     @runner_on_third = nil
     increase_score(1)
@@ -288,32 +295,32 @@ class Bases
   end
 
   def runner_on_first_advances_to_second
-    puts "#{@runner_on_first.full_name} advances to second."
+    # puts "#{@runner_on_first.full_name} advances to second."
     @runner_on_second = @runner_on_first
   end
 
   def runner_on_first_advances_to_third
-    puts "#{@runner_on_first.full_name} advances to third."
+    # puts "#{@runner_on_first.full_name} advances to third."
     @runner_on_third = @runner_on_first
   end
 
   def runner_on_second_advances_to_third
-    puts "#{@runner_on_second.full_name} advances to third."
+    # puts "#{@runner_on_second.full_name} advances to third."
     @runner_on_third = @runner_on_second
   end
 
   def batter_advances_to_first
-    puts "#{@batter.full_name} advances to first."
+    # puts "#{@batter.full_name} advances to first."
     @runner_on_first = @batter
   end
 
   def batter_advances_to_second
-    puts "#{@batter.full_name} advances to second."
+    # puts "#{@batter.full_name} advances to second."
     @runner_on_second = @batter
   end
 
   def batter_advances_to_third
-    puts "#{@batter.full_name} advances to third."
+    # puts "#{@batter.full_name} advances to third."
     @runner_on_third = @batter
   end
 

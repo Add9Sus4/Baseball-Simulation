@@ -47,7 +47,7 @@ class Hit
 
   # How likely is it that the fielder will reach the ball?
   def chanceOfReachingBall
-    0.60
+    0.70
   end
 
   # Result of the play
@@ -66,7 +66,7 @@ class Hit
         @result = HitResult::TRIPLE
       end
     end
-    puts "#{@type} hit to #{@location}, #{@result}"
+    # puts "#{@type} hit to #{@location}, #{@result}"
   end
 
 end

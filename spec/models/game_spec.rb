@@ -31,7 +31,6 @@ describe Game do
   team_one = FactoryGirl.create(:team_with_players)
   team_two = FactoryGirl.create(:team_with_players)
   game = Game.new(game_params(team_one, team_two))
-  game.prepare
   game.play
   game.save!
 end

@@ -144,7 +144,7 @@ class Player < ActiveRecord::Base
   end
 
   def allows_walk
-    @walks = @walks + 1
+    @walks_allowed = @walks_allowed + 1
   end
 
   def records_strikeout
@@ -153,7 +153,6 @@ class Player < ActiveRecord::Base
 
   def allows_home_run
     @home_runs_allowed = @home_runs_allowed + 1
-    allows_hit
   end
 
   def throws_pitch

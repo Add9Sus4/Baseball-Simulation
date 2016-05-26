@@ -1,6 +1,6 @@
 class Game < ActiveRecord::Base
   validate :teams_must_be_different
-  attr_accessor :home_team, :away_team, :pitch_locations, :heat_maps, :inning_status, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score
+  attr_accessor :home_team, :away_team, :pitch_locations, :heat_maps, :inning_status, :inning_number, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score, :home_team_inning_scores, :away_team_inning_scores
 
   def teams_must_be_different
     errors.add(:base, "Teams cannot be the same") if home_team_id == away_team_id
@@ -16,19 +16,28 @@ class Game < ActiveRecord::Base
     @away_team_lineup_position = 0
     @home_team_score = 0
     @away_team_score = 0
+    @home_team_inning_scores = ""
+    @away_team_inning_scores = ""
 
     # Simulate game
-    while @inning_number < 2 do
+    while !@over do
       # Top of inning
       puts "\nTop of inning #{@inning_number} (#{@away_team.full_name} batting):\n"
       @inning_status = InningStatus::TOP
       inning = Inning.new(self)
       # Bottom of inning
+      if @inning_number == 9 && @home_team_score > @away_team_score
+        @over = true
+      end
       puts "\nBottom of inning #{@inning_number} (#{@home_team.full_name} batting):"
       @inning_status = InningStatus::BOTTOM
       inning = Inning.new(self)
       @inning_number = @inning_number + 1
+      if @inning_number > 9 && @home_team_score != @away_team_score
+        @over = true
+      end
     end
+
     puts "Game over"
     collect_stats
   end
@@ -217,6 +226,11 @@ class Game < ActiveRecord::Base
         away_intentional_walks_allowed_string = away_intentional_walks_allowed_string + "_"
       end
     end
+
+    # runs scored in each inning
+    self.update_attributes(away_inning_scores: @away_team_inning_scores.chop)
+    self.update_attributes(home_inning_scores: @home_team_inning_scores.chop)
+
     # home batting stats
     self.update_attributes(home_atbats: home_at_bats_string)
     self.update_attributes(home_runs_scored: home_runs_scored_string)

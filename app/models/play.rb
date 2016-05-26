@@ -3,15 +3,15 @@ class Play
   def initialize(atBat)
     case atBat.result
     when AtBatResult::WALK
-      puts "walk"
+      # puts "walk"
       @result = PlayResult::SAFE
     when AtBatResult::PUT_IN_PLAY
       ballPutInPlay(atBat)
     when AtBatResult::STRIKEOUT
-      puts "strikeout"
+      # puts "strikeout"
       @result = PlayResult::OUT
     when AtBatResult::HBP
-      puts "hit by pitch"
+      # puts "hit by pitch"
       @result = PlayResult::SAFE
     else
       puts "this should never be reached"

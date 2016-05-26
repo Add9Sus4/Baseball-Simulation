@@ -9,7 +9,7 @@ class AtBat
     @heat_maps = heat_maps
     @result = AtBatResult::IN_PROGRESS
 
-    puts "\nNow batting: #{@batter.full_name}"
+    # puts "\nNow batting: #{@batter.full_name}"
     # Simulate at-bat
     while !@over do
       pitch = Pitch.new(@pitcher, @batter, @balls, @strikes, @heat_maps)

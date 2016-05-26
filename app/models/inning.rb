@@ -5,6 +5,7 @@ class Inning
     @outs = 0
     @bases = Bases.new(game)
     @over = false
+    @runs_scored = 0
     if game.inning_status == InningStatus::TOP
       @hitting_team = game.away_team
       @fielding_team = game.home_team
@@ -27,10 +28,10 @@ class Inning
         @pitcher.records_out(1)
         @outs = @outs + 1
       elsif play.result == PlayResult::DOUBLE_PLAY
-        puts "Double play"
+        # puts "Double play"
         @outs = @outs + 2
       elsif play.result == PlayResult::TRIPLE_PLAY
-        puts "Triple play"
+        # puts "Triple play"
         @outs = @outs + 3
       else
         if play.hit_result == HitResult::SINGLE
@@ -54,12 +55,14 @@ class Inning
           @bases.updateStatusOnWalkOrHBP(@batter, @pitcher)
         end
       end
+      @runs_scored += @bases.runs_scored
+      @bases.runs_scored = 0
       @lineup_position = @lineup_position + 1
       if @lineup_position > 8
         @lineup_position = 0
       end
       if @outs == 3
-        puts "\nInning over\n"
+        # puts "\nInning over\n"
         @over = true
       end
     end
@@ -68,13 +71,18 @@ class Inning
         @lineup_position = 0
       end
       game.away_team_lineup_position = @lineup_position
+      game.away_team_inning_scores += @runs_scored.to_s
+      game.away_team_inning_scores += "_"
     else
       if @lineup_position > 8
         @lineup_position = 0
       end
       game.home_team_lineup_position = @lineup_position
+      game.home_team_inning_scores += @runs_scored.to_s
+      game.home_team_inning_scores += "_"
     end
-    puts "\nScore: #{@game.away_team.full_name}: #{@game.away_team_score}, #{@game.home_team.full_name}: #{@game.home_team_score}\n"
+
+    # puts "\nScore: #{@game.away_team.full_name}: #{@game.away_team_score}, #{@game.home_team.full_name}: #{@game.home_team_score}\n"
   end
 
 end

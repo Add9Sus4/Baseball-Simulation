@@ -2,20 +2,11 @@
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Home team:</strong>
-  <%= @game.home_team_id %>
+<p><%= link_to 'Back', games_path, method: :get %>
 </p>
 
-<p>
-  <strong>Away team:</strong>
-  <%= @game.away_team_id %>
-</p>
-
-<p>
-  <strong>Attendance:</strong>
-  <%= @game.attendance %>
-</p>
+<% @home_team = Team.find(@game.home_team_id) %>
+<% @away_team = Team.find(@game.away_team_id) %>
 
 <p>
   <strong>Stadium name:</strong>
@@ -23,284 +14,356 @@
 </p>
 
 <p>
-  <strong>Home lineup:</strong>
-  <%= @game.home_lineup %>
+  <strong>Attendance:</strong>
+  <%= number_with_delimiter(@game.attendance, :delimiter => ',') %>
 </p>
 
+<% @home_team_runs = @game.home_runs_scored.split("_").map(&:to_i).sum %>
+<% @away_team_runs = @game.away_runs_scored.split("_").map(&:to_i).sum %>
+<% @game_display = "" %>
+<% if (@game.home_team_id != nil) %>
+<% @game_display += Team.find(@game.home_team_id).name %>
+<% end %>
+<% @game_display += " " + @home_team_runs.to_s + ", " %>
+<% if (@game.away_team_id != nil) %>
+<% @game_display += Team.find(@game.away_team_id).name %>
+<% end %>
+<% @game_display += " " + @away_team_runs.to_s %>
+<% if @home_team_runs > @away_team_runs %>
+  <% @title = @home_team.name  + " defeat the " + @away_team.name + ", " + @home_team_runs.to_s + " to " + @away_team_runs.to_s %>
+<% else %>
+  <% @title = @away_team.name  + " defeat the " + @home_team.name + ", " + @away_team_runs.to_s + " to " + @home_team_runs.to_s %>
+<% end %>
 <p>
-  <strong>Away lineup:</strong>
-  <%= @game.away_lineup %>
+  <h3><%= @title %></h3>
 </p>
 
-<p>
-  <strong>Home atbats:</strong>
-  <%= @game.home_atbats %>
-</p>
+<div id="line_score">
+  <% @away_line_score = @game.away_inning_scores.split("_").map(&:to_i) %>
+  <% @home_line_score = @game.home_inning_scores.split("_").map(&:to_i) %>
+  <table class="table_with_custom_border table-condensed table-striped table-bordered table-responsive">
+    <thead>
+      <tr>
+        <th></th>
+      <% for i in 1..@away_line_score.length do %>
+        <th><%= i %></th>
+      <% end %>
+      <th>R</th>
+      <th>H</th>
+      <th>E</th>
+      </tr>
+    </thead>
 
-<p>
-  <strong>Home runs scored:</strong>
-  <%= @game.home_runs_scored %>
-</p>
+    <tbody>
+      <tr>
+        <td><%= @away_team.name %></td>
+        <% for i in 1..@away_line_score.length do %>
+          <td><%= @away_line_score[i-1] %></td>
+        <% end %>
+        <% @away_runs_scored = @game.away_runs_scored.split("_").map(&:to_i) %>
+        <% @away_hits = @game.away_hits.split("_").map(&:to_i) %>
+        <% @away_errors = @game.away_errors.split("_").map(&:to_i) %>
+        <td><strong><%= @away_runs_scored.sum %></strong></td>
+        <td><%= @away_hits.sum %></td>
+        <td><%= @away_errors.sum %></td>
+      </tr>
+      <tr>
+        <td><%= @home_team.name %></td>
+        <% for i in 1..@home_line_score.length  do %>
+          <td><%= @home_line_score[i-1] %></td>
+        <% end %>
+        <% @home_runs_scored = @game.home_runs_scored.split("_").map(&:to_i) %>
+        <% @home_hits = @game.home_hits.split("_").map(&:to_i) %>
+        <% @home_errors = @game.home_errors.split("_").map(&:to_i) %>
+        <td><strong><%= @home_runs_scored.sum %></strong></td>
+        <td><%= @home_hits.sum %></td>
+        <td><%= @home_errors.sum %></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
-<p>
-  <strong>Home hits:</strong>
-  <%= @game.home_hits %>
-</p>
+<h2>
+  Batting
+</h2>
 
-<p>
-  <strong>Home doubles:</strong>
-  <%= @game.home_doubles %>
-</p>
+<div id="batting_box_score">
 
-<p>
-  <strong>Home triples:</strong>
-  <%= @game.home_triples %>
-</p>
+  <div id="away_team_box_score">
+    <p>
+      <strong>
+        <%= link_to @away_team.full_name, @away_team, method: :get %>
+      </strong>
+    </p>
+    <table class="table_with_custom_border table-condensed table-striped table-bordered table-responsive">
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>AB</th>
+          <th>R</th>
+          <th>H</th>
+          <th>RBI</th>
+          <th>HR</th>
+          <th>BB</th>
+          <th>K</th>
+        </tr>
+      </thead>
 
-<p>
-  <strong>Home home runs:</strong>
-  <%= @game.home_home_runs %>
-</p>
+      <tbody>
+        <% @away_lineup = @game.away_lineup.split("_").map(&:to_i) %>
+        <% @away_atbats = @game.away_atbats.split("_").map(&:to_i) %>
+        <% @away_runs_scored = @game.away_runs_scored.split("_").map(&:to_i) %>
+        <% @away_hits = @game.away_hits.split("_").map(&:to_i) %>
+        <% @away_rbi = @game.away_RBI.split("_").map(&:to_i) %>
+        <% @away_home_runs = @game.away_home_runs.split("_").map(&:to_i) %>
+        <% @away_walks = @game.away_walks.split("_").map(&:to_i) %>
+        <% @away_strikeouts = @game.away_strikeouts.split("_").map(&:to_i) %>
+        <% for i in 0..8 do %>
+        <% @player = Player.find(@away_lineup[i]) %>
+        <tr>
+          <td><%= link_to @player.full_name, @player, method: :get %></td>
+          <td><%= @away_atbats[i] %></td>
+          <td><%= @away_runs_scored[i] %></td>
+          <td><%= @away_hits[i] %></td>
+          <td><%= @away_rbi[i] %></td>
+          <td><%= @away_home_runs[i] %></td>
+          <td><%= @away_walks[i] %></td>
+          <td><%= @away_strikeouts[i] %></td>
+        </tr>
+        <% end %>
+        <tr>
+          <td><strong>Totals</strong></td>
+          <td><strong><%= @away_atbats.sum %></strong></td>
+          <td><strong><%= @away_runs_scored.sum %></strong></td>
+          <td><strong><%= @away_hits.sum %></strong></td>
+          <td><strong><%= @away_rbi.sum %></strong></td>
+          <td><strong><%= @away_home_runs.sum %></strong></td>
+          <td><strong><%= @away_walks.sum %></strong></td>
+          <td><strong><%= @away_strikeouts.sum %></strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-<p>
-  <strong>Home rbi:</strong>
-  <%= @game.home_RBI %>
-</p>
+  <div id="home_team_box_score">
+    <p>
+      <strong>
+        <%= link_to @home_team.full_name, @home_team, method: :get %>
+      </strong>
+    </p>
+    <table class="table_with_custom_border table-condensed table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>AB</th>
+          <th>R</th>
+          <th>H</th>
+          <th>RBI</th>
+          <th>HR</th>
+          <th>BB</th>
+          <th>K</th>
+        </tr>
+      </thead>
 
-<p>
-  <strong>Home walks:</strong>
-  <%= @game.home_walks %>
-</p>
+      <tbody>
+        <% @home_lineup = @game.home_lineup.split("_").map(&:to_i) %>
+        <% @home_atbats = @game.home_atbats.split("_").map(&:to_i) %>
+        <% @home_runs_scored = @game.home_runs_scored.split("_").map(&:to_i) %>
+        <% @home_hits = @game.home_hits.split("_").map(&:to_i) %>
+        <% @home_rbi = @game.home_RBI.split("_").map(&:to_i) %>
+        <% @home_home_runs = @game.home_home_runs.split("_").map(&:to_i) %>
+        <% @home_walks = @game.home_walks.split("_").map(&:to_i) %>
+        <% @home_strikeouts = @game.home_strikeouts.split("_").map(&:to_i) %>
+        <% for i in 0..8 do %>
+        <% @player = Player.find(@home_lineup[i]) %>
+        <tr>
+          <td><%= link_to @player.full_name, @player, method: :get %></td>
+          <td><%= @home_atbats[i] %></td>
+          <td><%= @home_runs_scored[i] %></td>
+          <td><%= @home_hits[i] %></td>
+          <td><%= @home_rbi[i] %></td>
+          <td><%= @home_home_runs[i] %></td>
+          <td><%= @home_walks[i] %></td>
+          <td><%= @home_strikeouts[i] %></td>
+        </tr>
+        <% end %>
+        <tr>
+          <td><strong>Totals</strong></td>
+          <td><strong><%= @home_atbats.sum %></strong></td>
+          <td><strong><%= @home_runs_scored.sum %></strong></td>
+          <td><strong><%= @home_hits.sum %></strong></td>
+          <td><strong><%= @home_rbi.sum %></strong></td>
+          <td><strong><%= @home_home_runs.sum %></strong></td>
+          <td><strong><%= @home_walks.sum %></strong></td>
+          <td><strong><%= @home_strikeouts.sum %></strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-<p>
-  <strong>Home strikeouts:</strong>
-  <%= @game.home_strikeouts %>
-</p>
+<h2>
+  Pitching
+</h2>
 
-<p>
-  <strong>Home stolen bases:</strong>
-  <%= @game.home_stolen_bases %>
-</p>
+<div id="pitching_box_score">
 
-<p>
-  <strong>Home caught stealing:</strong>
-  <%= @game.home_caught_stealing %>
-</p>
+  <div id="away_team_pitching_box_score">
+    <p>
+      <strong>
+        <%= link_to @away_team.full_name, @away_team, method: :get %>
+      </strong>
+    </p>
+    <table class="table_with_custom_border table-condensed table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>IP</th>
+          <th>H</th>
+          <th>R</th>
+          <th>ER</th>
+          <th>BB</th>
+          <th>K</th>
+          <th>HR</th>
+          <th>PT</th>
+          <th>S</th>
+          <th>B</th>
+        </tr>
+      </thead>
 
-<p>
-  <strong>Home errors:</strong>
-  <%= @game.home_errors %>
-</p>
+      <tbody>
+        <% @away_outs_recorded = @game.away_outs_recorded.split("_").map(&:to_i) %>
+        <% @away_hits_allowed = @game.away_hits_allowed.split("_").map(&:to_i) %>
+        <% @away_runs_allowed = @game.away_runs_allowed.split("_").map(&:to_i) %>
+        <% @away_earned_runs_allowed = @game.away_earned_runs_allowed.split("_").map(&:to_i) %>
+        <% @away_walks_allowed = @game.away_walks_allowed.split("_").map(&:to_i) %>
+        <% @away_strikeouts_recorded = @game.away_strikeouts_recorded.split("_").map(&:to_i) %>
+        <% @away_home_runs_allowed = @game.away_home_runs_allowed.split("_").map(&:to_i) %>
+        <% @away_total_pitches = @game.away_total_pitches.split("_").map(&:to_i) %>
+        <% @away_strikes_thrown = @game.away_strikes_thrown.split("_").map(&:to_i) %>
+        <% @away_balls_thrown = @game.away_balls_thrown.split("_").map(&:to_i) %>
+        <% for i in 0..0 do %>
+        <% @player = Player.find(@away_lineup[i]) %>
+        <tr>
+          <td><%= link_to @player.full_name, @player, method: :get %></td>
+          <td><%= @away_outs_recorded[i]/3 %></td>
+          <td><%= @away_hits_allowed[i] %></td>
+          <td><%= @away_runs_allowed[i] %></td>
+          <td><%= @away_earned_runs_allowed[i] %></td>
+          <td><%= @away_walks_allowed[i] %></td>
+          <td><%= @away_strikeouts_recorded[i] %></td>
+          <td><%= @away_home_runs_allowed[i] %></td>
+          <td><%= @away_total_pitches[i] %></td>
+          <td><%= @away_strikes_thrown[i] %></td>
+          <td><%= @away_balls_thrown[i] %></td>
+        </tr>
+        <% end %>
+        <tr>
+          <td><strong>Totals</strong></td>
+          <td><strong><%= @away_outs_recorded.sum/3 %></strong></td>
+          <td><strong><%= @away_hits_allowed.sum %></strong></td>
+          <td><strong><%= @away_runs_allowed.sum %></strong></td>
+          <td><strong><%= @away_earned_runs_allowed.sum %></strong></td>
+          <td><strong><%= @away_walks_allowed.sum %></strong></td>
+          <td><strong><%= @away_strikeouts_recorded.sum %></strong></td>
+          <td><strong><%= @away_home_runs_allowed.sum %></strong></td>
+          <td><strong><%= @away_total_pitches.sum %></strong></td>
+          <td><strong><%= @away_strikes_thrown.sum %></strong></td>
+          <td><strong><%= @away_balls_thrown.sum %></strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-<p>
-  <strong>Home assists:</strong>
-  <%= @game.home_assists %>
-</p>
+  <div id="home_team_pitching_box_score">
+    <p>
+      <strong>
+        <%= link_to @home_team.full_name, @home_team, method: :get %>
+      </strong>
+    </p>
+    <table class="table_with_custom_border table-condensed table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>IP</th>
+          <th>H</th>
+          <th>R</th>
+          <th>ER</th>
+          <th>BB</th>
+          <th>K</th>
+          <th>HR</th>
+          <th>PT</th>
+          <th>S</th>
+          <th>B</th>
+        </tr>
+      </thead>
 
-<p>
-  <strong>Home putouts:</strong>
-  <%= @game.home_putouts %>
-</p>
+      <tbody>
+        <% @home_outs_recorded = @game.home_outs_recorded.split("_").map(&:to_i) %>
+        <% @home_hits_allowed = @game.home_hits_allowed.split("_").map(&:to_i) %>
+        <% @home_runs_allowed = @game.home_runs_allowed.split("_").map(&:to_i) %>
+        <% @home_earned_runs_allowed = @game.home_earned_runs_allowed.split("_").map(&:to_i) %>
+        <% @home_walks_allowed = @game.home_walks_allowed.split("_").map(&:to_i) %>
+        <% @home_strikeouts_recorded = @game.home_strikeouts_recorded.split("_").map(&:to_i) %>
+        <% @home_home_runs_allowed = @game.home_home_runs_allowed.split("_").map(&:to_i) %>
+        <% @home_total_pitches = @game.home_total_pitches.split("_").map(&:to_i) %>
+        <% @home_strikes_thrown = @game.home_strikes_thrown.split("_").map(&:to_i) %>
+        <% @home_balls_thrown = @game.home_balls_thrown.split("_").map(&:to_i) %>
+        <% for i in 0..0 do %>
+        <% @player = Player.find(@home_lineup[i]) %>
+        <tr>
+          <td><%= link_to @player.full_name, @player, method: :get %></td>
+          <td><%= @home_outs_recorded[i]/3 %></td>
+          <td><%= @home_hits_allowed[i] %></td>
+          <td><%= @home_runs_allowed[i] %></td>
+          <td><%= @home_earned_runs_allowed[i] %></td>
+          <td><%= @home_walks_allowed[i] %></td>
+          <td><%= @home_strikeouts_recorded[i] %></td>
+          <td><%= @home_home_runs_allowed[i] %></td>
+          <td><%= @home_total_pitches[i] %></td>
+          <td><%= @home_strikes_thrown[i] %></td>
+          <td><%= @home_balls_thrown[i] %></td>
+        </tr>
+        <% end %>
+        <tr>
+          <td><strong>Totals</strong></td>
+          <td><strong><%= @home_outs_recorded.sum/3 %></strong></td>
+          <td><strong><%= @home_hits_allowed.sum %></strong></td>
+          <td><strong><%= @home_runs_allowed.sum %></strong></td>
+          <td><strong><%= @home_earned_runs_allowed.sum %></strong></td>
+          <td><strong><%= @home_walks_allowed.sum %></strong></td>
+          <td><strong><%= @home_strikeouts_recorded.sum %></strong></td>
+          <td><strong><%= @home_home_runs_allowed.sum %></strong></td>
+          <td><strong><%= @home_total_pitches.sum %></strong></td>
+          <td><strong><%= @home_strikes_thrown.sum %></strong></td>
+          <td><strong><%= @home_balls_thrown.sum %></strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-<p>
-  <strong>Home chances:</strong>
-  <%= @game.home_chances %>
-</p>
+<style>
+#away_team_box_score {
+  padding-right: 10px;
+}
 
-<p>
-  <strong>Away atbats:</strong>
-  <%= @game.away_atbats %>
-</p>
+#away_team_pitching_box_score {
+  padding-bottom: 7px;
+}
 
-<p>
-  <strong>Away runs scored:</strong>
-  <%= @game.away_runs_scored %>
-</p>
+#batting_box_score {
+  border: 2px solid #476685;
+  border-radius: 5px;
+  padding: 10px;
+  display: inline-flex;
+}
 
-<p>
-  <strong>Away hits:</strong>
-  <%= @game.away_hits %>
-</p>
+#pitching_box_score {
+  border: 2px solid #476685;
+  border-radius: 5px;
+  padding: 10px;
+  display: inline-block;
+}
 
-<p>
-  <strong>Away doubles:</strong>
-  <%= @game.away_doubles %>
-</p>
-
-<p>
-  <strong>Away triples:</strong>
-  <%= @game.away_triples %>
-</p>
-
-<p>
-  <strong>Away home runs:</strong>
-  <%= @game.away_home_runs %>
-</p>
-
-<p>
-  <strong>Away rbi:</strong>
-  <%= @game.away_RBI %>
-</p>
-
-<p>
-  <strong>Away walks:</strong>
-  <%= @game.away_walks %>
-</p>
-
-<p>
-  <strong>Away strikeouts:</strong>
-  <%= @game.away_strikeouts %>
-</p>
-
-<p>
-  <strong>Away caught stealing:</strong>
-  <%= @game.away_caught_stealing %>
-</p>
-
-<p>
-  <strong>Away errors:</strong>
-  <%= @game.away_errors %>
-</p>
-
-<p>
-  <strong>Away assists:</strong>
-  <%= @game.away_assists %>
-</p>
-
-<p>
-  <strong>Away putouts:</strong>
-  <%= @game.away_putouts %>
-</p>
-
-<p>
-  <strong>Away chances:</strong>
-  <%= @game.away_chances %>
-</p>
-
-<p>
-  <strong>Home pitchers:</strong>
-  <%= @game.home_pitchers %>
-</p>
-
-<p>
-  <strong>Away pitchers:</strong>
-  <%= @game.away_pitchers %>
-</p>
-
-<p>
-  <strong>Home innings pitched:</strong>
-  <%= @game.home_innings_pitched %>
-</p>
-
-<p>
-  <strong>Home hits allowed:</strong>
-  <%= @game.home_hits_allowed %>
-</p>
-
-<p>
-  <strong>Home runs allowed:</strong>
-  <%= @game.home_runs_allowed %>
-</p>
-
-<p>
-  <strong>Home earned runs allowed:</strong>
-  <%= @game.home_earned_runs_allowed %>
-</p>
-
-<p>
-  <strong>Home walks allowed:</strong>
-  <%= @game.home_walks_allowed %>
-</p>
-
-<p>
-  <strong>Home strikeouts recorded:</strong>
-  <%= @game.home_strikeouts_recorded %>
-</p>
-
-<p>
-  <strong>Home home runs allowed:</strong>
-  <%= @game.home_home_runs_allowed %>
-</p>
-
-<p>
-  <strong>Home total pitches:</strong>
-  <%= @game.home_total_pitches %>
-</p>
-
-<p>
-  <strong>Home strikes thrown:</strong>
-  <%= @game.home_strikes_thrown %>
-</p>
-
-<p>
-  <strong>Home balls thrown:</strong>
-  <%= @game.home_balls_thrown %>
-</p>
-
-<p>
-  <strong>Home intentional walks allowed:</strong>
-  <%= @game.home_intentional_walks_allowed %>
-</p>
-
-<p>
-  <strong>Away innings pitched:</strong>
-  <%= @game.away_innings_pitched %>
-</p>
-
-<p>
-  <strong>Away hits allowed:</strong>
-  <%= @game.away_hits_allowed %>
-</p>
-
-<p>
-  <strong>Away runs allowed:</strong>
-  <%= @game.away_runs_allowed %>
-</p>
-
-<p>
-  <strong>Away earned runs allowed:</strong>
-  <%= @game.away_earned_runs_allowed %>
-</p>
-
-<p>
-  <strong>Away walks allowed:</strong>
-  <%= @game.away_walks_allowed %>
-</p>
-
-<p>
-  <strong>Away strikeouts recorded:</strong>
-  <%= @game.away_strikeouts_recorded %>
-</p>
-
-<p>
-  <strong>Away home runs allowed:</strong>
-  <%= @game.away_home_runs_allowed %>
-</p>
-
-<p>
-  <strong>Away total pitches:</strong>
-  <%= @game.away_total_pitches %>
-</p>
-
-<p>
-  <strong>Away strikes thrown:</strong>
-  <%= @game.away_strikes_thrown %>
-</p>
-
-<p>
-  <strong>Away balls thrown:</strong>
-  <%= @game.away_balls_thrown %>
-</p>
-
-<p>
-  <strong>Away intentional walks allowed:</strong>
-  <%= @game.away_intentional_walks_allowed %>
-</p>
-
-<p>
-  <strong>Player of the game:</strong>
-  <%= @game.player_of_the_game %>
-</p>
-
-<%= link_to 'Edit', edit_game_path(@game), method: :get %> |
-<%= link_to 'Back', games_path, method: :get %>
+</style>
