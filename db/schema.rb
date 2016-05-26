@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160519205808) do
+ActiveRecord::Schema.define(version: 20160526033034) do
 
   create_table "called_strike_percentages", force: :cascade do |t|
     t.integer "zone_id",                  limit: 4
@@ -71,7 +71,7 @@ ActiveRecord::Schema.define(version: 20160519205808) do
     t.string   "away_chances",                   limit: 255
     t.string   "home_pitchers",                  limit: 255
     t.string   "away_pitchers",                  limit: 255
-    t.string   "home_innings_pitched",           limit: 255
+    t.string   "home_outs_recorded",             limit: 255
     t.string   "home_hits_allowed",              limit: 255
     t.string   "home_runs_allowed",              limit: 255
     t.string   "home_earned_runs_allowed",       limit: 255
@@ -82,7 +82,7 @@ ActiveRecord::Schema.define(version: 20160519205808) do
     t.string   "home_strikes_thrown",            limit: 255
     t.string   "home_balls_thrown",              limit: 255
     t.string   "home_intentional_walks_allowed", limit: 255
-    t.string   "away_innings_pitched",           limit: 255
+    t.string   "away_outs_recorded",             limit: 255
     t.string   "away_hits_allowed",              limit: 255
     t.string   "away_runs_allowed",              limit: 255
     t.string   "away_earned_runs_allowed",       limit: 255
@@ -96,6 +96,7 @@ ActiveRecord::Schema.define(version: 20160519205808) do
     t.integer  "player_of_the_game",             limit: 4
     t.datetime "created_at",                                 null: false
     t.datetime "updated_at",                                 null: false
+    t.string   "away_stolen_bases",              limit: 255
   end
 
   create_table "pitch_locations", force: :cascade do |t|

@@ -109,7 +109,6 @@ class AtBat
   # Batter strikes out
   def strikeout
     @pitcher.records_strikeout
-    @pitcher.records_out(1)
     @batter.strikes_out
     @batter.logs_at_bat
     @over = true
