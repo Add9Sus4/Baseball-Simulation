@@ -1,5 +1,6 @@
 class Player < ActiveRecord::Base
-  attr_accessor :at_bats, :runs_scored, :hits, :doubles, :triples, :home_runs, :rbi, :walks, :strikeouts, :stolen_bases, :caught_stealing, :errors_committed, :assists, :putouts, :chances, :outs_recorded, :hits_allowed, :runs_allowed, :earned_runs_allowed, :walks_allowed, :strikeouts_recorded, :home_runs_allowed, :total_pitches, :strikes_thrown, :balls_thrown, :intentional_walks_allowed
+  attr_accessor :game_atbats, :game_runs_scored, :game_hits, :game_doubles, :game_triples, :game_home_runs, :game_rbi, :game_walks, :game_strikeouts, :game_stolen_bases, :game_caught_stealing, :game_errors_committed, :game_assists, :game_putouts, :game_chances, :game_outs_recorded, :game_hits_allowed, :game_runs_allowed, :game_earned_runs_allowed, :game_walks_allowed, :game_strikeouts_recorded, :game_home_runs_allowed, :game_total_pitches, :game_strikes_thrown, :game_balls_thrown, :game_intentional_walks_allowed
+
 
   validates :team, :first_name, :last_name, :age, :height, :weight, :position, :salary, presence: true
   validates_numericality_of :weight, greater_than_or_equal_to: 160, less_than_or_equal_to: 300
@@ -35,140 +36,140 @@ class Player < ActiveRecord::Base
   end
 
   def set_initial_stats
-    @at_bats = 0
-    @runs_scored = 0
-    @hits = 0
-    @doubles = 0
-    @triples = 0
-    @home_runs = 0
-    @rbi = 0
-    @walks = 0
-    @strikeouts = 0
-    @stolen_bases = 0
-    @caught_stealing = 0
-    @errors_committed = 0
-    @assists = 0
-    @putouts = 0
-    @chances = 0
-    @outs_recorded = 0
-    @hits_allowed = 0
-    @runs_allowed = 0
-    @earned_runs_allowed = 0
-    @walks_allowed = 0
-    @strikeouts_recorded = 0
-    @home_runs_allowed = 0
-    @total_pitches = 0
-    @strikes_thrown = 0
-    @balls_thrown = 0
-    @intentional_walks_allowed = 0
+    @game_atbats = 0
+    @game_runs_scored = 0
+    @game_hits = 0
+    @game_doubles = 0
+    @game_triples = 0
+    @game_home_runs = 0
+    @game_rbi = 0
+    @game_walks = 0
+    @game_strikeouts = 0
+    @game_stolen_bases = 0
+    @game_caught_stealing = 0
+    @game_errors_committed = 0
+    @game_assists = 0
+    @game_putouts = 0
+    @game_chances = 0
+    @game_outs_recorded = 0
+    @game_hits_allowed = 0
+    @game_runs_allowed = 0
+    @game_earned_runs_allowed = 0
+    @game_walks_allowed = 0
+    @game_strikeouts_recorded = 0
+    @game_home_runs_allowed = 0
+    @game_total_pitches = 0
+    @game_strikes_thrown = 0
+    @game_balls_thrown = 0
+    @game_intentional_walks_allowed = 0
   end
 
   def logs_at_bat
-    @at_bats = @at_bats + 1
+    @game_atbats = @game_atbats + 1
   end
 
   def scores
-    @runs_scored = @runs_scored + 1
+    @game_runs_scored = @game_runs_scored + 1
   end
 
   def hits_single
-    @hits = @hits + 1
+    @game_hits = @game_hits + 1
   end
 
   def hits_double
-    @doubles = @doubles + 1
-    @hits = @hits + 1
+    @game_doubles = @game_doubles + 1
+    @game_hits = @game_hits + 1
   end
 
   def hits_triple
-    @triples = @triples + 1
-    @hits = @hits + 1
+    @game_triples = @game_triples + 1
+    @game_hits = @game_hits + 1
   end
 
   def hits_home_run
-    @home_runs = @home_runs + 1
-    @hits = @hits + 1
+    @game_home_runs = @game_home_runs + 1
+    @game_hits = @game_hits + 1
   end
 
   def records_rbi(num_rbi)
-    @rbi = @rbi + num_rbi
+    @game_rbi = @game_rbi + num_rbi
   end
 
   def receives_walk
-    @walks = @walks + 1
+    @game_walks = @game_walks + 1
   end
 
   def strikes_out
-    @strikeouts = @strikeouts + 1
+    @game_strikeouts = @game_strikeouts + 1
   end
 
   def steals_base
-    @stolen_bases = @stolen_bases + 1
+    @game_stolen_bases = @game_stolen_bases + 1
   end
 
   def gets_caught_stealing
-    @caught_stealing = @caught_stealing + 1
+    @game_caught_stealing = @game_caught_stealing + 1
   end
 
   def commits_error
-    @errors_committed = @errors_committed + 1
+    @game_errors_committed = @game_errors_committed + 1
   end
 
   def records_assist
-    @assists = @assists + 1
+    @game_assists = @game_assists + 1
   end
 
   def records_putout
-    @putouts = @putouts + 1
+    @game_putouts = @game_putouts + 1
   end
 
   def records_chance
-    @chances = @chances + 1
+    @game_chances = @game_chances + 1
   end
 
   def records_out(num_outs)
-    @outs_recorded = @outs_recorded + num_outs
+    @game_outs_recorded = @game_outs_recorded + num_outs
   end
 
   def allows_hit
-    @hits_allowed = @hits_allowed + 1
+    @game_hits_allowed = @game_hits_allowed + 1
   end
 
   def allows_unearned_run(num_runs)
-    @runs_allowed = @runs_allowed + num_runs
+    @game_runs_allowed = @game_runs_allowed + num_runs
   end
 
   def allows_earned_run(num_runs)
-    @earned_runs_allowed = @earned_runs_allowed + num_runs
-    @runs_allowed = @runs_allowed + num_runs
+    @game_earned_runs_allowed = @game_earned_runs_allowed + num_runs
+    @game_runs_allowed = @game_runs_allowed + num_runs
   end
 
   def allows_walk
-    @walks_allowed = @walks_allowed + 1
+    @game_walks_allowed = @game_walks_allowed + 1
   end
 
   def records_strikeout
-    @strikeouts_recorded = @strikeouts_recorded + 1
+    @game_strikeouts_recorded = @game_strikeouts_recorded + 1
   end
 
   def allows_home_run
-    @home_runs_allowed = @home_runs_allowed + 1
+    @game_home_runs_allowed = @game_home_runs_allowed + 1
   end
 
   def throws_pitch
-    @total_pitches = @total_pitches + 1
+    @game_total_pitches = @game_total_pitches + 1
   end
 
   def throws_strike
-    @strikes_thrown = @strikes_thrown + 1
+    @game_strikes_thrown = @game_strikes_thrown + 1
   end
 
   def throws_ball
-    @balls_thrown = @balls_thrown + 1
+    @game_balls_thrown = @game_balls_thrown + 1
   end
 
   def allows_intentional_walk
-    @intentional_walks_allowed = @intentional_walks_allowed + 1
+    @game_intentional_walks_allowed = @game_intentional_walks_allowed + 1
   end
 
 end

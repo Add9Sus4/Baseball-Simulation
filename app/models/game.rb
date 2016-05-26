@@ -50,6 +50,120 @@ class Game < ActiveRecord::Base
 
   def collect_stats
 
+    # player stats
+    @home_team.players.each do |player|
+      player.atbats ||= 0
+      player.runs ||= 0
+      player.hits ||= 0
+      player.doubles ||= 0
+      player.triples ||= 0
+      player.home_runs ||= 0
+      player.rbi ||= 0
+      player.walks ||= 0
+      player.strikeouts ||= 0
+      player.stolen_bases ||= 0
+      player.caught_stealing ||= 0
+      player.errors_committed ||= 0
+      player.assists ||= 0
+      player.putouts ||= 0
+      player.chances ||= 0
+      player.outs_recorded ||= 0
+      player.hits_allowed ||= 0
+      player.runs_allowed ||= 0
+      player.earned_runs_allowed ||= 0
+      player.walks_allowed ||= 0
+      player.strikeouts_recorded ||= 0
+      player.home_runs_allowed ||= 0
+      player.total_pitches ||= 0
+      player.strikes_thrown ||= 0
+      player.balls_thrown ||= 0
+      player.intentional_walks_allowed ||= 0
+
+      player.update_attribute(:atbats, player.atbats + player.game_atbats)
+      player.update_attribute(:runs, player.runs + player.game_runs_scored)
+      player.update_attribute(:hits, player.hits + player.game_hits)
+      player.update_attribute(:doubles, player.doubles + player.game_doubles)
+      player.update_attribute(:triples, player.triples + player.game_triples)
+      player.update_attribute(:home_runs, player.home_runs + player.game_home_runs)
+      player.update_attribute(:rbi, player.rbi + player.game_rbi)
+      player.update_attribute(:walks, player.walks + player.game_walks)
+      player.update_attribute(:strikeouts, player.strikeouts + player.game_strikeouts)
+      player.update_attribute(:stolen_bases, player.stolen_bases + player.game_stolen_bases)
+      player.update_attribute(:caught_stealing, player.caught_stealing + player.game_caught_stealing)
+      player.update_attribute(:errors_committed, player.errors_committed + player.game_errors_committed)
+      player.update_attribute(:assists, player.assists + player.game_assists)
+      player.update_attribute(:putouts, player.putouts + player.game_putouts)
+      player.update_attribute(:chances, player.chances + player.game_chances)
+      player.update_attribute(:outs_recorded, player.outs_recorded + player.game_outs_recorded)
+      player.update_attribute(:hits_allowed, player.hits_allowed + player.game_hits_allowed)
+      player.update_attribute(:runs_allowed, player.runs_allowed + player.game_runs_allowed)
+      player.update_attribute(:earned_runs_allowed, player.earned_runs_allowed + player.game_earned_runs_allowed)
+      player.update_attribute(:walks_allowed, player.walks_allowed + player.game_walks_allowed)
+      player.update_attribute(:strikeouts_recorded, player.strikeouts_recorded + player.game_strikeouts_recorded)
+      player.update_attribute(:home_runs_allowed, player.home_runs_allowed + player.game_home_runs_allowed)
+      player.update_attribute(:total_pitches, player.total_pitches + player.game_total_pitches)
+      player.update_attribute(:strikes_thrown, player.strikes_thrown + player.game_strikes_thrown)
+      player.update_attribute(:balls_thrown, player.balls_thrown + player.game_balls_thrown)
+      player.update_attribute(:intentional_walks_allowed, player.intentional_walks_allowed + player.game_intentional_walks_allowed)
+    end
+
+    @away_team.players.each do |player|
+
+      player.atbats ||= 0
+      player.runs ||= 0
+      player.hits ||= 0
+      player.doubles ||= 0
+      player.triples ||= 0
+      player.home_runs ||= 0
+      player.rbi ||= 0
+      player.walks ||= 0
+      player.strikeouts ||= 0
+      player.stolen_bases ||= 0
+      player.caught_stealing ||= 0
+      player.errors_committed ||= 0
+      player.assists ||= 0
+      player.putouts ||= 0
+      player.chances ||= 0
+      player.outs_recorded ||= 0
+      player.hits_allowed ||= 0
+      player.runs_allowed ||= 0
+      player.earned_runs_allowed ||= 0
+      player.walks_allowed ||= 0
+      player.strikeouts_recorded ||= 0
+      player.home_runs_allowed ||= 0
+      player.total_pitches ||= 0
+      player.strikes_thrown ||= 0
+      player.balls_thrown ||= 0
+      player.intentional_walks_allowed ||= 0
+
+      player.update_attribute(:atbats, player.atbats + player.game_atbats)
+      player.update_attribute(:runs, player.runs + player.game_runs_scored)
+      player.update_attribute(:hits, player.hits + player.game_hits)
+      player.update_attribute(:doubles, player.doubles + player.game_doubles)
+      player.update_attribute(:triples, player.triples + player.game_triples)
+      player.update_attribute(:home_runs, player.home_runs + player.game_home_runs)
+      player.update_attribute(:rbi, player.rbi + player.game_rbi)
+      player.update_attribute(:walks, player.walks + player.game_walks)
+      player.update_attribute(:strikeouts, player.strikeouts + player.game_strikeouts)
+      player.update_attribute(:stolen_bases, player.stolen_bases + player.game_stolen_bases)
+      player.update_attribute(:caught_stealing, player.caught_stealing + player.game_caught_stealing)
+      player.update_attribute(:errors_committed, player.errors_committed + player.game_errors_committed)
+      player.update_attribute(:assists, player.assists + player.game_assists)
+      player.update_attribute(:putouts, player.putouts + player.game_putouts)
+      player.update_attribute(:chances, player.chances + player.game_chances)
+      player.update_attribute(:outs_recorded, player.outs_recorded + player.game_outs_recorded)
+      player.update_attribute(:hits_allowed, player.hits_allowed + player.game_hits_allowed)
+      player.update_attribute(:runs_allowed, player.runs_allowed + player.game_runs_allowed)
+      player.update_attribute(:earned_runs_allowed, player.earned_runs_allowed + player.game_earned_runs_allowed)
+      player.update_attribute(:walks_allowed, player.walks_allowed + player.game_walks_allowed)
+      player.update_attribute(:strikeouts_recorded, player.strikeouts_recorded + player.game_strikeouts_recorded)
+      player.update_attribute(:home_runs_allowed, player.home_runs_allowed + player.game_home_runs_allowed)
+      player.update_attribute(:total_pitches, player.total_pitches + player.game_total_pitches)
+      player.update_attribute(:strikes_thrown, player.strikes_thrown + player.game_strikes_thrown)
+      player.update_attribute(:balls_thrown, player.balls_thrown + player.game_balls_thrown)
+      player.update_attribute(:intentional_walks_allowed, player.intentional_walks_allowed + player.game_intentional_walks_allowed)
+    end
+
     # home batting stats
     home_at_bats_string = ""
     home_runs_scored_string = ""
@@ -111,65 +225,66 @@ class Game < ActiveRecord::Base
     away_intentional_walks_allowed_string = ""
 
     for i in 0..8 do
+
       # home batting stats
-      home_at_bats_string = home_at_bats_string + "#{@home_team.find_player_by_lineup_index(i).at_bats}"
-      home_runs_scored_string = home_runs_scored_string + "#{@home_team.find_player_by_lineup_index(i).runs_scored}"
-      home_hits_string = home_hits_string + "#{@home_team.find_player_by_lineup_index(i).hits}"
-      home_doubles_string = home_doubles_string + "#{@home_team.find_player_by_lineup_index(i).doubles}"
-      home_triples_string = home_triples_string + "#{@home_team.find_player_by_lineup_index(i).triples}"
-      home_home_runs_string = home_home_runs_string + "#{@home_team.find_player_by_lineup_index(i).home_runs}"
-      home_RBI_string = home_RBI_string + "#{@home_team.find_player_by_lineup_index(i).rbi}"
-      home_walks_string = home_walks_string + "#{@home_team.find_player_by_lineup_index(i).walks}"
-      home_strikeouts_string = home_strikeouts_string + "#{@home_team.find_player_by_lineup_index(i).strikeouts}"
-      home_stolen_bases_string = home_stolen_bases_string + "#{@home_team.find_player_by_lineup_index(i).stolen_bases}"
-      home_caught_stealing_string = home_caught_stealing_string + "#{@home_team.find_player_by_lineup_index(i).caught_stealing}"
-      home_errors_string = home_errors_string + "#{@home_team.find_player_by_lineup_index(i).errors_committed}"
-      home_assists_string = home_assists_string + "#{@home_team.find_player_by_lineup_index(i).assists}"
-      home_putouts_string = home_putouts_string + "#{@home_team.find_player_by_lineup_index(i).putouts}"
-      home_chances_string = home_chances_string + "#{@home_team.find_player_by_lineup_index(i).chances}"
+      home_at_bats_string = home_at_bats_string + "#{@home_team.find_player_by_lineup_index(i).game_atbats}"
+      home_runs_scored_string = home_runs_scored_string + "#{@home_team.find_player_by_lineup_index(i).game_runs_scored}"
+      home_hits_string = home_hits_string + "#{@home_team.find_player_by_lineup_index(i).game_hits}"
+      home_doubles_string = home_doubles_string + "#{@home_team.find_player_by_lineup_index(i).game_doubles}"
+      home_triples_string = home_triples_string + "#{@home_team.find_player_by_lineup_index(i).game_triples}"
+      home_home_runs_string = home_home_runs_string + "#{@home_team.find_player_by_lineup_index(i).game_home_runs}"
+      home_RBI_string = home_RBI_string + "#{@home_team.find_player_by_lineup_index(i).game_rbi}"
+      home_walks_string = home_walks_string + "#{@home_team.find_player_by_lineup_index(i).game_walks}"
+      home_strikeouts_string = home_strikeouts_string + "#{@home_team.find_player_by_lineup_index(i).game_strikeouts}"
+      home_stolen_bases_string = home_stolen_bases_string + "#{@home_team.find_player_by_lineup_index(i).game_stolen_bases}"
+      home_caught_stealing_string = home_caught_stealing_string + "#{@home_team.find_player_by_lineup_index(i).game_caught_stealing}"
+      home_errors_string = home_errors_string + "#{@home_team.find_player_by_lineup_index(i).game_errors_committed}"
+      home_assists_string = home_assists_string + "#{@home_team.find_player_by_lineup_index(i).game_assists}"
+      home_putouts_string = home_putouts_string + "#{@home_team.find_player_by_lineup_index(i).game_putouts}"
+      home_chances_string = home_chances_string + "#{@home_team.find_player_by_lineup_index(i).game_chances}"
 
       # away batting stats
-      away_at_bats_string = away_at_bats_string + "#{@away_team.find_player_by_lineup_index(i).at_bats}"
-      away_runs_scored_string = away_runs_scored_string + "#{@away_team.find_player_by_lineup_index(i).runs_scored}"
-      away_hits_string = away_hits_string + "#{@away_team.find_player_by_lineup_index(i).hits}"
-      away_doubles_string = away_doubles_string + "#{@away_team.find_player_by_lineup_index(i).doubles}"
-      away_triples_string = away_triples_string + "#{@away_team.find_player_by_lineup_index(i).triples}"
-      away_home_runs_string = away_home_runs_string + "#{@away_team.find_player_by_lineup_index(i).home_runs}"
-      away_RBI_string = away_RBI_string + "#{@away_team.find_player_by_lineup_index(i).rbi}"
-      away_walks_string = away_walks_string + "#{@away_team.find_player_by_lineup_index(i).walks}"
-      away_strikeouts_string = away_strikeouts_string + "#{@away_team.find_player_by_lineup_index(i).strikeouts}"
-      away_stolen_bases_string = away_stolen_bases_string + "#{@away_team.find_player_by_lineup_index(i).stolen_bases}"
-      away_caught_stealing_string = away_caught_stealing_string + "#{@away_team.find_player_by_lineup_index(i).caught_stealing}"
-      away_errors_string = away_errors_string + "#{@away_team.find_player_by_lineup_index(i).errors_committed}"
-      away_assists_string = away_assists_string + "#{@away_team.find_player_by_lineup_index(i).assists}"
-      away_putouts_string = away_putouts_string + "#{@away_team.find_player_by_lineup_index(i).putouts}"
-      away_chances_string = away_chances_string + "#{@away_team.find_player_by_lineup_index(i).chances}"
+      away_at_bats_string = away_at_bats_string + "#{@away_team.find_player_by_lineup_index(i).game_atbats}"
+      away_runs_scored_string = away_runs_scored_string + "#{@away_team.find_player_by_lineup_index(i).game_runs_scored}"
+      away_hits_string = away_hits_string + "#{@away_team.find_player_by_lineup_index(i).game_hits}"
+      away_doubles_string = away_doubles_string + "#{@away_team.find_player_by_lineup_index(i).game_doubles}"
+      away_triples_string = away_triples_string + "#{@away_team.find_player_by_lineup_index(i).game_triples}"
+      away_home_runs_string = away_home_runs_string + "#{@away_team.find_player_by_lineup_index(i).game_home_runs}"
+      away_RBI_string = away_RBI_string + "#{@away_team.find_player_by_lineup_index(i).game_rbi}"
+      away_walks_string = away_walks_string + "#{@away_team.find_player_by_lineup_index(i).game_walks}"
+      away_strikeouts_string = away_strikeouts_string + "#{@away_team.find_player_by_lineup_index(i).game_strikeouts}"
+      away_stolen_bases_string = away_stolen_bases_string + "#{@away_team.find_player_by_lineup_index(i).game_stolen_bases}"
+      away_caught_stealing_string = away_caught_stealing_string + "#{@away_team.find_player_by_lineup_index(i).game_caught_stealing}"
+      away_errors_string = away_errors_string + "#{@away_team.find_player_by_lineup_index(i).game_errors_committed}"
+      away_assists_string = away_assists_string + "#{@away_team.find_player_by_lineup_index(i).game_assists}"
+      away_putouts_string = away_putouts_string + "#{@away_team.find_player_by_lineup_index(i).game_putouts}"
+      away_chances_string = away_chances_string + "#{@away_team.find_player_by_lineup_index(i).game_chances}"
 
       # home pitching stats
-      home_outs_recorded_string = home_outs_recorded_string + "#{@home_team.find_player_by_lineup_index(i).outs_recorded}"
-      home_hits_allowed_string = home_hits_allowed_string + "#{@home_team.find_player_by_lineup_index(i).hits_allowed}"
-      home_runs_allowed_string = home_runs_allowed_string + "#{@home_team.find_player_by_lineup_index(i).runs_allowed}"
-      home_earned_runs_allowed_string = home_earned_runs_allowed_string + "#{@home_team.find_player_by_lineup_index(i).earned_runs_allowed}"
-      home_walks_allowed_string = home_walks_allowed_string + "#{@home_team.find_player_by_lineup_index(i).walks_allowed}"
-      home_strikeouts_recorded_string = home_strikeouts_recorded_string + "#{@home_team.find_player_by_lineup_index(i).strikeouts_recorded}"
-      home_home_runs_allowed_string = home_home_runs_allowed_string + "#{@home_team.find_player_by_lineup_index(i).home_runs_allowed}"
-      home_total_pitches_string = home_total_pitches_string + "#{@home_team.find_player_by_lineup_index(i).total_pitches}"
-      home_strikes_thrown_string = home_strikes_thrown_string + "#{@home_team.find_player_by_lineup_index(i).strikes_thrown}"
-      home_balls_thrown_string = home_balls_thrown_string + "#{@home_team.find_player_by_lineup_index(i).balls_thrown}"
-      home_intentional_walks_allowed_string = home_intentional_walks_allowed_string + "#{@home_team.find_player_by_lineup_index(i).intentional_walks_allowed}"
+      home_outs_recorded_string = home_outs_recorded_string + "#{@home_team.find_player_by_lineup_index(i).game_outs_recorded}"
+      home_hits_allowed_string = home_hits_allowed_string + "#{@home_team.find_player_by_lineup_index(i).game_hits_allowed}"
+      home_runs_allowed_string = home_runs_allowed_string + "#{@home_team.find_player_by_lineup_index(i).game_runs_allowed}"
+      home_earned_runs_allowed_string = home_earned_runs_allowed_string + "#{@home_team.find_player_by_lineup_index(i).game_earned_runs_allowed}"
+      home_walks_allowed_string = home_walks_allowed_string + "#{@home_team.find_player_by_lineup_index(i).game_walks_allowed}"
+      home_strikeouts_recorded_string = home_strikeouts_recorded_string + "#{@home_team.find_player_by_lineup_index(i).game_strikeouts_recorded}"
+      home_home_runs_allowed_string = home_home_runs_allowed_string + "#{@home_team.find_player_by_lineup_index(i).game_home_runs_allowed}"
+      home_total_pitches_string = home_total_pitches_string + "#{@home_team.find_player_by_lineup_index(i).game_total_pitches}"
+      home_strikes_thrown_string = home_strikes_thrown_string + "#{@home_team.find_player_by_lineup_index(i).game_strikes_thrown}"
+      home_balls_thrown_string = home_balls_thrown_string + "#{@home_team.find_player_by_lineup_index(i).game_balls_thrown}"
+      home_intentional_walks_allowed_string = home_intentional_walks_allowed_string + "#{@home_team.find_player_by_lineup_index(i).game_intentional_walks_allowed}"
 
       # away pitching stats
-      away_outs_recorded_string = away_outs_recorded_string + "#{@away_team.find_player_by_lineup_index(i).outs_recorded}"
-      away_hits_allowed_string = away_hits_allowed_string + "#{@away_team.find_player_by_lineup_index(i).hits_allowed}"
-      away_runs_allowed_string = away_runs_allowed_string + "#{@away_team.find_player_by_lineup_index(i).runs_allowed}"
-      away_earned_runs_allowed_string = away_earned_runs_allowed_string + "#{@away_team.find_player_by_lineup_index(i).earned_runs_allowed}"
-      away_walks_allowed_string = away_walks_allowed_string + "#{@away_team.find_player_by_lineup_index(i).walks_allowed}"
-      away_strikeouts_recorded_string = away_strikeouts_recorded_string + "#{@away_team.find_player_by_lineup_index(i).strikeouts_recorded}"
-      away_home_runs_allowed_string = away_home_runs_allowed_string + "#{@away_team.find_player_by_lineup_index(i).home_runs_allowed}"
-      away_total_pitches_string = away_total_pitches_string + "#{@away_team.find_player_by_lineup_index(i).total_pitches}"
-      away_strikes_thrown_string = away_strikes_thrown_string + "#{@away_team.find_player_by_lineup_index(i).strikes_thrown}"
-      away_balls_thrown_string = away_balls_thrown_string + "#{@away_team.find_player_by_lineup_index(i).balls_thrown}"
-      away_intentional_walks_allowed_string = away_intentional_walks_allowed_string + "#{@away_team.find_player_by_lineup_index(i).intentional_walks_allowed}"
+      away_outs_recorded_string = away_outs_recorded_string + "#{@away_team.find_player_by_lineup_index(i).game_outs_recorded}"
+      away_hits_allowed_string = away_hits_allowed_string + "#{@away_team.find_player_by_lineup_index(i).game_hits_allowed}"
+      away_runs_allowed_string = away_runs_allowed_string + "#{@away_team.find_player_by_lineup_index(i).game_runs_allowed}"
+      away_earned_runs_allowed_string = away_earned_runs_allowed_string + "#{@away_team.find_player_by_lineup_index(i).game_earned_runs_allowed}"
+      away_walks_allowed_string = away_walks_allowed_string + "#{@away_team.find_player_by_lineup_index(i).game_walks_allowed}"
+      away_strikeouts_recorded_string = away_strikeouts_recorded_string + "#{@away_team.find_player_by_lineup_index(i).game_strikeouts_recorded}"
+      away_home_runs_allowed_string = away_home_runs_allowed_string + "#{@away_team.find_player_by_lineup_index(i).game_home_runs_allowed}"
+      away_total_pitches_string = away_total_pitches_string + "#{@away_team.find_player_by_lineup_index(i).game_total_pitches}"
+      away_strikes_thrown_string = away_strikes_thrown_string + "#{@away_team.find_player_by_lineup_index(i).game_strikes_thrown}"
+      away_balls_thrown_string = away_balls_thrown_string + "#{@away_team.find_player_by_lineup_index(i).game_balls_thrown}"
+      away_intentional_walks_allowed_string = away_intentional_walks_allowed_string + "#{@away_team.find_player_by_lineup_index(i).game_intentional_walks_allowed}"
 
       if i < 8
         # home batting stats
@@ -299,11 +414,7 @@ class Game < ActiveRecord::Base
     self.update_attributes(home_intentional_walks_allowed: home_intentional_walks_allowed_string)
 
     # play by play
-    puts "setting play by play"
-    # self.update_attributes(pbp: "lol")
-    # self.update_attributes(test: "lol")
     self.update_attributes(play_by_play: @pbp)
-    puts "play by play set"
   end
 
   # Creates instance variables to use in the game

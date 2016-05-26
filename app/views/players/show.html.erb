@@ -123,6 +123,82 @@
   </tbody>
 </table>
 
+<h3>Batting Stats</h3>
+<table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>AB</th>
+      <th>R</th>
+      <th>H</th>
+      <th>2B</th>
+      <th>3B</th>
+      <th>HR</th>
+      <th>RBI</th>
+      <th>BB</th>
+      <th>K</th>
+      <th>SB</th>
+      <th>CS</th>
+      <th>AVG</th>
+      <th>OBP</th>
+      <th>SLG</th>
+      <th>OPS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= @player.atbats %></td>
+      <td><%= @player.runs %></td>
+      <td><%= @player.hits %></td>
+      <td><%= @player.doubles %></td>
+      <td><%= @player.triples %></td>
+      <td><%= @player.home_runs %></td>
+      <td><%= @player.rbi %></td>
+      <td><%= @player.walks %></td>
+      <td><%= @player.strikeouts %></td>
+      <td><%= @player.stolen_bases %></td>
+      <td><%= @player.caught_stealing %></td>
+      <% @avg = @player.hits.to_f/@player.atbats.to_f %>
+      <% @obp = (@player.hits + @player.walks).to_f/(@player.atbats + @player.walks).to_f %>
+      <% @slg = (@player.hits - @player.doubles - @player.triples - @player.home_runs + 2 * @player.doubles + 3 * @player.triples + 4 * @player.home_runs).to_f/@player.atbats.to_f %>
+      <% @ops = @obp + @slg %>
+      <td><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></td>
+      <td><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
+      <td><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
+      <td><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Pitching Stats</h3>
+<table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>IP</th>
+      <th>H</th>
+      <th>R</th>
+      <th>ER</th>
+      <th>HR</th>
+      <th>BB</th>
+      <th>K</th>
+      <th>ERA</th>
+      <th>WHIP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= number_with_precision(@player.outs_recorded.to_f/3, precision: 1) %></td>
+      <td><%= @player.hits_allowed %></td>
+      <td><%= @player.runs_allowed %></td>
+      <td><%= @player.earned_runs_allowed %></td>
+      <td><%= @player.home_runs_allowed %></td>
+      <td><%= @player.walks_allowed %></td>
+      <td><%= @player.strikeouts_recorded %></td>
+      <td><%= number_with_precision(@player.earned_runs_allowed.to_f*27/@player.outs_recorded.to_f, precision: 2) %></td>
+      <td><%= number_with_precision((@player.walks_allowed + @player.hits_allowed).to_f*3/@player.outs_recorded.to_f, precision: 2) %></td>
+    </tr>
+  </tbody>
+</table>
+
 </br>
 
 <script>

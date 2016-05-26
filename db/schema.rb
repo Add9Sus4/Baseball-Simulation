@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160526192915) do
+ActiveRecord::Schema.define(version: 20160526213310) do
 
   create_table "called_strike_percentages", force: :cascade do |t|
     t.integer "zone_id",                  limit: 4
@@ -113,39 +113,65 @@ ActiveRecord::Schema.define(version: 20160526192915) do
   end
 
   create_table "players", force: :cascade do |t|
-    t.integer  "team_id",         limit: 4
-    t.string   "first_name",      limit: 255
-    t.string   "last_name",       limit: 255
-    t.integer  "age",             limit: 4
-    t.integer  "height",          limit: 4
-    t.integer  "weight",          limit: 4
-    t.string   "position",        limit: 255
-    t.integer  "salary",          limit: 4
-    t.integer  "power",           limit: 4
-    t.integer  "contact",         limit: 4
-    t.integer  "speed",           limit: 4
-    t.integer  "patience",        limit: 4
-    t.integer  "plate_vision",    limit: 4
-    t.integer  "pull_amount",     limit: 4
-    t.integer  "uppercut_amount", limit: 4
-    t.integer  "batting_average", limit: 4
-    t.integer  "movement",        limit: 4
-    t.integer  "control",         limit: 4
-    t.integer  "location",        limit: 4
-    t.integer  "agility",         limit: 4
-    t.integer  "reactionTime",    limit: 4
-    t.integer  "armStrength",     limit: 4
-    t.integer  "fieldGrounder",   limit: 4
-    t.integer  "fieldLiner",      limit: 4
-    t.integer  "fieldFlyball",    limit: 4
-    t.integer  "fieldPopup",      limit: 4
-    t.integer  "throwShort",      limit: 4
-    t.integer  "throwMedium",     limit: 4
-    t.integer  "throwLong",       limit: 4
-    t.integer  "intelligence",    limit: 4
-    t.integer  "endurance",       limit: 4
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.integer  "team_id",                   limit: 4
+    t.string   "first_name",                limit: 255
+    t.string   "last_name",                 limit: 255
+    t.integer  "age",                       limit: 4
+    t.integer  "height",                    limit: 4
+    t.integer  "weight",                    limit: 4
+    t.string   "position",                  limit: 255
+    t.integer  "salary",                    limit: 4
+    t.integer  "power",                     limit: 4
+    t.integer  "contact",                   limit: 4
+    t.integer  "speed",                     limit: 4
+    t.integer  "patience",                  limit: 4
+    t.integer  "plate_vision",              limit: 4
+    t.integer  "pull_amount",               limit: 4
+    t.integer  "uppercut_amount",           limit: 4
+    t.integer  "batting_average",           limit: 4
+    t.integer  "movement",                  limit: 4
+    t.integer  "control",                   limit: 4
+    t.integer  "location",                  limit: 4
+    t.integer  "agility",                   limit: 4
+    t.integer  "reactionTime",              limit: 4
+    t.integer  "armStrength",               limit: 4
+    t.integer  "fieldGrounder",             limit: 4
+    t.integer  "fieldLiner",                limit: 4
+    t.integer  "fieldFlyball",              limit: 4
+    t.integer  "fieldPopup",                limit: 4
+    t.integer  "throwShort",                limit: 4
+    t.integer  "throwMedium",               limit: 4
+    t.integer  "throwLong",                 limit: 4
+    t.integer  "intelligence",              limit: 4
+    t.integer  "endurance",                 limit: 4
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+    t.integer  "atbats",                    limit: 4
+    t.integer  "runs",                      limit: 4
+    t.integer  "hits",                      limit: 4
+    t.integer  "doubles",                   limit: 4
+    t.integer  "triples",                   limit: 4
+    t.integer  "home_runs",                 limit: 4
+    t.integer  "rbi",                       limit: 4
+    t.integer  "walks",                     limit: 4
+    t.integer  "strikeouts",                limit: 4
+    t.integer  "stolen_bases",              limit: 4
+    t.integer  "caught_stealing",           limit: 4
+    t.integer  "errors_committed",          limit: 4
+    t.integer  "assists",                   limit: 4
+    t.integer  "putouts",                   limit: 4
+    t.integer  "chances",                   limit: 4
+    t.integer  "outs_recorded",             limit: 4
+    t.integer  "hits_allowed",              limit: 4
+    t.integer  "runs_allowed",              limit: 4
+    t.integer  "earned_runs_allowed",       limit: 4
+    t.integer  "walks_allowed",             limit: 4
+    t.integer  "strikeouts_recorded",       limit: 4
+    t.integer  "home_runs_allowed",         limit: 4
+    t.integer  "total_pitches",             limit: 4
+    t.integer  "strikes_thrown",            limit: 4
+    t.integer  "balls_thrown",              limit: 4
+    t.integer  "intentional_walks_allowed", limit: 4
   end
 
   create_table "swing_percentages", force: :cascade do |t|

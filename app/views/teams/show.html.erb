@@ -57,8 +57,8 @@
 </style>
 
 <h2>
-<%= @team.city %>
-<%= @team.name %>
+  <%= @team.city %>
+  <%= @team.name %>
 </h2>
 <p>
   <%= link_to 'Edit Team Info', edit_team_path(@team), method: :get %> |
@@ -90,59 +90,59 @@
   </p>
 
   <h3 id="lineup_title" data-toggle="tooltip" data-placement="top" title="Drag from roster to set positions.
-                                    Reorder table to set lineup.">Lineup</h3>
+  Reorder table to set lineup.">Lineup</h3>
 
   <div id="view_lineup">
-    </br>
-    <table class="multi-table order table-condensed table-striped table-bordered">
-      <thead>
-        <tr>
-          <th>
-            Order
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <% for i in 1..9 do %>
-        <tr><td><%= i %></td></tr>
-        <% end %>
-      </tbody>
-    </table>
-    <table id="batting_order" class="multi-table lineup table-condensed table-striped table-bordered">
-      <thead>
-        <tr>
-          <th>Position</th>
-          <th>Player</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% for i in 0..8 do %>
-          <tr>
-            <td>
-              <%= @team.find_position(i) %>
-            </td>
-            <td>
-              <span class="hidden_position_name" hidden><%= @team.find_position_name(i) %></span>
-              <span class="hidden_position_index" hidden><%= @team.find_lineup_index(i) %></span>
-                <% if @team.find_player_by_position(i).is_a? Player %>
-                  <%= link_to @team.find_player_by_position(i).full_name, @team.find_player_by_position(i), method: :get %>
-                  <span class="hidden_id" hidden><%= @team.find_player_by_position_id(i) %></span>
-                  <span class="hidden_row_number" hidden><%= "lineup#{(i+1)}" %></span>
-                <% else %>
-                  <%= '--' %>
-                  <span class="hidden_id" hidden><%= nil %></span>
-                  <span class="hidden_row_number" hidden><%= "lineup#{(i+1)}" %></span>
-                <% end %>
-              </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+  </br>
+  <table class="multi-table order table-condensed table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>
+          Order
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for i in 1..9 do %>
+      <tr><td><%= i %></td></tr>
+      <% end %>
+    </tbody>
+  </table>
+  <table id="batting_order" class="multi-table lineup table-condensed table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Position</th>
+        <th>Player</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for i in 0..8 do %>
+      <tr>
+        <td>
+          <%= @team.find_position(i) %>
+        </td>
+        <td>
+          <span class="hidden_position_name" hidden><%= @team.find_position_name(i) %></span>
+          <span class="hidden_position_index" hidden><%= @team.find_lineup_index(i) %></span>
+          <% if @team.find_player_by_position(i).is_a? Player %>
+          <%= link_to @team.find_player_by_position(i).full_name, @team.find_player_by_position(i), method: :get %>
+          <span class="hidden_id" hidden><%= @team.find_player_by_position_id(i) %></span>
+          <span class="hidden_row_number" hidden><%= "lineup#{(i+1)}" %></span>
+          <% else %>
+          <%= '--' %>
+          <span class="hidden_id" hidden><%= nil %></span>
+          <span class="hidden_row_number" hidden><%= "lineup#{(i+1)}" %></span>
+          <% end %>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
 
-  <div id="lineup_changed" hidden>
-    <button id="save_lineup_changes" onclick="saveLineupChanges()">Save Lineup Changes</button>
-  </div>
+<div id="lineup_changed" hidden>
+  <button id="save_lineup_changes" onclick="saveLineupChanges()">Save Lineup Changes</button>
+</div>
 </div>
 
 <div id="roster_div">
@@ -160,19 +160,176 @@
     </thead>
     <tbody>
       <% @team.players.each do |player| %>
-        <tr class="player_row">
-          <td><%= link_to player.full_name, player, method: :get %><span "hidden_id" hidden><%= player.id %></span></td>
-          <td><%= player.age %></td>
-          <td class="height"><%= player.height %></td>
-          <td><%= player.weight %> lb.</td>
-          <td class="position"><%= player.position %></td>
-          <td class="salary"><%= player.salary %></td>
-        </tr>
+      <tr class="player_row">
+        <td><%= link_to player.full_name, player, method: :get %><span "hidden_id" hidden><%= player.id %></span></td>
+        <td><%= player.age %></td>
+        <td class="height"><%= player.height %></td>
+        <td><%= player.weight %> lb.</td>
+        <td class="position"><%= player.position %></td>
+        <td class="salary"><%= player.salary %></td>
+      </tr>
       <% end %>
     </tbody>
   </table>
 </div>
 
+<h3>Batting Stats</h3>
+<table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Player</th>
+      <th>AB</th>
+      <th>R</th>
+      <th>H</th>
+      <th>2B</th>
+      <th>3B</th>
+      <th>HR</th>
+      <th>RBI</th>
+      <th>BB</th>
+      <th>K</th>
+      <th>SB</th>
+      <th>CS</th>
+      <th>AVG</th>
+      <th>OBP</th>
+      <th>SLG</th>
+      <th>OPS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @team.players.each do |player| %>
+    <tr>
+      <td><%= link_to player.full_name, player, method: :get %></td>
+      <td><%= player.atbats %></td>
+      <td><%= player.runs %></td>
+      <td><%= player.hits %></td>
+      <td><%= player.doubles %></td>
+      <td><%= player.triples %></td>
+      <td><%= player.home_runs %></td>
+      <td><%= player.rbi %></td>
+      <td><%= player.walks %></td>
+      <td><%= player.strikeouts %></td>
+      <td><%= player.stolen_bases %></td>
+      <td><%= player.caught_stealing %></td>
+      <% @avg = player.hits.to_f/player.atbats.to_f %>
+      <% @obp = (player.hits + player.walks).to_f/(player.atbats + player.walks).to_f %>
+      <% @slg = (player.hits - player.doubles - player.triples - player.home_runs + 2 * player.doubles + 3 * player.triples + 4 * player.home_runs).to_f/player.atbats.to_f %>
+      <% @ops = @obp + @slg %>
+      <td><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></td>
+      <td><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
+      <td><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
+      <td><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
+    </tr>
+    <% end %>
+    <tr>
+      <% @total_atbats = 0 %>
+      <% @total_runs = 0 %>
+      <% @total_hits = 0 %>
+      <% @total_doubles = 0 %>
+      <% @total_triples = 0 %>
+      <% @total_home_runs = 0 %>
+      <% @total_rbi = 0 %>
+      <% @total_walks = 0 %>
+      <% @total_strikeouts = 0 %>
+      <% @total_stolen_bases = 0 %>
+      <% @total_caught_stealing = 0 %>
+      <% @team.players.each do |player| %>
+      <% @total_atbats += player.atbats %>
+        <% @total_runs += player.runs %>
+        <% @total_hits += player.hits %>
+        <% @total_doubles += player.doubles %>
+        <% @total_triples += player.triples %>
+        <% @total_home_runs += player.home_runs %>
+        <% @total_rbi += player.rbi %>
+        <% @total_walks += player.walks %>
+        <% @total_strikeouts += player.strikeouts %>
+        <% @total_stolen_bases += player.stolen_bases %>
+        <% @total_caught_stealing += player.caught_stealing %>
+      <% end %>
+      <td><strong>Total</strong></td>
+      <td><strong><%= @total_atbats %></strong></td>
+      <td><strong><%= @total_runs %></strong></td>
+      <td><strong><%= @total_hits %></strong></td>
+      <td><strong><%= @total_doubles %></strong></td>
+      <td><strong><%= @total_triples %></strong></td>
+      <td><strong><%= @total_home_runs %></strong></td>
+      <td><strong><%= @total_rbi %></strong></td>
+      <td><strong><%= @total_walks %></strong></td>
+      <td><strong><%= @total_strikeouts %></strong></td>
+      <td><strong><%= @total_stolen_bases %></strong></td>
+      <td><strong><%= @total_caught_stealing %></strong></td>
+      <% @avg = @total_hits.to_f/@total_atbats.to_f %>
+      <% @obp = (@total_hits + @total_walks).to_f/(@total_atbats + @total_walks).to_f %>
+      <% @slg = (@total_hits - @total_doubles - @total_triples - @total_home_runs + 2 * @total_doubles + 3 * @total_triples + 4 * @total_home_runs).to_f/@total_atbats.to_f %>
+      <% @ops = @obp + @slg %>
+      <td><strong><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></strong></td>
+      <td><strong><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></strong></td>
+      <td><strong><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></strong></td>
+      <td><strong><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Pitching Stats</h3>
+<table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Player</th>
+      <th>IP</th>
+      <th>H</th>
+      <th>R</th>
+      <th>ER</th>
+      <th>HR</th>
+      <th>BB</th>
+      <th>K</th>
+      <th>ERA</th>
+      <th>WHIP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @team.players.each do |player| %>
+    <tr>
+      <td><%= link_to player.full_name, player, method: :get %></td>
+      <td><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td>
+      <td><%= player.hits_allowed %></td>
+      <td><%= player.runs_allowed %></td>
+      <td><%= player.earned_runs_allowed %></td>
+      <td><%= player.home_runs_allowed %></td>
+      <td><%= player.walks_allowed %></td>
+      <td><%= player.strikeouts_recorded %></td>
+      <td><%= number_with_precision(player.earned_runs_allowed.to_f*27/player.outs_recorded.to_f, precision: 2) %></td>
+      <td><%= number_with_precision((player.walks_allowed + player.hits_allowed).to_f*3/player.outs_recorded.to_f, precision: 2) %></td>
+    </tr>
+    <% end %>
+    <tr>
+      <% @total_outs_recorded = 0 %>
+      <% @total_hits_allowed = 0 %>
+      <% @total_runs_allowed = 0 %>
+      <% @total_earned_runs_allowed = 0 %>
+      <% @total_home_runs_allowed = 0 %>
+      <% @total_walks_allowed = 0 %>
+      <% @total_strikeouts_recorded = 0 %>
+      <% @team.players.each do |player| %>
+        <% @total_outs_recorded += player.outs_recorded %>
+        <% @total_hits_allowed += player.hits_allowed %>
+        <% @total_runs_allowed += player.runs_allowed %>
+        <% @total_earned_runs_allowed += player.earned_runs_allowed %>
+        <% @total_home_runs_allowed += player.home_runs_allowed %>
+        <% @total_walks_allowed += player.walks_allowed %>
+        <% @total_strikeouts_recorded += player.strikeouts_recorded %>
+      <% end %>
+      <td><strong>Total</strong></td>
+      <td><strong><%= number_with_precision(@total_outs_recorded.to_f/3, precision: 1) %></strong></td>
+      <td><strong><%= @total_hits_allowed %></strong></td>
+      <td><strong><%= @total_runs_allowed %></strong></td>
+      <td><strong><%= @total_earned_runs_allowed %></strong></td>
+      <td><strong><%= @total_home_runs_allowed %></strong></td>
+      <td><strong><%= @total_walks_allowed %></strong></td>
+      <td><strong><%= @total_strikeouts_recorded %></strong></td>
+      <td><strong><%= number_with_precision(@total_earned_runs_allowed.to_f*27/@total_outs_recorded.to_f, precision: 2) %></strong></td>
+      <td><strong><%= number_with_precision((@total_walks_allowed + @total_hits_allowed).to_f*3/@total_outs_recorded.to_f, precision: 2) %></strong></td>
+    </tr>
+  </tbody>
+</table>
 
 <script>
 
@@ -215,18 +372,18 @@ function saveLineupChanges() {
     type: 'PATCH',
     dataType: 'json',
     data: { "team": { "lineup1": lineup_indices[0],
-                      "lineup2": lineup_indices[1],
-                      "lineup3": lineup_indices[2],
-                      "lineup4": lineup_indices[3],
-                      "lineup5": lineup_indices[4],
-                      "lineup6": lineup_indices[5],
-                      "lineup7": lineup_indices[6],
-                      "lineup8": lineup_indices[7],
-                      "lineup9": lineup_indices[8]
-                    }
-          },
-  });
-  $("#lineup_changed").hide();
+    "lineup2": lineup_indices[1],
+    "lineup3": lineup_indices[2],
+    "lineup4": lineup_indices[3],
+    "lineup5": lineup_indices[4],
+    "lineup6": lineup_indices[5],
+    "lineup7": lineup_indices[6],
+    "lineup8": lineup_indices[7],
+    "lineup9": lineup_indices[8]
+  }
+},
+});
+$("#lineup_changed").hide();
 }
 
 $('.position').each(function() {
@@ -234,41 +391,41 @@ $('.position').each(function() {
   var position = '';
   switch (positionSymbol.toLowerCase()) {
     case 'p':
-      $(this).attr('data-value',1);
-      position = 'Pitcher';
-      break;
+    $(this).attr('data-value',1);
+    position = 'Pitcher';
+    break;
     case 'c':
     $(this).attr('data-value',2);
-      position = 'Catcher';
-      break;
+    position = 'Catcher';
+    break;
     case '1b':
-      $(this).attr('data-value',3);
-      position = 'First Base';
-      break;
+    $(this).attr('data-value',3);
+    position = 'First Base';
+    break;
     case '2b':
-      $(this).attr('data-value',4);
-      position = 'Second Base';
-      break;
+    $(this).attr('data-value',4);
+    position = 'Second Base';
+    break;
     case '3b':
-      $(this).attr('data-value',5);
-      position = 'Third Base';
-      break;
+    $(this).attr('data-value',5);
+    position = 'Third Base';
+    break;
     case 'ss':
-      $(this).attr('data-value',6);
-      position = 'Shortstop';
-      break;
+    $(this).attr('data-value',6);
+    position = 'Shortstop';
+    break;
     case 'lf':
-      $(this).attr('data-value',7);
-      position = 'Left Field';
-      break;
+    $(this).attr('data-value',7);
+    position = 'Left Field';
+    break;
     case 'cf':
-      $(this).attr('data-value',8);
-      position = 'Center Field';
-      break;
+    $(this).attr('data-value',8);
+    position = 'Center Field';
+    break;
     case 'rf':
-      $(this).attr('data-value',9);
-      position = 'Right Field';
-      break;
+    $(this).attr('data-value',9);
+    position = 'Right Field';
+    break;
   }
   $(this).text(position);
 });
