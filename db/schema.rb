@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160526213310) do
+ActiveRecord::Schema.define(version: 20160528221757) do
 
   create_table "called_strike_percentages", force: :cascade do |t|
     t.integer "zone_id",                  limit: 4
@@ -172,6 +172,78 @@ ActiveRecord::Schema.define(version: 20160526213310) do
     t.integer  "strikes_thrown",            limit: 4
     t.integer  "balls_thrown",              limit: 4
     t.integer  "intentional_walks_allowed", limit: 4
+    t.integer  "zone_1_pitches",            limit: 4
+    t.integer  "zone_2_pitches",            limit: 4
+    t.integer  "zone_3_pitches",            limit: 4
+    t.integer  "zone_4_pitches",            limit: 4
+    t.integer  "zone_5_pitches",            limit: 4
+    t.integer  "zone_6_pitches",            limit: 4
+    t.integer  "zone_7_pitches",            limit: 4
+    t.integer  "zone_8_pitches",            limit: 4
+    t.integer  "zone_9_pitches",            limit: 4
+    t.integer  "zone_10_pitches",           limit: 4
+    t.integer  "zone_11_pitches",           limit: 4
+    t.integer  "zone_12_pitches",           limit: 4
+    t.integer  "zone_13_pitches",           limit: 4
+    t.integer  "zone_14_pitches",           limit: 4
+    t.integer  "zone_15_pitches",           limit: 4
+    t.integer  "zone_16_pitches",           limit: 4
+    t.integer  "zone_17_pitches",           limit: 4
+    t.integer  "zone_18_pitches",           limit: 4
+    t.integer  "zone_19_pitches",           limit: 4
+    t.integer  "zone_20_pitches",           limit: 4
+    t.integer  "zone_21_pitches",           limit: 4
+    t.integer  "zone_22_pitches",           limit: 4
+    t.integer  "zone_23_pitches",           limit: 4
+    t.integer  "zone_24_pitches",           limit: 4
+    t.integer  "zone_25_pitches",           limit: 4
+    t.integer  "zone_26_pitches",           limit: 4
+    t.integer  "zone_27_pitches",           limit: 4
+    t.integer  "zone_28_pitches",           limit: 4
+    t.integer  "zone_29_pitches",           limit: 4
+    t.integer  "zone_30_pitches",           limit: 4
+    t.integer  "zone_31_pitches",           limit: 4
+    t.integer  "zone_32_pitches",           limit: 4
+    t.integer  "zone_33_pitches",           limit: 4
+    t.integer  "zone_34_pitches",           limit: 4
+    t.integer  "zone_35_pitches",           limit: 4
+    t.integer  "zone_36_pitches",           limit: 4
+    t.integer  "zone_37_pitches",           limit: 4
+    t.integer  "zone_38_pitches",           limit: 4
+    t.integer  "zone_39_pitches",           limit: 4
+    t.integer  "zone_40_pitches",           limit: 4
+    t.integer  "zone_41_pitches",           limit: 4
+    t.integer  "zone_42_pitches",           limit: 4
+    t.integer  "zone_43_pitches",           limit: 4
+    t.integer  "zone_44_pitches",           limit: 4
+    t.integer  "zone_45_pitches",           limit: 4
+    t.integer  "zone_46_pitches",           limit: 4
+    t.integer  "zone_47_pitches",           limit: 4
+    t.integer  "zone_48_pitches",           limit: 4
+    t.integer  "zone_49_pitches",           limit: 4
+    t.integer  "zone_50_pitches",           limit: 4
+    t.integer  "zone_51_pitches",           limit: 4
+    t.integer  "zone_52_pitches",           limit: 4
+    t.integer  "zone_53_pitches",           limit: 4
+    t.integer  "zone_54_pitches",           limit: 4
+    t.integer  "zone_55_pitches",           limit: 4
+    t.integer  "zone_56_pitches",           limit: 4
+    t.integer  "zone_57_pitches",           limit: 4
+    t.integer  "zone_58_pitches",           limit: 4
+    t.integer  "zone_59_pitches",           limit: 4
+    t.integer  "zone_60_pitches",           limit: 4
+    t.integer  "zone_61_pitches",           limit: 4
+    t.integer  "zone_62_pitches",           limit: 4
+    t.integer  "zone_63_pitches",           limit: 4
+    t.integer  "zone_64_pitches",           limit: 4
+    t.integer  "zone_65_pitches",           limit: 4
+    t.integer  "zone_66_pitches",           limit: 4
+    t.integer  "zone_67_pitches",           limit: 4
+    t.integer  "zone_68_pitches",           limit: 4
+    t.integer  "zone_69_pitches",           limit: 4
+    t.integer  "zone_70_pitches",           limit: 4
+    t.integer  "zone_71_pitches",           limit: 4
+    t.integer  "zone_72_pitches",           limit: 4
   end
 
   create_table "swing_percentages", force: :cascade do |t|

@@ -1,5 +1,7 @@
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<%= stylesheet_link_tag "jquery-ui.min", 'data-turbolinks-track' => true %>
+<%= javascript_include_tag "jquery-ui.min", 'data-turbolinks-track' => true %>
 <%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
 <%= javascript_include_tag 'moment.min', 'data-turbolinks-track' => true %>
 <%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
@@ -7,6 +9,9 @@
 <style>
   .table_with_custom_border > thead > tr > th {
     padding-right: 18px;
+  }
+  .ui-tooltip-content {
+    font-size:8pt;
   }
 </style>
 
@@ -27,6 +32,21 @@
       <th>Weight</th>
       <th>Position</th>
       <th>Salary</th>
+      <th class="tooltip_enable" title="At-bats">AB</th>
+      <th class="tooltip_enable" title="Runs scored">R</th>
+      <th class="tooltip_enable" title="Hits">H</th>
+      <th class="tooltip_enable" title="Doubles">2B</th>
+      <th class="tooltip_enable" title="Triples">3B</th>
+      <th class="tooltip_enable" title="Home runs">HR</th>
+      <th class="tooltip_enable" title="Runs batted in">RBI</th>
+      <th class="tooltip_enable" title="Walks">BB</th>
+      <th class="tooltip_enable" title="Strikeouts">K</th>
+      <th class="tooltip_enable" title="Stolen bases">SB</th>
+      <th class="tooltip_enable" title="Caught stealing">CS</th>
+      <th class="tooltip_enable" title="Batting average">AVG</th>
+      <th class="tooltip_enable" title="On-base percentage">OBP</th>
+      <th class="tooltip_enable" title="Slugging percentage">SLG</th>
+      <th class="tooltip_enable" title="On-base plus slugging percentage">OPS</th>
     </tr>
   </thead>
   <tbody>
@@ -39,6 +59,25 @@
         <td><%= player.weight %> lb.</td>
         <td class="position"><%= player.position %></td>
         <td class="salary"><%= number_to_currency(player.salary) %></td>
+        <td><%= player.atbats %></td>
+        <td><%= player.runs %></td>
+        <td><%= player.hits %></td>
+        <td><%= player.doubles %></td>
+        <td><%= player.triples %></td>
+        <td><%= player.home_runs %></td>
+        <td><%= player.rbi %></td>
+        <td><%= player.walks %></td>
+        <td><%= player.strikeouts %></td>
+        <td><%= player.stolen_bases %></td>
+        <td><%= player.caught_stealing %></td>
+        <% @avg = player.hits.to_f/player.atbats.to_f %>
+        <% @obp = (player.hits + player.walks).to_f/(player.atbats + player.walks).to_f %>
+        <% @slg = (player.hits - player.doubles - player.triples - player.home_runs + 2 * player.doubles + 3 * player.triples + 4 * player.home_runs).to_f/player.atbats.to_f %>
+        <% @ops = @obp + @slg %>
+        <td><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></td>
+        <td><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
+        <td><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
+        <td><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
       </tr>
     <% end %>
   </tbody>
@@ -54,6 +93,14 @@
 </style>
 
 <script>
+
+$(function() {
+  $(".tooltip_enable").tooltip({
+    show: {
+      delay: 250
+    }
+  });
+});
 
 $('.salary').each(function() {
   $(this).attr('data-value',salaryToInteger($(this).text()));

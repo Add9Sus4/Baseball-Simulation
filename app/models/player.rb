@@ -1,12 +1,11 @@
 class Player < ActiveRecord::Base
-  attr_accessor :game_atbats, :game_runs_scored, :game_hits, :game_doubles, :game_triples, :game_home_runs, :game_rbi, :game_walks, :game_strikeouts, :game_stolen_bases, :game_caught_stealing, :game_errors_committed, :game_assists, :game_putouts, :game_chances, :game_outs_recorded, :game_hits_allowed, :game_runs_allowed, :game_earned_runs_allowed, :game_walks_allowed, :game_strikeouts_recorded, :game_home_runs_allowed, :game_total_pitches, :game_strikes_thrown, :game_balls_thrown, :game_intentional_walks_allowed
+  attr_accessor :zone_pitches_thrown, :game_atbats, :game_runs_scored, :game_hits, :game_doubles, :game_triples, :game_home_runs, :game_rbi, :game_walks, :game_strikeouts, :game_stolen_bases, :game_caught_stealing, :game_errors_committed, :game_assists, :game_putouts, :game_chances, :game_outs_recorded, :game_hits_allowed, :game_runs_allowed, :game_earned_runs_allowed, :game_walks_allowed, :game_strikeouts_recorded, :game_home_runs_allowed, :game_total_pitches, :game_strikes_thrown, :game_balls_thrown, :game_intentional_walks_allowed
 
 
   validates :team, :first_name, :last_name, :age, :height, :weight, :position, :salary, presence: true
   validates_numericality_of :weight, greater_than_or_equal_to: 160, less_than_or_equal_to: 300
   validate :team_cannot_have_more_than_max_players
   belongs_to :team
-
 
 
   def team_cannot_have_more_than_max_players
@@ -62,6 +61,7 @@ class Player < ActiveRecord::Base
     @game_strikes_thrown = 0
     @game_balls_thrown = 0
     @game_intentional_walks_allowed = 0
+    @zone_pitches_thrown = Array.new(72, 0)
   end
 
   def logs_at_bat
@@ -156,7 +156,8 @@ class Player < ActiveRecord::Base
     @game_home_runs_allowed = @game_home_runs_allowed + 1
   end
 
-  def throws_pitch
+  def throws_pitch(zone_number)
+    @zone_pitches_thrown[zone_number - 1] += 1
     @game_total_pitches = @game_total_pitches + 1
   end
 
@@ -170,6 +171,17 @@ class Player < ActiveRecord::Base
 
   def allows_intentional_walk
     @game_intentional_walks_allowed = @game_intentional_walks_allowed + 1
+  end
+
+  # determines the maximum number of pitches thrown in any zone
+  def max_zone_pitches
+    max = 0
+    for i in 1..72 do
+      if self["zone_#{i}_pitches".to_sym] > max
+        max = self["zone_#{i}_pitches".to_sym]
+      end
+    end
+    max
   end
 
 end

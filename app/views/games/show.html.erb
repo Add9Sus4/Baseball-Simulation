@@ -30,13 +30,14 @@
 <% end %>
 <% @game_display += " " + @away_team_runs.to_s %>
 <% if @home_team_runs > @away_team_runs %>
-  <% @title = @home_team.name  + " defeat the " + @away_team.name + ", " + @home_team_runs.to_s + " to " + @away_team_runs.to_s %>
-<% else %>
-  <% @title = @away_team.name  + " defeat the " + @home_team.name + ", " + @away_team_runs.to_s + " to " + @home_team_runs.to_s %>
-<% end %>
 <p>
-  <h3><%= @title %></h3>
+  <h3><%= link_to @home_team.name, @home_team, method: :get %> defeat the <%= link_to @away_team.name, @away_team, method: :get %>, <%= @home_team_runs.to_s %> to <%= @away_team_runs.to_s %></h3>
 </p>
+<% else %>
+<p>
+  <h3><%= link_to @away_team.name, @away_team, method: :get %> defeat the <%= link_to @home_team.name, @home_team, method: :get %>, <%= @away_team_runs.to_s %> to <%= @home_team_runs.to_s %></h3>
+</p>
+<% end %>
 
 <div id="line_score">
   <% @away_line_score = @game.away_inning_scores.split("_").map(&:to_i) %>
@@ -56,7 +57,7 @@
 
     <tbody>
       <tr>
-        <td><%= @away_team.name %></td>
+        <td><%= link_to @away_team.name, @away_team, method: :get %></td>
         <% for i in 1..@away_line_score.length do %>
           <td><%= @away_line_score[i-1] %></td>
         <% end %>
@@ -68,7 +69,7 @@
         <td><%= @away_errors.sum %></td>
       </tr>
       <tr>
-        <td><%= @home_team.name %></td>
+        <td><%= link_to @home_team.name, @home_team, method: :get %></td>
         <% for i in 1..@home_line_score.length  do %>
           <td><%= @home_line_score[i-1] %></td>
         <% end %>

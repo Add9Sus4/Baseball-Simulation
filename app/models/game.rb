@@ -1,3 +1,10 @@
+# If we access the database every time we want to reference a heat map value,
+# then a game takes roughly 90 seconds to simulate.
+# If we load the heat maps first and then simulate the game, the total duration
+# is 65 seconds. Since loading the heat maps takes roughly 60 seconds, the game
+# simulation only takes 5 seconds to complete with the heat maps loaded into
+# memory. Therefore, game simulation runs almost 20 times faster if all the
+# heat maps are loaded into a hash before the game begins
 class Game < ActiveRecord::Base
   validate :teams_must_be_different
   attr_accessor :pbp, :bad, :good, :home_team, :away_team, :pitch_locations, :heat_maps, :inning_status, :inning_number, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score, :home_team_inning_scores, :away_team_inning_scores, :over
@@ -105,6 +112,9 @@ class Game < ActiveRecord::Base
       player.update_attribute(:strikes_thrown, player.strikes_thrown + player.game_strikes_thrown)
       player.update_attribute(:balls_thrown, player.balls_thrown + player.game_balls_thrown)
       player.update_attribute(:intentional_walks_allowed, player.intentional_walks_allowed + player.game_intentional_walks_allowed)
+      for i in 1..72 do
+        player.update_attribute("zone_#{i}_pitches".to_sym, player["zone_#{i}_pitches".to_sym] + player.zone_pitches_thrown[i-1])
+      end
     end
 
     @away_team.players.each do |player|
@@ -162,6 +172,9 @@ class Game < ActiveRecord::Base
       player.update_attribute(:strikes_thrown, player.strikes_thrown + player.game_strikes_thrown)
       player.update_attribute(:balls_thrown, player.balls_thrown + player.game_balls_thrown)
       player.update_attribute(:intentional_walks_allowed, player.intentional_walks_allowed + player.game_intentional_walks_allowed)
+      for i in 1..72 do
+        player.update_attribute("zone_#{i}_pitches".to_sym, player["zone_#{i}_pitches".to_sym] + player.zone_pitches_thrown[i-1])
+      end
     end
 
     # home batting stats
@@ -435,14 +448,17 @@ class Game < ActiveRecord::Base
     end
 
     # heat map data
-    @called_strike_percentages = CalledStrikePercentage.all
-    @contact_percentages = ContactPercentage.all
-    @pitch_locations = PitchLocation.all
-    @swing_percentages = SwingPercentage.all
-    @heat_maps = {:called_strike_percentages => @called_strike_percentages,
-                  :contact_percentages => @contact_percentages,
-                  :pitch_locations => @pitch_locations,
-                  :swing_percentages => @swing_percentages}
+    # @called_strike_percentages = CalledStrikePercentage.all
+    # @contact_percentages = ContactPercentage.all
+    # @pitch_locations = PitchLocation.all
+    # @swing_percentages = SwingPercentage.all
+    # @heat_maps = {:called_strike_percentages => @called_strike_percentages,
+    #               :contact_percentages => @contact_percentages,
+    #               :pitch_locations => @pitch_locations,
+    #               :swing_percentages => @swing_percentages}
+
+    # heat maps
+    # @heat_maps = HeatMap.new
 
     # stadium data
     self.stadium_name = @home_team.stadium

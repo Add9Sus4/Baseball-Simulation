@@ -1,5 +1,5 @@
 class Pitch
-  attr_accessor :heat_maps, :location, :swing_percentage, :contact_percentage, :called_strike_percentage
+  attr_accessor :heat_maps, :location, :swing_percentage, :contact_percentage, :called_strike_percentage, :location_type
   def initialize(pitcher, batter, balls, strikes, heat_maps)
     @pitcher = pitcher
     @batter = batter
@@ -8,23 +8,28 @@ class Pitch
     @heat_maps = heat_maps
     # Calculate pitch location (which zone it will be in)
     @location = determine_location(rand(), "LEFT", "RIGHT", @balls, @strikes, "FA")
+    @location_type = determine_location_type("RIGHT", @location)
     # Will batter swing?
     @swing_percentage = determine_swing_percentage(@location, "LEFT", "RIGHT", @balls, @strikes, "FA")
     # Will batter make contact?
     @contact_percentage = determine_contact_percentage(@location, "LEFT", "RIGHT", @balls, @strikes, "FA")
     # Will the pitch be called a strike?
     @called_strike_percentage = determine_called_strike_percentage(@location, "LEFT", "RIGHT", @balls, @strikes, "FA")
-    @pitcher.throws_pitch
+    @pitcher.throws_pitch(@location)
   end
 
   # Retrieve called strike percentage
   def determine_called_strike_percentage(zone_id, pitcher_hand, batter_hand, balls, strikes, pitch_type)
-    @heat_maps[:called_strike_percentages].where(zone_id: zone_id, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
+    key = "#{zone_id}_#{pitcher_hand}_#{batter_hand}_#{balls}_#{strikes}_#{pitch_type}"
+    @heat_maps.called_strike_percentages[key]
+    # @heat_maps[:called_strike_percentages].where(zone_id: zone_id, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
   end
 
   # Retrieve contact percentage
   def determine_contact_percentage(zone_id, pitcher_hand, batter_hand, balls, strikes, pitch_type)
-    @heat_maps[:contact_percentages].where(zone_id: zone_id, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
+    key = "#{zone_id}_#{pitcher_hand}_#{batter_hand}_#{balls}_#{strikes}_#{pitch_type}"
+    @heat_maps.contact_percentages[key]
+    # @heat_maps[:contact_percentages].where(zone_id: zone_id, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
   end
 
   # Retrieve pitch location (which zone the pitch will be in)
@@ -35,7 +40,9 @@ class Pitch
     sum = 0
     # Get the pitch location percentages for each zone
     72.times do
-      zone_percentages[count] = @heat_maps[:pitch_locations].where(zone_id: count, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
+      key = "#{count}_#{pitcher_hand}_#{batter_hand}_#{balls}_#{strikes}_#{pitch_type}"
+      zone_percentages[count] = @heat_maps.pitch_locations[key]
+      # zone_percentages[count] = @heat_maps[:pitch_locations].where(zone_id: count, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
       sum += zone_percentages[count]
       count = count + 1
     end
@@ -51,8 +58,82 @@ class Pitch
     count - 1 # Return the correct zone
   end
 
+  # Given the zone_number of the pitch and the batter's handedness, determine the pitch location type (as defined in PitchLocationType)
+  def determine_location_type(batter_hand, zone_number)
+    case zone_number
+    # If the pitch is a ball
+    when 1
+      batter_hand == "LEFT" ? PitchLocationType::WAY_HIGH_AND_OUTSIDE : PitchLocationType::WAY_HIGH_AND_INSIDE
+    when 2
+      PitchLocationType::WAY_HIGH
+    when 3
+      batter_hand == "LEFT" ? PitchLocationType::WAY_HIGH_AND_INSIDE : PitchLocationType::WAY_HIGH_AND_OUTSIDE
+    when 4, 5, 12
+      batter_hand == "LEFT" ? PitchLocationType::JUST_HIGH_AND_OUTSIDE : PitchLocationType::JUST_HIGH_AND_INSIDE
+    when 6..9
+      PitchLocationType::JUST_HIGH
+    when 10, 11, 19
+      batter_hand == "LEFT" ? PitchLocationType::JUST_HIGH_AND_INSIDE : PitchLocationType::JUST_HIGH_AND_OUTSIDE
+    when 28
+      batter_hand == "LEFT" ? PitchLocationType::WAY_OUTSIDE : PitchLocationType::WAY_INSIDE
+    when 20, 29, 38, 46
+      batter_hand == "LEFT" ? PitchLocationType::JUST_OUTSIDE : PitchLocationType::JUST_INSIDE
+    when 27, 36, 45, 53
+      batter_hand == "LEFT" ? PitchLocationType::JUST_INSIDE : PitchLocationType::JUST_OUTSIDE
+    when 37
+      batter_hand == "LEFT" ? PitchLocationType::WAY_INSIDE : PitchLocationType::WAY_OUTSIDE
+    when 70
+      batter_hand == "LEFT" ? PitchLocationType::WAY_LOW_AND_OUTSIDE : PitchLocationType::WAY_LOW_AND_INSIDE
+    when 54, 62, 63
+      batter_hand == "LEFT" ? PitchLocationType::JUST_LOW_AND_OUTSIDE : PitchLocationType::JUST_LOW_AND_INSIDE
+    when 64..67
+      PitchLocationType::JUST_LOW
+    when 61, 68, 69
+      batter_hand == "LEFT" ? PitchLocationType::JUST_LOW_AND_INSIDE : PitchLocationType::JUST_LOW_AND_OUTSIDE
+    when 72
+      batter_hand == "LEFT" ? PitchLocationType::WAY_LOW_AND_INSIDE : PitchLocationType::WAY_LOW_AND_OUTSIDE
+    # If the pitch is a strike
+    when 13, 14, 21
+      batter_hand == "LEFT" ? PitchLocationType::AT_THE_LETTERS_ON_THE_OUTSIDE_CORNER : PitchLocationType::AT_THE_LETTERS_ON_THE_INSIDE_CORNER
+    when 15, 16
+      PitchLocationType::AT_THE_LETTERS
+    when 17, 18, 26
+      batter_hand == "LEFT" ? PitchLocationType::AT_THE_LETTERS_ON_THE_INSIDE_CORNER : PitchLocationType::AT_THE_LETTERS_ON_THE_OUTSIDE_CORNER
+    when 30, 39
+      batter_hand == "LEFT" ? PitchLocationType::ON_THE_OUTSIDE_CORNER : PitchLocationType::ON_THE_INSIDE_CORNER
+    when 35, 44
+      batter_hand == "LEFT" ? PitchLocationType::ON_THE_INSIDE_CORNER : PitchLocationType::ON_THE_OUTSIDE_CORNER
+    when 47, 55, 56
+      batter_hand == "LEFT" ? PitchLocationType::AT_THE_KNEES_ON_THE_OUTSIDE_CORNER : PitchLocationType::AT_THE_KNEES_ON_THE_INSIDE_CORNER
+    when 57, 58
+      PitchLocationType::AT_THE_KNEES
+    when 52, 59, 60
+      batter_hand == "LEFT" ? PitchLocationType::AT_THE_KNEES_ON_THE_INSIDE_CORNER : PitchLocationType::AT_THE_KNEES_ON_THE_OUTSIDE_CORNER
+    when 22
+      batter_hand == "LEFT" ? PitchLocationType::ON_THE_UPPER_OUTER_HALF : PitchLocationType::ON_THE_UPPER_INNER_HALF
+    when 25
+      batter_hand == "LEFT" ? PitchLocationType::ON_THE_UPPER_INNER_HALF : PitchLocationType::ON_THE_UPPER_OUTER_HALF
+    when 48
+      batter_hand == "LEFT" ? PitchLocationType::ON_THE_LOWER_OUTER_HALF : PitchLocationType::ON_THE_LOWER_INNER_HALF
+    when 51
+      batter_hand == "LEFT" ? PitchLocationType::ON_THE_LOWER_INNER_HALF : PitchLocationType::ON_THE_LOWER_OUTER_HALF
+    when 23, 24
+      PitchLocationType::ON_THE_UPPER_HALF
+    when 49, 50
+      PitchLocationType::ON_THE_LOWER_HALF
+    when 31, 40
+      batter_hand == "LEFT" ? PitchLocationType::ON_THE_OUTER_HALF : PitchLocationType::ON_THE_INNER_HALF
+    when 34, 43
+      batter_hand == "LEFT" ? PitchLocationType::ON_THE_INNER_HALF : PitchLocationType::ON_THE_OUTER_HALF
+    when 32, 33, 41, 42
+      PitchLocationType::DOWN_THE_MIDDLE
+    end
+  end
+
   # Retrieve swing percentage
   def determine_swing_percentage(zone_id, pitcher_hand, batter_hand, balls, strikes, pitch_type)
-    @heat_maps[:swing_percentages].where(zone_id: zone_id, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
+    key = "#{zone_id}_#{pitcher_hand}_#{batter_hand}_#{balls}_#{strikes}_#{pitch_type}"
+    @heat_maps.swing_percentages[key]
+    # @heat_maps[:swing_percentages].where(zone_id: zone_id, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
   end
 end

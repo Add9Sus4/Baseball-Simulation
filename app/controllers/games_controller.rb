@@ -24,20 +24,27 @@ class GamesController < ApplicationController
   # POST /games
   # POST /games.json
   def create
+    @heat_maps = HeatMap.new
+    49.times do
     @game = Game.new(game_params)
+    # Play game here
+      @game.heat_maps = @heat_maps
+      @game.play
+    end
 
-    # Play game here, then do stuff like @game.home_hits = 7 to update the
-    # stats before submitting to the database. This should be done in the model
-    @game.play
 
+    # respond_to do |format|
+    #   if @game.save
+    #     format.html { redirect_to @game, notice: 'Game was successfully created.' }
+    #     format.json { render :show, status: :created, location: @game }
+    #   else
+    #     format.html { render :new }
+    #     format.json { render json: @game.errors, status: :unprocessable_entity }
+    #   end
+    # end
     respond_to do |format|
-      if @game.save
-        format.html { redirect_to @game, notice: 'Game was successfully created.' }
-        format.json { render :show, status: :created, location: @game }
-      else
-        format.html { render :new }
-        format.json { render json: @game.errors, status: :unprocessable_entity }
-      end
+      format.html { redirect_to @game, notice: 'Game was successfully created.' }
+      format.json { render :show, status: :created, location: @game }
     end
   end
 

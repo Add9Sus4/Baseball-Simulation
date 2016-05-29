@@ -9,6 +9,14 @@
 
 <style>
 
+.ui-tooltip-content {
+  font-size:8pt;
+}
+
+.ui-tooltip {
+  max-width: 800px;
+}
+
 .order {
   float: left;
   border-top: 4px solid #54708C;
@@ -178,21 +186,21 @@
   <thead>
     <tr>
       <th>Player</th>
-      <th>AB</th>
-      <th>R</th>
-      <th>H</th>
-      <th>2B</th>
-      <th>3B</th>
-      <th>HR</th>
-      <th>RBI</th>
-      <th>BB</th>
-      <th>K</th>
-      <th>SB</th>
-      <th>CS</th>
-      <th>AVG</th>
-      <th>OBP</th>
-      <th>SLG</th>
-      <th>OPS</th>
+      <th class="tooltip_enable" title="At-bats">AB</th>
+      <th class="tooltip_enable" title="Runs scored">R</th>
+      <th class="tooltip_enable" title="Hits">H</th>
+      <th class="tooltip_enable" title="Doubles">2B</th>
+      <th class="tooltip_enable" title="Triples">3B</th>
+      <th class="tooltip_enable" title="Home runs">HR</th>
+      <th class="tooltip_enable" title="Runs batted in">RBI</th>
+      <th class="tooltip_enable" title="Walks">BB</th>
+      <th class="tooltip_enable" title="Strikeouts">K</th>
+      <th class="tooltip_enable" title="Stolen bases">SB</th>
+      <th class="tooltip_enable" title="Caught stealing">CS</th>
+      <th class="tooltip_enable" title="Batting average">AVG</th>
+      <th class="tooltip_enable" title="On-base percentage">OBP</th>
+      <th class="tooltip_enable" title="Slugging percentage">SLG</th>
+      <th class="tooltip_enable" title="On-base plus slugging percentage">OPS</th>
     </tr>
   </thead>
   <tbody>
@@ -274,21 +282,24 @@
   <thead>
     <tr>
       <th>Player</th>
-      <th>IP</th>
-      <th>H</th>
-      <th>R</th>
-      <th>ER</th>
-      <th>HR</th>
-      <th>BB</th>
-      <th>K</th>
-      <th>ERA</th>
-      <th>WHIP</th>
+      <th class="tooltip_enable" title="Innings pitched">IP</th>
+      <th class="tooltip_enable" title="Hits allowed">H</th>
+      <th class="tooltip_enable" title="Runs allowed">R</th>
+      <th class="tooltip_enable" title="Earned runs allowed">ER</th>
+      <th class="tooltip_enable" title="Home runs allowed">HR</th>
+      <th class="tooltip_enable" title="Walks">BB</th>
+      <th class="tooltip_enable" title="Strikeouts recorded">K</th>
+      <th class="tooltip_enable" title="Earned run average">ERA</th>
+      <th class="tooltip_enable" title="Walks plus hits per inning pitched">WHIP</th>
     </tr>
   </thead>
   <tbody>
     <% @team.players.each do |player| %>
     <tr>
-      <td><%= link_to player.full_name, player, method: :get %></td>
+      <td title="" class="player_link tooltip_enable">
+        <span hidden="true" class="player_id_span"><%= player.id %></span>
+        <%= link_to player.full_name, player, method: :get %>
+      </td>
       <td><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td>
       <td><%= player.hits_allowed %></td>
       <td><%= player.runs_allowed %></td>
@@ -296,8 +307,8 @@
       <td><%= player.home_runs_allowed %></td>
       <td><%= player.walks_allowed %></td>
       <td><%= player.strikeouts_recorded %></td>
-      <td><%= number_with_precision(player.earned_runs_allowed.to_f*27/player.outs_recorded.to_f, precision: 2) %></td>
-      <td><%= number_with_precision((player.walks_allowed + player.hits_allowed).to_f*3/player.outs_recorded.to_f, precision: 2) %></td>
+      <td><%= number_with_precision(zero_if_nan(player.earned_runs_allowed.to_f*27/player.outs_recorded.to_f), precision: 2) %></td>
+      <td><%= number_with_precision(zero_if_nan((player.walks_allowed + player.hits_allowed).to_f*3/player.outs_recorded.to_f), precision: 2) %></td>
     </tr>
     <% end %>
     <tr>
@@ -325,18 +336,73 @@
       <td><strong><%= @total_home_runs_allowed %></strong></td>
       <td><strong><%= @total_walks_allowed %></strong></td>
       <td><strong><%= @total_strikeouts_recorded %></strong></td>
-      <td><strong><%= number_with_precision(@total_earned_runs_allowed.to_f*27/@total_outs_recorded.to_f, precision: 2) %></strong></td>
-      <td><strong><%= number_with_precision((@total_walks_allowed + @total_hits_allowed).to_f*3/@total_outs_recorded.to_f, precision: 2) %></strong></td>
+      <td><strong><%= number_with_precision(zero_if_nan(@total_earned_runs_allowed.to_f*27/@total_outs_recorded.to_f), precision: 2) %></strong></td>
+      <td><strong><%= number_with_precision(zero_if_nan((@total_walks_allowed + @total_hits_allowed).to_f*3/@total_outs_recorded.to_f), precision: 2) %></strong></td>
     </tr>
   </tbody>
 </table>
 
 <script>
 
+$(function() {
+  $(".tooltip_enable").tooltip({
+    show: {
+      delay: 250
+    },
+    content: function () {
+              return $(this).prop('title');
+    }
+  });
+});
+
+$('.player_link').mouseenter(function() {
+  var link = $(this);
+  var id = $(this).find("span").text();
+  var name = "";
+  $.ajax({
+    url: '/players/' + id,
+    type: 'GET',
+    dataType: 'json',
+    complete: function(jqXHR, textStatus) {
+      console.log("complete");
+    },
+    success: function (data, textStatus, jqXHR) {
+      console.log(data);
+      console.log(data.id);
+      link.attr('title', function() {
+        var div = $("<div></div>");
+        var table = $("<table></table>").addClass('table-condensed table-striped table-bordered table-responsive');
+        div.append(table);
+        var thead = $("<thead></thead>");
+        var row1 = $('<tr></tr>');
+        var headings = ['Power','Contact','Speed','Patience','Plate Vision','Pull Amount','Uppercut Amount','Batting Average'];
+        for (i=0; i<headings.length; i++) {
+          var heading_cell = $('<td></td>').text(headings[i]);
+          row1.append(heading_cell);
+        }
+        thead.append(row1);
+        table.append(thead);
+        var tbody = $("<tbody></tbody>");
+        var row2 = $('<tr></tr>');
+        var values = [data.power, data.contact, data.speed, data.patience, data.plate_vision, data.pull_amount, data.uppercut_amount, data.batting_average];
+        for (i=0; i<headings.length; i++) {
+          var body_cell = $('<td></td>').text(values[i]);
+          row2.append(body_cell);
+        }
+        tbody.append(row2);
+        table.append(tbody);
+        return div.html();
+      });
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.log("error");
+    }
+  });
+});
+
 var initial_player_ids;
 
 $(document).ready(function() {
-  $('#lineup_title').tooltip();
 
   initial_player_ids = $.map($(".lineup tbody").find("tr"), function(element) {
     return $(element).find("td span.hidden_position_index").text();

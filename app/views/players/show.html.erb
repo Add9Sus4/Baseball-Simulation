@@ -1,5 +1,8 @@
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
 <p id="notice"><%= notice %></p>
 
@@ -53,14 +56,14 @@
 <table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
   <thead>
     <tr>
-      <th>Power</th>
-      <th>Contact</th>
-      <th>Speed</th>
-      <th>Patience</th>
-      <th>Plate Vision</th>
-      <th>Pull Amount</th>
-      <th>Uppercut Amount</th>
-      <th>Batting Average</th>
+      <th class="tooltip_enable" title="How far this player is able to hit the ball">Power</th>
+      <th class="tooltip_enable" title="How well this player makes contact with the ball">Contact</th>
+      <th class="tooltip_enable" title="How fast this player can run">Speed</th>
+      <th class="tooltip_enable" title="How aggressive this player is at the plate">Patience</th>
+      <th class="tooltip_enable" title="How well this player can tell balls from strikes">Plate Vision</th>
+      <th class="tooltip_enable" title="How much this player tends to pull the ball">Pull Amount</th>
+      <th class="tooltip_enable" title="How much this player tends to hit the ball in the air instead of on the ground">Uppercut Amount</th>
+      <th class="tooltip_enable" title="How often this player makes solid contact">Batting Average</th>
     </tr>
   </thead>
   <tbody>
@@ -82,9 +85,9 @@
 <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
   <thead>
     <tr>
-      <th>Pitch Movement</th>
-      <th>Pitch Control</th>
-      <th>Pitch Location</th>
+      <th class="tooltip_enable" title="How well this player can make a pitch deviate from its expected path">Pitch Movement</th>
+      <th class="tooltip_enable" title="How well this player can throw strikes instead of balls">Pitch Control</th>
+      <th class="tooltip_enable" title="How well this player can hit a specific location with a pitch">Pitch Location</th>
     </tr>
   </thead>
   <tbody>
@@ -101,13 +104,13 @@
 <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
   <thead>
     <tr>
-      <th>Agility</th>
-      <th>Reaction Time</th>
-      <th>Arm Strength</th>
-      <th>Fielding</th>
-      <th>Throwing</th>
-      <th>Intelligence</th>
-      <th>Endurance</th>
+      <th class="tooltip_enable" title="How well this player can make quick, sudden movements">Agility</th>
+      <th class="tooltip_enable" title="How quickly this player reacts to a play">Reaction Time</th>
+      <th class="tooltip_enable" title="How far this player can throw">Arm Strength</th>
+      <th class="tooltip_enable" title="How well this player can field the ball">Fielding</th>
+      <th class="tooltip_enable" title="How accurately this player can throw the ball">Throwing</th>
+      <th class="tooltip_enable" title="How often this player makes the right decision for a given play">Intelligence</th>
+      <th class="tooltip_enable" title="How quickly this player gets tired">Endurance</th>
     </tr>
   </thead>
   <tbody>
@@ -127,21 +130,21 @@
 <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
   <thead>
     <tr>
-      <th>AB</th>
-      <th>R</th>
-      <th>H</th>
-      <th>2B</th>
-      <th>3B</th>
-      <th>HR</th>
-      <th>RBI</th>
-      <th>BB</th>
-      <th>K</th>
-      <th>SB</th>
-      <th>CS</th>
-      <th>AVG</th>
-      <th>OBP</th>
-      <th>SLG</th>
-      <th>OPS</th>
+      <th class="tooltip_enable" title="At-bats">AB</th>
+      <th class="tooltip_enable" title="Runs scored">R</th>
+      <th class="tooltip_enable" title="Hits">H</th>
+      <th class="tooltip_enable" title="Doubles">2B</th>
+      <th class="tooltip_enable" title="Triples">3B</th>
+      <th class="tooltip_enable" title="Home runs">HR</th>
+      <th class="tooltip_enable" title="Runs batted in">RBI</th>
+      <th class="tooltip_enable" title="Walks">BB</th>
+      <th class="tooltip_enable" title="Strikeouts">K</th>
+      <th class="tooltip_enable" title="Stolen bases">SB</th>
+      <th class="tooltip_enable" title="Caught stealing">CS</th>
+      <th class="tooltip_enable" title="Batting average">AVG</th>
+      <th class="tooltip_enable" title="On-base percentage">OBP</th>
+      <th class="tooltip_enable" title="Slugging percentage">SLG</th>
+      <th class="tooltip_enable" title="On-base plus slugging percentage">OPS</th>
     </tr>
   </thead>
   <tbody>
@@ -173,15 +176,15 @@
 <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
   <thead>
     <tr>
-      <th>IP</th>
-      <th>H</th>
-      <th>R</th>
-      <th>ER</th>
-      <th>HR</th>
-      <th>BB</th>
-      <th>K</th>
-      <th>ERA</th>
-      <th>WHIP</th>
+      <th class="tooltip_enable" title="Innings pitched">IP</th>
+      <th class="tooltip_enable" title="Hits allowed">H</th>
+      <th class="tooltip_enable" title="Runs allowed">R</th>
+      <th class="tooltip_enable" title="Earned runs allowed">ER</th>
+      <th class="tooltip_enable" title="Home runs allowed">HR</th>
+      <th class="tooltip_enable" title="Walks allowed">BB</th>
+      <th class="tooltip_enable" title="Strikeouts recorded">K</th>
+      <th class="tooltip_enable" title="Earned run average">ERA</th>
+      <th class="tooltip_enable" title="Walks plus hits per inning pitched">WHIP</th>
     </tr>
   </thead>
   <tbody>
@@ -193,15 +196,145 @@
       <td><%= @player.home_runs_allowed %></td>
       <td><%= @player.walks_allowed %></td>
       <td><%= @player.strikeouts_recorded %></td>
-      <td><%= number_with_precision(@player.earned_runs_allowed.to_f*27/@player.outs_recorded.to_f, precision: 2) %></td>
-      <td><%= number_with_precision((@player.walks_allowed + @player.hits_allowed).to_f*3/@player.outs_recorded.to_f, precision: 2) %></td>
+      <td><%= number_with_precision(zero_if_nan(@player.earned_runs_allowed.to_f*27/@player.outs_recorded.to_f), precision: 2) %></td>
+      <td><%= number_with_precision(zero_if_nan((@player.walks_allowed + @player.hits_allowed).to_f*3/@player.outs_recorded.to_f), precision: 2) %></td>
     </tr>
   </tbody>
 </table>
-
+<h3>Pitch Locations</h3>
+<br/>
+<table id="pitch_locations_table">
+  <thead>
+  </thead>
+  <tbody>
+    <% for i in 0..9 do %>
+    <tr><% for j in 1..10 do %>
+      <td class="pitch_location_percentage tooltip_enable" title="<%= @player["zone_#{table_index_to_zone(i*10 + j)}_pitches".to_sym] %> total pitches thrown in this zone." width="50" height="50" style="text-align:center">
+        <span class="num_pitches" hidden="true">
+          <%= @player["zone_#{table_index_to_zone(i*10 + j)}_pitches".to_sym] %>
+        </span>
+        <span class="max_pitches" hidden="true">
+          <%= @player.max_zone_pitches.to_f %>
+        </span>
+      </td>
+    <% end %></tr>
+    <% end %>
+  </tbody>
+</table>
 </br>
 
+<style media="screen">
+.ui-tooltip-content {
+  font-size:8pt;
+}
+
+#pitch_locations_table {
+  position: relative;
+  border-collapse: separate;
+  border:3px solid white;
+  border-radius: 5px;
+}
+
+#pitch_locations_table:after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: black;
+  border-radius: 5px;
+  z-index: -1;
+}
+
+</style>
+
 <script>
+
+$("#pitch_locations_table > tbody > tr").each(function() {
+  $(this).find("td").each(function(index) {
+      if (index % 2 == 0) {
+        // $(this).text("okay");
+      }
+  });
+});
+
+$('.pitch_location_percentage').hover(
+  function() {
+    $(this).find(".num_pitches").fadeIn();
+  },
+  function() {
+    $(this).find(".num_pitches").fadeOut();
+  }
+);
+
+$('.pitch_location_percentage').each(function(index) {
+  var num_pitches = $(this).find('.num_pitches').text();
+  var max_pitches = $(this).find('.max_pitches').text();
+  var percent = num_pitches/max_pitches;
+  var red;
+  var blue;
+  var green;
+  green = 0;
+  blue = 0;
+  red = percent*255;
+  var rgb = "rgb(" + Math.floor(red) + "," + Math.floor(green) + "," + Math.floor(blue) + ")";
+  $(this).css({"background-color":rgb});
+  $(this).css({"color":"white"});
+  var borderColor = "#668099";
+  var strikeZoneColor = "#c2a3a3";
+  if (index == 3 || index == 7 || index == 93 || index == 97) {
+    $(this).css({"border-left":"1px solid " + borderColor});
+  }
+  if (index == 20 || index == 60 || index == 29 || index == 69) {
+    $(this).css({"border-bottom":"1px solid " + borderColor});
+  }
+  if (index % 10 != 0 && index % 10 != 9 && (index < 72 || (index > 77 && index < 90))) {
+    $(this).css({"border-bottom":"1px solid " + borderColor});
+  }
+  if (index % 10 != 0 && index % 10 != 8 && index > 10 && index < 90) {
+    $(this).css({"border-left":"1px solid  " + borderColor});
+  }
+  if (index == 18 || index == 88) {
+    $(this).css({"border-left":"1px solid  " + borderColor});
+  }
+  if (index > 11 && index < 18) {
+    $(this).css({"border-bottom":"2px solid " + strikeZoneColor});
+  }
+  if (index > 21 && index < 28) {
+    $(this).css({"border-top":"2px solid " + strikeZoneColor});
+  }
+  if (index > 71 && index < 78) {
+    $(this).css({"border-bottom":"2px solid " + strikeZoneColor});
+  }
+  if (index > 81 && index < 88) {
+    $(this).css({"border-top":"2px solid " + strikeZoneColor});
+  }
+  if (index == 21 || index == 31 || index == 41
+    || index == 51 || index == 61 || index == 71 ) {
+    $(this).css({"border-right":"2px solid " + strikeZoneColor});
+  }
+  if (index == 22 || index == 32 || index == 42
+    || index == 52 || index == 62 || index == 72 ) {
+    $(this).css({"border-left":"2px solid " + strikeZoneColor});
+  }
+  if (index == 28 || index == 38 || index == 48
+    || index == 58 || index == 68 || index == 78 ) {
+    $(this).css({"border-left":"2px solid " + strikeZoneColor});
+  }
+  if (index == 27 || index == 37 || index == 47
+    || index == 57 || index == 67 || index == 77 ) {
+    $(this).css({"border-right":"2px solid " + strikeZoneColor});
+  }
+});
+
+$(function() {
+  $(".tooltip_enable").tooltip({
+    show: {
+      delay: 250
+    }
+  });
+});
 
   $('.hotcold').each(function() {
     var val = $(this).text();

@@ -15,24 +15,31 @@
     <% @games.each do |game| %>
     <% @home_team_runs = game.home_runs_scored.split("_").map(&:to_i).sum %>
     <% @away_team_runs = game.away_runs_scored.split("_").map(&:to_i).sum %>
-      <tr>
-        <% @game_display = "" %>
-          <% if game.home_team_id != nil %>
-          <% @game_display += Team.find(game.home_team_id).name %>
+    <tr>
+      <% @game_display = "" %>
+      <% if game.home_team_id != nil %>
+        <% if @home_team_runs > @away_team_runs %>
+          <% @game_display += "<strong>" + Team.find(game.home_team_id).name + " " + @home_team_runs.to_s + "</strong>" %>
+        <% else %>
+          <% @game_display += Team.find(game.home_team_id).name + " " + @home_team_runs.to_s %>
         <% end %>
-        <% @game_display += " " + @home_team_runs.to_s + ", " %>
-        <% if game.away_team_id != nil %>
-          <% @game_display += Team.find(game.away_team_id).name %>
+      <% end %>
+      <% @game_display += ", " %>
+      <% if game.away_team_id != nil %>
+        <% if @away_team_runs > @home_team_runs %>
+          <% @game_display += "<strong>" + Team.find(game.away_team_id).name + " " + @away_team_runs.to_s + "</strong>" %>
+        <% else %>
+          <% @game_display += Team.find(game.away_team_id).name + " " + @away_team_runs.to_s %>
         <% end %>
-        <% @game_display += " " + @away_team_runs.to_s %>
-        <% if game.home_inning_scores != nil %>
-          <% @num_innings = game.home_inning_scores.split("_").map(&:to_i).length %>
-          <% if @num_innings > 9 %>
-            <% @game_display += " (F/" + @num_innings.to_s + ")" %>
-          <% end %>
+      <% end %>
+      <% if game.home_inning_scores != nil %>
+        <% @num_innings = game.home_inning_scores.split("_").map(&:to_i).length %>
+        <% if @num_innings > 9 %>
+          <% @game_display += " (F/" + @num_innings.to_s + ")" %>
         <% end %>
-        <td><%= link_to @game_display, game, method: :get %></td>
-      </tr>
+      <% end %>
+      <td><%= link_to simple_format(@game_display), game, method: :get %></td>
+    </tr>
     <% end %>
   </tbody>
 </table>
