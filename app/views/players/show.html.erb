@@ -173,6 +173,7 @@
 </table>
 
 <h3>Pitching Stats</h3>
+</br>
 <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
   <thead>
     <tr>
@@ -190,19 +191,19 @@
   <tbody>
     <tr>
       <td><%= number_with_precision(@player.outs_recorded.to_f/3, precision: 1) %></td>
-      <td><%= @player.hits_allowed %></td>
+      <td class="tooltip_enable" title="<%= number_with_precision(@player.hits_allowed.to_f*27/@player.outs_recorded.to_f, precision: 2) %> H/9"><%= @player.hits_allowed %></td>
       <td><%= @player.runs_allowed %></td>
-      <td><%= @player.earned_runs_allowed %></td>
-      <td><%= @player.home_runs_allowed %></td>
-      <td><%= @player.walks_allowed %></td>
-      <td><%= @player.strikeouts_recorded %></td>
+      <td class="tooltip_enable"><%= @player.earned_runs_allowed %></td>
+      <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(@player.home_runs_allowed.to_f*27/@player.outs_recorded.to_f, precision: 2) %> HR/9"><%= @player.home_runs_allowed %></td>
+      <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(@player.walks_allowed.to_f*27/@player.outs_recorded.to_f, precision: 2) %> BB/9"><%= @player.walks_allowed %></td>
+      <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(@player.strikeouts_recorded.to_f*27/@player.outs_recorded.to_f, precision: 2) %> K/9"><%= @player.strikeouts_recorded %></td>
       <td><%= number_with_precision(zero_if_nan(@player.earned_runs_allowed.to_f*27/@player.outs_recorded.to_f), precision: 2) %></td>
       <td><%= number_with_precision(zero_if_nan((@player.walks_allowed + @player.hits_allowed).to_f*3/@player.outs_recorded.to_f), precision: 2) %></td>
     </tr>
   </tbody>
 </table>
 <h3>Pitch Locations</h3>
-<br/>
+<br/><br/>
 <table id="pitch_locations_table">
   <thead>
   </thead>
@@ -231,7 +232,7 @@
 #pitch_locations_table {
   position: relative;
   border-collapse: separate;
-  border:3px solid white;
+  border:3px solid #9cb3c9;
   border-radius: 5px;
 }
 
@@ -275,14 +276,14 @@ $('.pitch_location_percentage').each(function(index) {
   var red;
   var blue;
   var green;
-  green = 0;
-  blue = 0;
-  red = percent*255;
+  green = (1-percent)*25;
+  blue = (1-percent)*50;
+  red = percent*200;
   var rgb = "rgb(" + Math.floor(red) + "," + Math.floor(green) + "," + Math.floor(blue) + ")";
   $(this).css({"background-color":rgb});
   $(this).css({"color":"white"});
   var borderColor = "#668099";
-  var strikeZoneColor = "#c2a3a3";
+  var strikeZoneColor = "#a37575";
   if (index == 3 || index == 7 || index == 93 || index == 97) {
     $(this).css({"border-left":"1px solid " + borderColor});
   }

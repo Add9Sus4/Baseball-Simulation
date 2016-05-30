@@ -155,21 +155,28 @@
 
 <div id="roster_div">
   <h3>Roster</h3>
-  <table class="table_with_custom_border roster sortable">
+  <table class="table_with_custom_border roster">
     <thead>
       <tr>
         <th>Name</th>
         <th>Age</th>
         <th>Height</th>
         <th>Weight</th>
-        <th id="position_column_header" data-defaultsort="asc">Natural Position</th>
+        <th id="position_column_header">Natural Position</th>
         <th>Salary</th>
       </tr>
     </thead>
     <tbody>
       <% @team.players.each do |player| %>
       <tr class="player_row">
-        <td><%= link_to player.full_name, player, method: :get %><span "hidden_id" hidden><%= player.id %></span></td>
+        <td>
+          <% if @team.is_in_starting_lineup(player.id) %>
+          <strong><%= link_to player.full_name + @team.find_position_of_player(player.id), player, method: :get %></strong>
+          <% else %>
+          <%= link_to player.full_name + @team.find_position_of_player(player.id), player, method: :get %>
+          <% end %>
+          <span "hidden_id" hidden><%= player.id %></span>
+        </td>
         <td><%= player.age %></td>
         <td class="height"><%= player.height %></td>
         <td><%= player.weight %> lb.</td>
@@ -242,16 +249,16 @@
       <% @total_caught_stealing = 0 %>
       <% @team.players.each do |player| %>
       <% @total_atbats += player.atbats %>
-        <% @total_runs += player.runs %>
-        <% @total_hits += player.hits %>
-        <% @total_doubles += player.doubles %>
-        <% @total_triples += player.triples %>
-        <% @total_home_runs += player.home_runs %>
-        <% @total_rbi += player.rbi %>
-        <% @total_walks += player.walks %>
-        <% @total_strikeouts += player.strikeouts %>
-        <% @total_stolen_bases += player.stolen_bases %>
-        <% @total_caught_stealing += player.caught_stealing %>
+      <% @total_runs += player.runs %>
+      <% @total_hits += player.hits %>
+      <% @total_doubles += player.doubles %>
+      <% @total_triples += player.triples %>
+      <% @total_home_runs += player.home_runs %>
+      <% @total_rbi += player.rbi %>
+      <% @total_walks += player.walks %>
+      <% @total_strikeouts += player.strikeouts %>
+      <% @total_stolen_bases += player.stolen_bases %>
+      <% @total_caught_stealing += player.caught_stealing %>
       <% end %>
       <td><strong>Total</strong></td>
       <td><strong><%= @total_atbats %></strong></td>
@@ -320,13 +327,13 @@
       <% @total_walks_allowed = 0 %>
       <% @total_strikeouts_recorded = 0 %>
       <% @team.players.each do |player| %>
-        <% @total_outs_recorded += player.outs_recorded %>
-        <% @total_hits_allowed += player.hits_allowed %>
-        <% @total_runs_allowed += player.runs_allowed %>
-        <% @total_earned_runs_allowed += player.earned_runs_allowed %>
-        <% @total_home_runs_allowed += player.home_runs_allowed %>
-        <% @total_walks_allowed += player.walks_allowed %>
-        <% @total_strikeouts_recorded += player.strikeouts_recorded %>
+      <% @total_outs_recorded += player.outs_recorded %>
+      <% @total_hits_allowed += player.hits_allowed %>
+      <% @total_runs_allowed += player.runs_allowed %>
+      <% @total_earned_runs_allowed += player.earned_runs_allowed %>
+      <% @total_home_runs_allowed += player.home_runs_allowed %>
+      <% @total_walks_allowed += player.walks_allowed %>
+      <% @total_strikeouts_recorded += player.strikeouts_recorded %>
       <% end %>
       <td><strong>Total</strong></td>
       <td><strong><%= number_with_precision(@total_outs_recorded.to_f/3, precision: 1) %></strong></td>
@@ -342,6 +349,47 @@
   </tbody>
 </table>
 
+<h3>Games</h3>
+<table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Game</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% Game.where("home_team_id = ? OR away_team_id =?", @team.id, @team.id).each do |game| %>
+    <% @home_team_runs = game.home_runs_scored.split("_").map(&:to_i).sum %>
+    <% @away_team_runs = game.away_runs_scored.split("_").map(&:to_i).sum %>
+    <tr>
+      <% @game_display = "" %>
+      <% if game.home_team_id != nil %>
+      <% if @home_team_runs > @away_team_runs %>
+      <% @game_display += "<strong>" + Team.find(game.home_team_id).name + " " + @home_team_runs.to_s + "</strong>" %>
+      <% else %>
+      <% @game_display += Team.find(game.home_team_id).name + " " + @home_team_runs.to_s %>
+      <% end %>
+      <% end %>
+      <% @game_display += ", " %>
+      <% if game.away_team_id != nil %>
+      <% if @away_team_runs > @home_team_runs %>
+      <% @game_display += "<strong>" + Team.find(game.away_team_id).name + " " + @away_team_runs.to_s + "</strong>" %>
+      <% else %>
+      <% @game_display += Team.find(game.away_team_id).name + " " + @away_team_runs.to_s %>
+      <% end %>
+      <% end %>
+      <% if game.home_inning_scores != nil %>
+      <% @num_innings = game.home_inning_scores.split("_").map(&:to_i).length %>
+      <% if @num_innings > 9 %>
+      <% @game_display += " (F/" + @num_innings.to_s + ")" %>
+      <% end %>
+      <% end %>
+      <td><%= link_to simple_format(@game_display), game, method: :get %></td>
+    </tr>
+
+    <% end %>
+  </tbody>
+</table>
+
 <script>
 
 $(function() {
@@ -350,11 +398,12 @@ $(function() {
       delay: 250
     },
     content: function () {
-              return $(this).prop('title');
+      return $(this).prop('title');
     }
   });
 });
 
+// Displays batting attribute on mouseenter action for player link
 $('.player_link').mouseenter(function() {
   var link = $(this);
   var id = $(this).find("span").text();
@@ -452,75 +501,78 @@ function saveLineupChanges() {
 $("#lineup_changed").hide();
 }
 
-$('.position').each(function() {
-  var positionSymbol = $(this).text();
-  var position = '';
-  switch (positionSymbol.toLowerCase()) {
-    case 'p':
-    $(this).attr('data-value',1);
-    position = 'Pitcher';
-    break;
-    case 'c':
-    $(this).attr('data-value',2);
-    position = 'Catcher';
-    break;
-    case '1b':
-    $(this).attr('data-value',3);
-    position = 'First Base';
-    break;
-    case '2b':
-    $(this).attr('data-value',4);
-    position = 'Second Base';
-    break;
-    case '3b':
-    $(this).attr('data-value',5);
-    position = 'Third Base';
-    break;
-    case 'ss':
-    $(this).attr('data-value',6);
-    position = 'Shortstop';
-    break;
-    case 'lf':
-    $(this).attr('data-value',7);
-    position = 'Left Field';
-    break;
-    case 'cf':
-    $(this).attr('data-value',8);
-    position = 'Center Field';
-    break;
-    case 'rf':
-    $(this).attr('data-value',9);
-    position = 'Right Field';
-    break;
-  }
-  $(this).text(position);
-});
+function formatData() {
+  $('.position').each(function() {
+    var positionSymbol = $(this).text();
+    var position = '';
+    switch (positionSymbol.toLowerCase()) {
+      case 'p':
+      $(this).attr('data-value',1);
+      position = 'Pitcher';
+      break;
+      case 'c':
+      $(this).attr('data-value',2);
+      position = 'Catcher';
+      break;
+      case '1b':
+      $(this).attr('data-value',3);
+      position = 'First Base';
+      break;
+      case '2b':
+      $(this).attr('data-value',4);
+      position = 'Second Base';
+      break;
+      case '3b':
+      $(this).attr('data-value',5);
+      position = 'Third Base';
+      break;
+      case 'ss':
+      $(this).attr('data-value',6);
+      position = 'Shortstop';
+      break;
+      case 'lf':
+      $(this).attr('data-value',7);
+      position = 'Left Field';
+      break;
+      case 'cf':
+      $(this).attr('data-value',8);
+      position = 'Center Field';
+      break;
+      case 'rf':
+      $(this).attr('data-value',9);
+      position = 'Right Field';
+      break;
+    }
+    $(this).text(position);
+  });
 
-$('.height').each(function() {
-  var height = $(this).text();
-  var feet = Math.floor(Number(height)/12);
-  var inches = Number(height) - feet*12;
-  var text = $(this).text();
-  $(this).text(feet + '\' ' + inches + '\"');
-  $(this).attr('data-value', height);
-});
+  $('.height').each(function() {
+    var height = $(this).text();
+    var feet = Math.floor(Number(height)/12);
+    var inches = Number(height) - feet*12;
+    var text = $(this).text();
+    $(this).text(feet + '\' ' + inches + '\"');
+    $(this).attr('data-value', height);
+  });
 
-$('.salary').each(function() {
-  var item = $(this).text();
-  var num = Number(item).toLocaleString('en');
+  $('.salary').each(function() {
+    var item = $(this).text();
+    var num = Number(item).toLocaleString('en');
 
-  if(Number(item) < 0) {
-    num = num.replace('-','');
-    $(this).addClass('negMoney');
-  } else {
-    $(this).addClass('enMoney');
-  }
-  $(this).text(num);
-});
+    if(Number(item) < 0) {
+      num = num.replace('-','');
+      $(this).addClass('negMoney');
+    } else {
+      $(this).addClass('enMoney');
+    }
+    $(this).text(num);
+  });
 
-$('.salary').each(function() {
-  $(this).attr('data-value', salaryToInteger($(this).text()));
-});
+  $('.salary').each(function() {
+    $(this).attr('data-value', salaryToInteger($(this).text()));
+  });
+}
+formatData();
 
 function salaryToInteger(salary) {
   var condensedSalary = salary.replace(/[$,.]/g,''); // Get rid of dollar signs and commas
@@ -531,54 +583,54 @@ $(".dragging").each(function() {
   $(this).css('opacity', '0.5');
 });
 
-$(document).ready(function() {
+var fixHelperModified = function(e, tr) {
+  var $originals = tr.children();
+  var $helper = tr.clone();
+  $helper.children().each(function(index) {
+    $(this).width($originals.eq(index).width());
+  });
+  return $helper;
+};
 
-  var fixHelperModified = function(e, tr) {
-    var $originals = tr.children();
-    var $helper = tr.clone();
-    $helper.children().each(function(index) {
-      $(this).width($originals.eq(index).width());
-    });
-    return $helper;
-  };
+$(".roster tbody tr").draggable({
+  helper: 'clone',
+  delay: 150,
+  revert: true,
 
-  $(".roster tbody tr").draggable({
-    helper: 'clone',
-    delay: 150,
-    revert: true,
+  start: function(event, ui) {
+    $(this).toggleClass('dragging');
+    console.log("I am dragging " + $(this).find("span").text());
+  },
+  stop: function(event, ui) {
+    $(this).toggleClass('dragging');
+  },
+  // containment: "#roster_div",
+}).disableSelection();
 
-    start: function(event, ui) {
-      $(this).toggleClass('dragging');
-      console.log("I am dragging " + $(this).find("span").text());
-    },
-    stop: function(event, ui) {
-      $(this).toggleClass('dragging');
-    },
-    // containment: "#roster_div",
-  }).disableSelection();
+$(".lineup tbody").sortable({
+  helper: 'clone',
+  delay: 150,
+  tolerance: "pointer",
 
-  $(".lineup tbody").sortable({
-    helper: 'clone',
-    delay: 150,
-    tolerance: "pointer",
+  start: function(event, ui) {
+    $(this).toggleClass('dragging');
 
-    start: function(event, ui) {
-      $(this).toggleClass('dragging');
+  },
+  stop: function(event, ui) {
+    if (battingOrderChanged()) {
+      $('#lineup_changed').show();
+      saveLineupChanges();
+    } else {
+      $('#lineup_changed').hide();
+    }
+    $(this).toggleClass('dragging');
+  },
+  // containment: "#view_lineup"
+}).disableSelection();
 
-    },
-    stop: function(event, ui) {
-      if (battingOrderChanged()) {
-        $('#lineup_changed').show();
-      } else {
-        $('#lineup_changed').hide();
-      }
-      $(this).toggleClass('dragging');
-    },
-    // containment: "#view_lineup"
-  }).disableSelection();
-
+function createDroppable() {
   $("#batting_order tbody tr").droppable({
-    drop: function(event, ui) {
+    drop: function dropFunction(event, ui) {
       var player_id = ui.draggable.find("span");
       if (player_id.closest("div").is("#roster_div")) {
         var defense_position = $(this).find("span.hidden_position_name");
@@ -592,11 +644,64 @@ $(document).ready(function() {
           type: 'PATCH',
           dataType: 'json',
           data: teamData,
+          success: function (data, textStatus, jqXHR) {
+            console.log(data);
+            $("#view_lineup").load("/teams/" + data.id + " #view_lineup", function(responseText, textStatus, XMLHttpRequest) {
+
+
+              createDroppable();
+
+              $(".lineup tbody").sortable({
+                helper: 'clone',
+                delay: 150,
+                tolerance: "pointer",
+
+                start: function(event, ui) {
+                  $(this).toggleClass('dragging');
+
+                },
+                stop: function(event, ui) {
+                  if (battingOrderChanged()) {
+                    $('#lineup_changed').show();
+                    saveLineupChanges();
+                  } else {
+                    $('#lineup_changed').hide();
+                  }
+                  $(this).toggleClass('dragging');
+                },
+                // containment: "#view_lineup"
+              }).disableSelection();
+
+
+
+            });
+            $("#roster_div").load("/teams/" + data.id + " #roster_div", function(responseText, textStatus, XMLHttpRequest) {
+              $(".roster tbody tr").draggable({
+                helper: 'clone',
+                delay: 150,
+                revert: true,
+
+                start: function(event, ui) {
+                  $(this).toggleClass('dragging');
+                  console.log("I am dragging " + $(this).find("span").text());
+                },
+                stop: function(event, ui) {
+                  $(this).toggleClass('dragging');
+                },
+                // containment: "#roster_div",
+              }).disableSelection();
+              formatData();
+            });
+          }
         });
-        location.reload();
+        // location.reload();
+
       }
     },
-  })
+  });
+}
 
-});
+createDroppable();
+
+
 </script>

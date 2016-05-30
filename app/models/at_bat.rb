@@ -9,15 +9,16 @@ class AtBat
     @heat_maps = heat_maps
     @result = AtBatResult::IN_PROGRESS
     @game = game
-
+    @game.pbp += "\n<span>Now batting: #{@batter.full_name}</span>\n"
     # @game.pbp += "\nNow batting: #{@batter.full_name}"
     # Simulate at-bat
     while !@over do
-      pitch = Pitch.new(@pitcher, @batter, @balls, @strikes, @heat_maps)
-      if batterSwingsAt(pitch)
+      @pitch = Pitch.new(@pitcher, @batter, @balls, @strikes, @heat_maps)
+      if batterSwingsAt(@pitch)
         @pitcher.throws_strike
-        if batterMakesContactWith(pitch)
+        if batterMakesContactWith(@pitch)
           if ballIsHitFair
+            @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, hit in play.</span>\n"
             fairBall
           else
             foulBall
@@ -26,7 +27,7 @@ class AtBat
           swingAndAMiss
         end
       else
-        batterDoesntSwingAt(pitch)
+        batterDoesntSwingAt(@pitch)
       end
     end
   end
@@ -59,13 +60,16 @@ class AtBat
     if @strikes < 2
       @strikes = @strikes + 1
     end
+    @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, fouled off. Count: #{@balls}-#{@strikes}</span>\n"
   end
 
   # Batter swings and misses
   def swingAndAMiss
     if @strikes < 2
       @strikes = @strikes + 1
+      @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, swing and a miss. Count: #{@balls}-#{@strikes}</span>\n"
     else
+      @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, swing and a miss for strike 3.</span>\n"
       strikeout
     end
   end
@@ -85,7 +89,9 @@ class AtBat
   def batterTakesStrike
     if @strikes < 2
       @strikes = @strikes + 1
+      @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for a strike. Count: #{@balls}-#{@strikes}</span>\n"
     else
+      @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for strike 3.</span>\n"
       strikeout
     end
   end
@@ -94,7 +100,9 @@ class AtBat
   def batterTakesBall
     if @balls < 3
       @balls = @balls + 1
+      @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for a ball. Count: #{@balls}-#{@strikes}</span>\n"
     else
+      @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for ball 4.</span>\n"
       walk
     end
   end

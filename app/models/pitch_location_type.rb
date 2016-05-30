@@ -1,39 +1,39 @@
 module PitchLocationType
-  WAY_OUTSIDE = 1
-  WAY_HIGH = 2
-  WAY_LOW = 3
-  WAY_INSIDE = 4
-  WAY_HIGH_AND_OUTSIDE = 5
-  WAY_HIGH_AND_INSIDE = 6
-  WAY_LOW_AND_OUTSIDE = 7
-  WAY_LOW_AND_INSIDE = 8
+  WAY_OUTSIDE = "very far outside"
+  WAY_HIGH = "very high"
+  WAY_LOW = "very low"
+  WAY_INSIDE = "very far inside"
+  WAY_HIGH_AND_OUTSIDE = "very high and outside"
+  WAY_HIGH_AND_INSIDE = "very high and inside"
+  WAY_LOW_AND_OUTSIDE = "very low and outside"
+  WAY_LOW_AND_INSIDE = "very low and inside"
 
-  JUST_OUTSIDE = 9
-  JUST_HIGH = 10
-  JUST_LOW = 11
-  JUST_INSIDE = 12
-  JUST_HIGH_AND_OUTSIDE = 13
-  JUST_HIGH_AND_INSIDE = 14
-  JUST_LOW_AND_INSIDE = 15
-  JUST_LOW_AND_OUTSIDE = 16
+  JUST_OUTSIDE = "just off the outside corner"
+  JUST_HIGH = "just above the letters"
+  JUST_LOW = "just below the knees"
+  JUST_INSIDE = "just off the inside corner"
+  JUST_HIGH_AND_OUTSIDE = "just off the high outside corner"
+  JUST_HIGH_AND_INSIDE = "just off the high inside corner"
+  JUST_LOW_AND_INSIDE = "just off the low inside corner"
+  JUST_LOW_AND_OUTSIDE = "just off the low outside corner"
 
-  AT_THE_LETTERS = 17
-  AT_THE_KNEES = 18
-  ON_THE_INSIDE_CORNER = 19
-  ON_THE_OUTSIDE_CORNER = 20
-  AT_THE_LETTERS_ON_THE_INSIDE_CORNER = 21
-  AT_THE_LETTERS_ON_THE_OUTSIDE_CORNER = 22
-  AT_THE_KNEES_ON_THE_INSIDE_CORNER = 23
-  AT_THE_KNEES_ON_THE_OUTSIDE_CORNER = 24
+  AT_THE_LETTERS = "at the letters"
+  AT_THE_KNEES = "at the knees"
+  ON_THE_INSIDE_CORNER = "on the inside corner"
+  ON_THE_OUTSIDE_CORNER = "on the outside corner"
+  AT_THE_LETTERS_ON_THE_INSIDE_CORNER = "on the high inside corner"
+  AT_THE_LETTERS_ON_THE_OUTSIDE_CORNER = "on the low outside corner"
+  AT_THE_KNEES_ON_THE_INSIDE_CORNER = "on the low inside corner"
+  AT_THE_KNEES_ON_THE_OUTSIDE_CORNER = "on the low outside corner"
 
-  ON_THE_UPPER_HALF = 25
-  ON_THE_LOWER_HALF = 26
-  ON_THE_INNER_HALF = 27
-  ON_THE_OUTER_HALF = 28
-  ON_THE_UPPER_INNER_HALF = 29
-  ON_THE_UPPER_OUTER_HALF = 30
-  ON_THE_LOWER_INNER_HALF = 31
-  ON_THE_LOWER_OUTER_HALF = 32
+  ON_THE_UPPER_HALF = "on the upper half"
+  ON_THE_LOWER_HALF = "on the lower half"
+  ON_THE_INNER_HALF = "on the inner half"
+  ON_THE_OUTER_HALF = "on the outer half"
+  ON_THE_UPPER_INNER_HALF = "on the upper inner half"
+  ON_THE_UPPER_OUTER_HALF = "on the upper outer half"
+  ON_THE_LOWER_INNER_HALF = "on the lower inner half"
+  ON_THE_LOWER_OUTER_HALF = "on the lower outer half"
 
-  DOWN_THE_MIDDLE = 33
+  DOWN_THE_MIDDLE = "down the middle"
 end

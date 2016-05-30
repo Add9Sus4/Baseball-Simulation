@@ -39,9 +39,9 @@ class Pitch
     count = 1
     sum = 0
     # Get the pitch location percentages for each zone
-    72.times do
+    72.times do # count 1 to 72
       key = "#{count}_#{pitcher_hand}_#{batter_hand}_#{balls}_#{strikes}_#{pitch_type}"
-      zone_percentages[count] = @heat_maps.pitch_locations[key]
+      zone_percentages[count] = @heat_maps.pitch_locations[key]*location_adjustment(@pitcher, count) # adjust for pitcher control and location attributes
       # zone_percentages[count] = @heat_maps[:pitch_locations].where(zone_id: count, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
       sum += zone_percentages[count]
       count = count + 1
@@ -56,6 +56,56 @@ class Pitch
       count = count + 1
     end
     count - 1 # Return the correct zone
+  end
+
+  # Returns true if a heat map index is inside the strike zone
+  def is_in_strike_zone(index)
+    case index
+    when 13..18, 21..26, 30..35, 39..44, 47..52, 55..60
+      true
+    else
+      false
+    end
+  end
+
+  # Adjusts location probabilities based on pitcher control attribute
+  def control_adjustment(pitcher, index)
+    control_multiplier = 1
+    if pitcher.control > 50
+      control_multiplier = pitcher.control.to_f/50 # 1 to 2
+    else
+      control_multiplier = (pitcher.control + 50).to_f/100 # 0.5 to 1
+    end
+    if is_in_strike_zone(index)
+      control_multiplier
+    else
+      1/control_multiplier
+    end
+  end
+
+  # Returns true if a heat map index is near the edge of the strike zone
+  def is_close_to_edge(index)
+    case index
+    when 4..21, 26, 27, 29, 30, 35, 36, 38, 39, 44..47, 52..69
+      true
+    else
+      false
+    end
+  end
+
+  # Adjusts location probabilities based on pitcher location attribute
+  def location_adjustment(pitcher, index)
+    location_multiplier = 1
+    if pitcher.location > 50
+      location_multiplier = pitcher.location.to_f/50 # 1 to 2
+    else
+      location_multiplier = (pitcher.location + 50).to_f/100 # 0.5 to 1
+    end
+    if is_close_to_edge(index)
+      location_multiplier
+    else
+      1/location_multiplier
+    end
   end
 
   # Given the zone_number of the pitch and the batter's handedness, determine the pitch location type (as defined in PitchLocationType)
