@@ -8,6 +8,8 @@
 <% @home_team = Team.find(@game.home_team_id) %>
 <% @away_team = Team.find(@game.away_team_id) %>
 
+<!-- <%= image_tag "bases_runner_on_first.png" %> -->
+
 <p>
   <strong>Stadium name:</strong>
   <%= @game.stadium_name %>
@@ -107,6 +109,7 @@
           <th>HR</th>
           <th>BB</th>
           <th>K</th>
+          <th>SB</th>
         </tr>
       </thead>
 
@@ -119,6 +122,7 @@
         <% @away_home_runs = @game.away_home_runs.split("_").map(&:to_i) %>
         <% @away_walks = @game.away_walks.split("_").map(&:to_i) %>
         <% @away_strikeouts = @game.away_strikeouts.split("_").map(&:to_i) %>
+        <% @away_stolen_bases = @game.away_stolen_bases.split("_").map(&:to_i) %>
         <% for i in 0..8 do %>
         <% @player = Player.find(@away_lineup[i]) %>
         <tr>
@@ -130,6 +134,7 @@
           <td><%= @away_home_runs[i] %></td>
           <td><%= @away_walks[i] %></td>
           <td><%= @away_strikeouts[i] %></td>
+          <td><%= @away_stolen_bases[i] %></td>
         </tr>
         <% end %>
         <tr>
@@ -141,6 +146,7 @@
           <td><strong><%= @away_home_runs.sum %></strong></td>
           <td><strong><%= @away_walks.sum %></strong></td>
           <td><strong><%= @away_strikeouts.sum %></strong></td>
+          <td><strong><%= @away_stolen_bases.sum %></strong></td>
         </tr>
       </tbody>
     </table>
@@ -163,6 +169,7 @@
           <th>HR</th>
           <th>BB</th>
           <th>K</th>
+          <th>SB</th>
         </tr>
       </thead>
 
@@ -175,6 +182,7 @@
         <% @home_home_runs = @game.home_home_runs.split("_").map(&:to_i) %>
         <% @home_walks = @game.home_walks.split("_").map(&:to_i) %>
         <% @home_strikeouts = @game.home_strikeouts.split("_").map(&:to_i) %>
+        <% @home_stolen_bases = @game.home_stolen_bases.split("_").map(&:to_i) %>
         <% for i in 0..8 do %>
         <% @player = Player.find(@home_lineup[i]) %>
         <tr>
@@ -186,6 +194,7 @@
           <td><%= @home_home_runs[i] %></td>
           <td><%= @home_walks[i] %></td>
           <td><%= @home_strikeouts[i] %></td>
+          <td><%= @home_stolen_bases[i] %></td>
         </tr>
         <% end %>
         <tr>
@@ -197,6 +206,7 @@
           <td><strong><%= @home_home_runs.sum %></strong></td>
           <td><strong><%= @home_walks.sum %></strong></td>
           <td><strong><%= @home_strikeouts.sum %></strong></td>
+          <td><strong><%= @home_stolen_bases.sum %></strong></td>
         </tr>
       </tbody>
     </table>

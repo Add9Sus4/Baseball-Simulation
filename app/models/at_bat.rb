@@ -1,6 +1,8 @@
 class AtBat
+  include Reusable
   attr_accessor :result, :balls, :strikes, :over, :batter
-  def initialize(pitcher, batter, heat_maps, game)
+  def initialize(pitcher, batter, heat_maps, game, bases)
+    @bases = bases
     @balls = 0
     @strikes = 0
     @over = false
@@ -28,6 +30,15 @@ class AtBat
         end
       else
         batterDoesntSwingAt(@pitch)
+      end
+    end
+  end
+
+  # Calculates if a runner tries to steal a base
+  def steal_opportunity
+    if @bases.status == BaseStatus::RUNNER_ON_FIRST || @bases.status == BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
+      if rand() > map_attribute_to_range(@bases.runner_on_first.speed, AttributeAdjustments::RUNNER_SPEED_AFFECTS_STEAL_PROBABILITY_MIN, AttributeAdjustments::RUNNER_SPEED_AFFECTS_STEAL_PROBABILITY_MAX, true)
+        @bases.runner_on_first_steals_second
       end
     end
   end
@@ -68,6 +79,7 @@ class AtBat
     if @strikes < 2
       @strikes = @strikes + 1
       @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, swing and a miss. Count: #{@balls}-#{@strikes}</span>\n"
+      steal_opportunity
     else
       @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, swing and a miss for strike 3.</span>\n"
       strikeout
@@ -90,6 +102,7 @@ class AtBat
     if @strikes < 2
       @strikes = @strikes + 1
       @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for a strike. Count: #{@balls}-#{@strikes}</span>\n"
+      steal_opportunity
     else
       @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for strike 3.</span>\n"
       strikeout
@@ -101,6 +114,7 @@ class AtBat
     if @balls < 3
       @balls = @balls + 1
       @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for a ball. Count: #{@balls}-#{@strikes}</span>\n"
+      steal_opportunity
     else
       @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for ball 4.</span>\n"
       walk

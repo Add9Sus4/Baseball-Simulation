@@ -25,7 +25,7 @@ class GamesController < ApplicationController
   # POST /games.json
   def create
     @heat_maps = HeatMap.new
-    1.times do
+    20.times do
     @game = Game.new(game_params)
     # Play game here
       @game.heat_maps = @heat_maps

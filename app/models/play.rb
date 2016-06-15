@@ -1,5 +1,6 @@
 class Play
-  attr_accessor :result, :hit_result
+  include Reusable
+  attr_accessor :result, :hit_result, :hit
   def initialize(atBat, game)
     @game = game
     case atBat.result
@@ -18,8 +19,8 @@ class Play
   end
 
   def ballPutInPlay(atBat)
-    hit = Hit.new(atBat, @game)
-    if hit.result == HitResult::FIELDED
+    @hit = Hit.new(atBat, @game)
+    if HitResult::fielded(hit.result)
       @result = PlayResult::OUT
     else
       @result = PlayResult::SAFE

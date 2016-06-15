@@ -7,7 +7,7 @@
 # heat maps are loaded into a hash before the game begins
 class Game < ActiveRecord::Base
   validate :teams_must_be_different
-  attr_accessor :pbp, :bad, :good, :home_team, :away_team, :pitch_locations, :heat_maps, :inning_status, :inning_number, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score, :home_team_inning_scores, :away_team_inning_scores, :over
+  attr_accessor :pbp, :bad, :good, :home_team, :away_team, :heat_maps, :inning_status, :inning_number, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score, :home_team_inning_scores, :away_team_inning_scores, :over
 
   def teams_must_be_different
     errors.add(:base, "Teams cannot be the same") if home_team_id == away_team_id
@@ -16,18 +16,6 @@ class Game < ActiveRecord::Base
   # Plays a game
   def play
     prepare
-    @over = false
-    @inning_number = 1
-    @inning_status = InningStatus::TOP
-    @home_team_lineup_position = 0
-    @away_team_lineup_position = 0
-    @home_team_score = 0
-    @away_team_score = 0
-    @home_team_inning_scores = ""
-    @away_team_inning_scores = ""
-    @pbp = ""
-    @good = "#267373"
-    @bad = "#854747"
 
     # Simulate game
     while !@over do
@@ -433,6 +421,19 @@ class Game < ActiveRecord::Base
   # Creates instance variables to use in the game
   def prepare
 
+    @over = false
+    @inning_number = 1
+    @inning_status = InningStatus::TOP
+    @home_team_lineup_position = 0
+    @away_team_lineup_position = 0
+    @home_team_score = 0
+    @away_team_score = 0
+    @home_team_inning_scores = ""
+    @away_team_inning_scores = ""
+    @pbp = ""
+    @good = "#267373"
+    @bad = "#854747"
+
     # home and away teams
     @home_team = Team.find(self.home_team_id)
     @away_team = Team.find(self.away_team_id)
@@ -446,19 +447,6 @@ class Game < ActiveRecord::Base
     @away_team.players.each do |player|
       player.set_initial_stats
     end
-
-    # heat map data
-    # @called_strike_percentages = CalledStrikePercentage.all
-    # @contact_percentages = ContactPercentage.all
-    # @pitch_locations = PitchLocation.all
-    # @swing_percentages = SwingPercentage.all
-    # @heat_maps = {:called_strike_percentages => @called_strike_percentages,
-    #               :contact_percentages => @contact_percentages,
-    #               :pitch_locations => @pitch_locations,
-    #               :swing_percentages => @swing_percentages}
-
-    # heat maps
-    # @heat_maps = HeatMap.new
 
     # stadium data
     self.stadium_name = @home_team.stadium
@@ -478,85 +466,6 @@ class Game < ActiveRecord::Base
     self.update_attributes(home_lineup: home_lineup_string)
     self.update_attributes(away_lineup: away_lineup_string)
 
-  end
-
-  def randomGaussian
-		((rand() +
-		rand() + rand() +
-		rand() + rand() +
-		rand()) - 3) / 3;
-	end
-
-  def generateDistribution(min, max, mean, stdev)
-    counter = 0
-    idealMean = mean
-    idealStdev = stdev
-    numDataPts = 100
-    bias = 0
-    skew = 1
-    randomData = calculateData(bias, skew, min, max, mean, stdev, numDataPts)
-    newMean = calculateMean(randomData)
-    newStdev = calculateStDev(randomData)
-    meanError = idealMean/newMean
-    stdevError = idealStdev/newStdev
-    while meanError > 1.01 || meanError < 0.99 || stdevError > 1.01 || stdevError < 0.99 do
-      if meanError > 1.01
-        bias += 0.1
-      elsif meanError < 0.99
-        bias -= 0.1
-      end
-      if stdevError > 1.1
-        skew *= 0.9
-      elsif stdevError < 0.9
-        skew *= 1.1
-      end
-      randomData = calculateData(bias, skew, min, max, mean, stdev, numDataPts)
-      newMean = calculateMean(randomData)
-      newStdev = calculateStDev(randomData)
-      meanError = idealMean/newMean
-      stdevError = idealStdev/newStdev
-      counter = counter + 1
-      if counter > 99
-        break
-      end
-    end
-    randomData
-  end
-
-  # random values from a distribution with a given min, max, mean, stdev
-  def getRandomValue(bias, skew, min, max, mean, stdev)
-    range = max - min
-    mid = min + range/2
-    unitGaussian = randomGaussian
-    biasFactor = Math.exp(bias)
-    value = (mid + (range * (biasFactor / (biasFactor + Math.exp(-unitGaussian / skew)) - 0.5)))
-  end
-
-  def calculateData(bias, skew, min, max, mean, stdev, numDataPts)
-    randomData = Array.new(numDataPts)
-    for i in 0..numDataPts-1
-      randomData[i] = getRandomValue(bias, skew, min, max, mean, stdev)
-    end
-    randomData
-  end
-
-  def calculateMean(randomData)
-    numDataPts = randomData.length
-    sum = 0
-    for i in 0..numDataPts-1
-      sum += randomData[i]
-    end
-    mean = sum/numDataPts
-  end
-
-  def calculateStDev(randomData)
-    numDataPts = randomData.length
-    mean = calculateMean(randomData)
-    sum = 0
-    for i in 0..numDataPts-1
-      sum += (randomData[i] - mean) ** 2
-    end
-    stdev = Math.sqrt(sum/numDataPts)
   end
 
 end

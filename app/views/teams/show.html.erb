@@ -162,6 +162,8 @@
         <th>Age</th>
         <th>Height</th>
         <th>Weight</th>
+        <th>Bats</th>
+        <th>Throws</th>
         <th id="position_column_header">Natural Position</th>
         <th>Salary</th>
       </tr>
@@ -180,6 +182,8 @@
         <td><%= player.age %></td>
         <td class="height"><%= player.height %></td>
         <td><%= player.weight %> lb.</td>
+        <td><%= player.hitting_side.capitalize %></td>
+        <td><%= player.throwing_hand.capitalize %></td>
         <td class="position"><%= player.position %></td>
         <td class="salary"><%= player.salary %></td>
       </tr>

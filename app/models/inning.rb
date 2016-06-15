@@ -1,5 +1,5 @@
 class Inning
-
+  include Reusable
   def initialize(game)
     @game = game
     @pbp = @game.pbp
@@ -23,7 +23,7 @@ class Inning
     while !@over do
       @batter = @hitting_team.find_player_by_lineup_index(@lineup_position)
       @pitcher = @fielding_team.players[0]
-      atBat = AtBat.new(@pitcher, @batter, @heat_maps, @game)
+      atBat = AtBat.new(@pitcher, @batter, @heat_maps, @game, @bases)
       play = Play.new(atBat, @game)
       if play.result == PlayResult::OUT
         @pitcher.records_out(1)
@@ -34,27 +34,24 @@ class Inning
       elsif play.result == PlayResult::TRIPLE_PLAY
         @game.pbp += "\nTriple play\n"
         @outs = @outs + 3
+      elsif atBat.result == AtBatResult::WALK || atBat.result == AtBatResult::HBP
+        @bases.updateStatusOnWalkOrHBP(@batter, @pitcher)
       else
-        if play.hit_result == HitResult::SINGLE
+        if HitResult.is_a_single(play.hit_result)
           @batter.hits_single
           @pitcher.allows_hit
-          @bases.updateStatusOnHit(play.hit_result, @batter, @pitcher)
-        elsif play.hit_result == HitResult::DOUBLE
+        elsif HitResult.is_a_double(play.hit_result)
           @batter.hits_double
           @pitcher.allows_hit
-          @bases.updateStatusOnHit(play.hit_result, @batter, @pitcher)
-        elsif play.hit_result == HitResult::TRIPLE
+        elsif HitResult.is_a_triple(play.hit_result)
           @batter.hits_triple
           @pitcher.allows_hit
-          @bases.updateStatusOnHit(play.hit_result, @batter, @pitcher)
-        elsif play.hit_result == HitResult::HOME_RUN
+        elsif HitResult.is_a_home_run(play.hit_result)
           @batter.hits_home_run
           @pitcher.allows_hit
           @pitcher.allows_home_run
-          @bases.updateStatusOnHit(play.hit_result, @batter, @pitcher)
-        elsif atBat.result == AtBatResult::WALK || atBat.result == AtBatResult::HBP
-          @bases.updateStatusOnWalkOrHBP(@batter, @pitcher)
         end
+        @bases.updateStatusOnHit(play.hit_result, @batter, @pitcher)
       end
       @runs_scored += @bases.runs_scored
       @bases.runs_scored = 0

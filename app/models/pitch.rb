@@ -1,4 +1,5 @@
 class Pitch
+  include Reusable
   attr_accessor :heat_maps, :location, :swing_percentage, :contact_percentage, :called_strike_percentage, :location_type
   def initialize(pitcher, batter, balls, strikes, heat_maps)
     @pitcher = pitcher
@@ -7,14 +8,14 @@ class Pitch
     @strikes = strikes
     @heat_maps = heat_maps
     # Calculate pitch location (which zone it will be in)
-    @location = determine_location(rand(), "LEFT", "RIGHT", @balls, @strikes, "FA")
-    @location_type = determine_location_type("RIGHT", @location)
+    @location = determine_location(rand(), @pitcher.throwing_hand, @batter.hitting_side, @balls, @strikes, "FA")
+    @location_type = determine_location_type(@batter.hitting_side, @location)
     # Will batter swing?
-    @swing_percentage = determine_swing_percentage(@location, "LEFT", "RIGHT", @balls, @strikes, "FA")
+    @swing_percentage = determine_swing_percentage(@location, @pitcher.throwing_hand, @batter.hitting_side, @balls, @strikes, "FA")
     # Will batter make contact?
-    @contact_percentage = determine_contact_percentage(@location, "LEFT", "RIGHT", @balls, @strikes, "FA")
+    @contact_percentage = determine_contact_percentage(@location, @pitcher.throwing_hand, @batter.hitting_side, @balls, @strikes, "FA")
     # Will the pitch be called a strike?
-    @called_strike_percentage = determine_called_strike_percentage(@location, "LEFT", "RIGHT", @balls, @strikes, "FA")
+    @called_strike_percentage = determine_called_strike_percentage(@location, @pitcher.throwing_hand, @batter.hitting_side, @balls, @strikes, "FA")
     @pitcher.throws_pitch(@location)
   end
 
@@ -28,7 +29,10 @@ class Pitch
   # Retrieve contact percentage
   def determine_contact_percentage(zone_id, pitcher_hand, batter_hand, balls, strikes, pitch_type)
     key = "#{zone_id}_#{pitcher_hand}_#{batter_hand}_#{balls}_#{strikes}_#{pitch_type}"
-    @heat_maps.contact_percentages[key]
+    @heat_maps.contact_percentages[key]*
+      map_attribute_to_range(@batter.contact, AttributeAdjustments::BATTER_CONTACT_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::BATTER_CONTACT_AFFECTS_CONTACT_PERCENTAGE_MAX, false)*
+      map_attribute_to_range(@pitcher.armStrength, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MAX, true)*
+      map_attribute_to_range(@pitcher.movement, AttributeAdjustments::PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MAX, true)
     # @heat_maps[:contact_percentages].where(zone_id: zone_id, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
   end
 
@@ -86,7 +90,7 @@ class Pitch
   # Returns true if a heat map index is near the edge of the strike zone
   def is_close_to_edge(index)
     case index
-    when 4..21, 26, 27, 29, 30, 35, 36, 38, 39, 44..47, 52..69
+    when 13..18, 21, 26, 30, 35, 39, 44, 47, 52, 55..60
       true
     else
       false
@@ -183,7 +187,18 @@ class Pitch
   # Retrieve swing percentage
   def determine_swing_percentage(zone_id, pitcher_hand, batter_hand, balls, strikes, pitch_type)
     key = "#{zone_id}_#{pitcher_hand}_#{batter_hand}_#{balls}_#{strikes}_#{pitch_type}"
-    @heat_maps.swing_percentages[key]
+    plate_vision_multiplier = 1
+    if is_in_strike_zone(zone_id)
+      plate_vision_multiplier = map_attribute_to_range(@batter.plate_vision, AttributeAdjustments::BATTER_PLATE_VISION_AFFECTS_SWING_PERCENTAGE_MIN, AttributeAdjustments::BATTER_PLATE_VISION_AFFECTS_SWING_PERCENTAGE_MAX, false)
+    else
+      plate_vision_multiplier = map_attribute_to_range(@batter.plate_vision, AttributeAdjustments::BATTER_PLATE_VISION_AFFECTS_SWING_PERCENTAGE_MIN, AttributeAdjustments::BATTER_PLATE_VISION_AFFECTS_SWING_PERCENTAGE_MAX, true)
+    end
+
+    if strikes < 2
+      @heat_maps.swing_percentages[key]*map_attribute_to_range(@batter.patience, AttributeAdjustments::BATTER_PATIENCE_AFFECTS_SWING_PERCENTAGE_MIN, AttributeAdjustments::BATTER_PATIENCE_AFFECTS_SWING_PERCENTAGE_MAX, true)*plate_vision_multiplier
+    else
+      @heat_maps.swing_percentages[key]*plate_vision_multiplier
+    end
     # @heat_maps[:swing_percentages].where(zone_id: zone_id, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
   end
 end

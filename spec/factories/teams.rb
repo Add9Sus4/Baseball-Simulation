@@ -22,7 +22,7 @@ FactoryGirl.define do
     factory :team_with_players do
       after(:create) do |team|
         13.times do
-          player = create(:player, team: team)
+          player = create(:player, :average, team: team)
           player.set_initial_stats
         end
         team.update_attributes(catcher: team.players[0].id)

@@ -34,7 +34,7 @@ teams = []
 # end
 
 def completely_random_player(team_id)
-  Player.create!(team_id: team.id,
+  Player.create!(team_id: team_id,
                               first_name: Faker::Name.first_name,
                               last_name: Faker::Name.last_name,
                               age: rand(17..40),
@@ -162,7 +162,9 @@ def completely_random_player(team_id)
                               zone_69_pitches: 0,
                               zone_70_pitches: 0,
                               zone_71_pitches: 0,
-                              zone_72_pitches: 0)
+                              zone_72_pitches: 0,
+                              throwing_hand: ["LEFT","RIGHT"].sample,
+                              hitting_side: ["LEFT","RIGHT"].sample )
 
 
 
@@ -297,7 +299,9 @@ def completely_average_player(team_id)
                               zone_69_pitches: 0,
                               zone_70_pitches: 0,
                               zone_71_pitches: 0,
-                              zone_72_pitches: 0)
+                              zone_72_pitches: 0,
+                              throwing_hand: ["LEFT","RIGHT"].sample,
+                              hitting_side: ["LEFT","RIGHT"].sample)
 end
 
 # Create teams
@@ -321,7 +325,7 @@ end
 teams.each do |team|
   players = []
   numPlayersPerTeam.times do
-    newPlayer = completely_average_player(team.id)
+    newPlayer = completely_random_player(team.id)
     players.unshift(newPlayer)
   end
   city = Faker::Address.city

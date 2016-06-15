@@ -1,5 +1,6 @@
 class Bases
-  attr_accessor :runs_scored
+  include Reusable
+  attr_accessor :runs_scored, :status, :runner_on_first
   def initialize(game)
     @game = game
     @status = BaseStatus::EMPTY
@@ -14,56 +15,187 @@ class Bases
     @batter = batter
     @pitcher = pitcher
     @runs_scored = 0
-    case hit_result
-    when HitResult::SINGLE
+    @hit_result = hit_result
+
+    if HitResult.is_a_single(hit_result)
       single
-    when HitResult::DOUBLE
+    elsif HitResult.is_a_double(hit_result)
       double
-    when HitResult::TRIPLE
+    elsif HitResult.is_a_triple(hit_result)
       triple
-    when HitResult::HOME_RUN
+    elsif HitResult.is_a_home_run(hit_result)
       home_run
+    end
+
+  end
+
+  def runner_on_first_steals_second
+    @game.pbp += "\n#{@runner_on_first.full_name} steals second.\n"
+    @runner_on_first.steals_base
+    runner_on_first_advances_to_second
+  end
+
+  def steals_second
+    case @status
+    when BaseStatus::RUNNER_ON_FIRST
+      runner_on_first_steals_second
+      @status = BaseStatus::RUNNER_ON_SECOND
+    when BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
+      runner_on_first_steals_second
+      @status = BaseStatus::RUNNERS_ON_SECOND_AND_THIRD
     end
   end
 
   def single
     case @status
     when BaseStatus::EMPTY
-      batter_advances_to_first
+
       @status = BaseStatus::RUNNER_ON_FIRST
+      batter_advances_to_first
+
     when BaseStatus::RUNNER_ON_FIRST
-      runner_on_first_advances_to_second
+
+      case @hit_result
+      when HitResult::SINGLE_TO_CENTER
+        if rand() > 0.5
+          runner_on_first_advances_to_second
+          @status = BaseStatus::RUNNERS_ON_FIRST_AND_SECOND
+        else
+          runner_on_first_advances_to_third
+          @status = BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
+        end
+      when HitResult::SINGLE_TO_RIGHT
+        runner_on_first_advances_to_third
+        @status = BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
+      else
+        runner_on_first_advances_to_second
+        @status = BaseStatus::RUNNERS_ON_FIRST_AND_SECOND
+      end
+
       batter_advances_to_first
-      @status = BaseStatus::RUNNERS_ON_FIRST_AND_SECOND
+
     when BaseStatus::RUNNER_ON_SECOND
-      runner_on_second_scores
+
+      case @hit_result
+      when HitResult::INFIELD_SINGLE_TO_PITCHER, HitResult::INFIELD_SINGLE_TO_CATCHER, HitResult::INFIELD_SINGLE_TO_SHORT, HitResult::INFIELD_SINGLE_TO_THIRD
+        @status = BaseStatus::RUNNERS_ON_FIRST_AND_SECOND
+      when HitResult::INFIELD_SINGLE_TO_FIRST, HitResult::INFIELD_SINGLE_TO_SECOND
+        runner_on_second_advances_to_third
+        @status = BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
+      else
+        runner_on_second_scores
+        @status = BaseStatus::RUNNER_ON_FIRST
+      end
+
       batter_advances_to_first
-      @status = BaseStatus::RUNNER_ON_FIRST
+
     when BaseStatus::RUNNER_ON_THIRD
-      runner_on_third_scores
+
+      if HitResult.is_infield_single(@hit_result)
+        @status = BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
+      else
+        runner_on_third_scores
+        @status = BaseStatus::RUNNER_ON_FIRST
+      end
+
       batter_advances_to_first
-      @status = BaseStatus::RUNNER_ON_FIRST
+
     when BaseStatus::RUNNERS_ON_FIRST_AND_SECOND
-      runner_on_second_scores
-      runner_on_first_advances_to_second
+
+      case @hit_result
+      when HitResult::SINGLE_TO_CENTER
+        if rand() > 0.5
+          runner_on_second_scores
+          runner_on_first_advances_to_second
+          @status = BaseStatus::RUNNERS_ON_FIRST_AND_SECOND
+        else
+          runner_on_second_scores
+          runner_on_first_advances_to_third
+          @status = BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
+        end
+      when HitResult::SINGLE_TO_RIGHT
+        runner_on_second_scores
+        runner_on_first_advances_to_third
+        @status = BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
+      when HitResult::SINGLE_TO_LEFT
+        runner_on_second_scores
+        runner_on_first_advances_to_second
+        @status = BaseStatus::RUNNERS_ON_FIRST_AND_SECOND
+      when HitResult::INFIELD_SINGLE_TO_FIRST, HitResult::INFIELD_SINGLE_TO_THIRD, HitResult::INFIELD_SINGLE_TO_SHORT,
+        HitResult::INFIELD_SINGLE_TO_SECOND, HitResult::INFIELD_SINGLE_TO_PITCHER, HitResult::INFIELD_SINGLE_TO_CATCHER
+        runner_on_second_advances_to_third
+        runner_on_first_advances_to_second
+        @status = BaseStatus::LOADED
+      end
+
       batter_advances_to_first
-      @status = BaseStatus::RUNNERS_ON_FIRST_AND_SECOND
+
     when BaseStatus::RUNNERS_ON_SECOND_AND_THIRD
-      runner_on_third_scores
-      runner_on_second_scores
+
+      if HitResult.is_infield_single(@hit_result)
+        @status = BaseStatus::LOADED
+      else
+        runner_on_third_scores
+        runner_on_second_scores
+        @status = BaseStatus::RUNNER_ON_FIRST
+      end
+
       batter_advances_to_first
-      @status = BaseStatus::RUNNER_ON_FIRST
     when BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
-      runner_on_third_scores
-      runner_on_first_advances_to_second
+
+      if HitResult.is_infield_single(@hit_result)
+        runner_on_first_advances_to_second
+        @status = BaseStatus::LOADED
+      elsif @hit_result == HitResult::SINGLE_TO_LEFT
+        runner_on_third_scores
+        runner_on_first_advances_to_second
+        @status = BaseStatus::RUNNERS_ON_FIRST_AND_SECOND
+      elsif @hit_result == HitResult::SINGLE_TO_CENTER
+        runner_on_third_scores
+        if rand() > 0.50
+          runner_on_first_advances_to_second
+          @status = BaseStatus::RUNNERS_ON_FIRST_AND_SECOND
+        else
+          runner_on_first_advances_to_third
+          @status = BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
+        end
+      elsif @hit_result == HitResult::SINGLE_TO_RIGHT
+        runner_on_third_scores
+        runner_on_first_advances_to_third
+        @status = BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
+      end
+
       batter_advances_to_first
-      @status = BaseStatus::RUNNERS_ON_FIRST_AND_SECOND
     when BaseStatus::LOADED
-      runner_on_third_scores
-      runner_on_second_scores
-      runner_on_first_advances_to_second
+
+      if HitResult.is_infield_single(@hit_result)
+        runner_on_third_scores
+        runner_on_second_advances_to_third
+        runner_on_first_advances_to_second
+        @status = BaseStatus::LOADED
+      elsif @hit_result == HitResult::SINGLE_TO_LEFT
+        runner_on_third_scores
+        runner_on_second_scores
+        runner_on_first_advances_to_second
+        @status = BaseStatus::RUNNERS_ON_FIRST_AND_SECOND
+      elsif @hit_result == HitResult::SINGLE_TO_CENTER
+        runner_on_third_scores
+        runner_on_second_scores
+        if rand() > 0.50
+          runner_on_first_advances_to_second
+          @status = BaseStatus::RUNNERS_ON_FIRST_AND_SECOND
+        else
+          runner_on_first_advances_to_third
+          @status = BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
+        end
+      elsif @hit_result == HitResult::SINGLE_TO_RIGHT
+        runner_on_third_scores
+        runner_on_second_scores
+        runner_on_first_advances_to_third
+        @status = BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
+      end
+
       batter_advances_to_first
-      @status = BaseStatus::RUNNERS_ON_FIRST_AND_SECOND
     end
   end
 

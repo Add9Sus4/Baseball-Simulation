@@ -44,6 +44,16 @@
     <span class="salary"><%= @player.salary %></span>
   </p>
 
+  <p>
+    <strong>Bats:</strong>
+    <%= @player.hitting_side.capitalize %>
+  </p>
+
+  <p>
+    <strong>Throws:</strong>
+    <%= @player.throwing_hand.capitalize %>
+  </p>
+
 </div>
 </br>
 <%= link_to 'Edit Player Info', edit_player_path(@player), method: :get %> |
