@@ -39,6 +39,13 @@ class Pitch
   # Retrieve pitch location (which zone the pitch will be in)
   # NOTE: random_between_0_and_1 is a variable that holds a random number between 0 and 1 (use rand() to generate)
   def determine_location(random_between_0_and_1, pitcher_hand, batter_hand, balls, strikes, pitch_type)
+
+
+
+
+
+
+
     zone_percentages = Array.new(72)
     count = 1
     sum = 0

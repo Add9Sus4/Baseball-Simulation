@@ -54,6 +54,11 @@
     <%= @player.throwing_hand.capitalize %>
   </p>
 
+  <p>
+    <strong>Pitches:</strong>
+    <%= @player.pitches %>
+  </p>
+
 </div>
 </br>
 <%= link_to 'Edit Player Info', edit_player_path(@player), method: :get %> |

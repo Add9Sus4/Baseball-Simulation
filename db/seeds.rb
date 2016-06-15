@@ -34,6 +34,40 @@ teams = []
 # end
 
 def completely_random_player(team_id)
+
+  # Create the pitch types
+  pitch_types_1 = ['FA']
+  pitch_types_2 = ['FT','SL','CU','CH']
+  pitch_types_3 = ['SI','FC','FS']
+  pitch_types_4 = ['FO','KN','SC','KC']
+  pitch_types_5 = ['EP','UN']
+
+  pitches = Array.new
+
+  total_pitches = rand(2..5)
+
+  while pitches.length < total_pitches do
+    if pitch_types_1.length > 0 then pitches.push(pitch_types_1.delete_at(rand(pitch_types_1.length))) end
+    rand(1..4).times do
+      if pitch_types_2.length > 0 then pitches.push(pitch_types_2.delete_at(rand(pitch_types_2.length))) end
+      if pitches.length >= total_pitches then break end
+    end
+    rand(0..1).times do
+      if pitch_types_3.length > 0 then pitches.push(pitch_types_3.delete_at(rand(pitch_types_3.length))) end
+    end
+    rand(0..1).times do
+      if pitch_types_4.length > 0 then pitches.push(pitch_types_4.delete_at(rand(pitch_types_4.length))) end
+    end
+    rand(0..1).times do
+      if pitch_types_5.length > 0 then pitches.push(pitch_types_5.delete_at(rand(pitch_types_5.length))) end
+    end
+  end
+
+  extra_pitches = 5 - total_pitches
+  extra_pitches.times do
+    pitches.push('--')
+  end
+
   Player.create!(team_id: team_id,
                               first_name: Faker::Name.first_name,
                               last_name: Faker::Name.last_name,
@@ -164,13 +198,51 @@ def completely_random_player(team_id)
                               zone_71_pitches: 0,
                               zone_72_pitches: 0,
                               throwing_hand: ["LEFT","RIGHT"].sample,
-                              hitting_side: ["LEFT","RIGHT"].sample )
+                              hitting_side: ["LEFT","RIGHT"].sample,
+                              pitch_1: pitches[0],
+                              pitch_2: pitches[1],
+                              pitch_3: pitches[2],
+                              pitch_4: pitches[3],
+                              pitch_5: pitches[4] )
 
 
 
 end
 
 def completely_average_player(team_id)
+
+  # Create the pitch types
+  pitch_types_1 = ['FA']
+  pitch_types_2 = ['FT','SL','CU','CH']
+  pitch_types_3 = ['SI','FC','FS']
+  pitch_types_4 = ['FO','KN','SC','KC']
+  pitch_types_5 = ['EP','UN']
+
+  pitches = Array.new
+
+  total_pitches = rand(2..5)
+
+  while pitches.length <= total_pitches do
+    pitches.push(pitch_types_1.sample.pop)
+    rand(1..4).times do
+      pitches.push(pitch_types_2.sample.pop)
+    end
+    rand(0..1).times do
+      pitches.push(pitch_types_3.sample.pop)
+    end
+    rand(0..1).times do
+      pitches.push(pitch_types_4.sample.pop)
+    end
+    rand(0..1).times do
+      pitches.push(pitch_types_5.sample.pop)
+    end
+  end
+
+  extra_pitches = 5 - total_pitches
+  extra_pitches.times do
+    pitches.push('--')
+  end
+
   Player.create!(team_id: team_id,
                               first_name: Faker::Name.first_name,
                               last_name: Faker::Name.last_name,
@@ -301,7 +373,12 @@ def completely_average_player(team_id)
                               zone_71_pitches: 0,
                               zone_72_pitches: 0,
                               throwing_hand: ["LEFT","RIGHT"].sample,
-                              hitting_side: ["LEFT","RIGHT"].sample)
+                              hitting_side: ["LEFT","RIGHT"].sample,
+                              pitch_1: pitches[0],
+                              pitch_2: pitches[1],
+                              pitch_3: pitches[2],
+                              pitch_4: pitches[3],
+                              pitch_5: pitches[4])
 end
 
 # Create teams

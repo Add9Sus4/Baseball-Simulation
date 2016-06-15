@@ -17,6 +17,46 @@ class Player < ActiveRecord::Base
     end
   end
 
+  def pitches
+    str = "#{pitch_name(pitch_1)}, #{pitch_name(pitch_2)}"
+    if pitch_3 != "--" then str += ", #{pitch_name(pitch_3)}" end
+    if pitch_4 != "--" then str += ", #{pitch_name(pitch_4)}" end
+    if pitch_5 != "--" then str += ", #{pitch_name(pitch_5)}" end
+    str
+  end
+
+  def pitch_name(abbrev)
+    case abbrev
+    when "FA"
+      "Fastball"
+    when "FT"
+      "Fastball (2 seam)"
+    when "FC"
+      "Cutter"
+    when "FS"
+      "Splitter"
+    when "FO"
+      "Forkball"
+    when "SI"
+      "Sinker"
+    when "SL"
+      "Slider"
+    when "CU"
+      "Curveball"
+    when "KC"
+      "Knuckle-curve"
+    when "EP"
+      "Eephus"
+    when "CH"
+      "Changeup"
+    when "SC"
+      "Screwball"
+    when "KN"
+      "Knuckleball"
+    when "UN"
+      "Mystery pitch"
+    end
+  end
 
   def full_name
     first_name + ' ' + last_name
