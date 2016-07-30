@@ -247,7 +247,7 @@ DEPENDENCIES
   jquery-ui-rails
   launchy
   mysql2 (>= 0.3.13, < 0.5)
-  pg (= 0.18.4)
+  pg (~> 0.18.4)
   rails (= 4.2.5)
   rspec-rails
   sass-rails (~> 5.0)
