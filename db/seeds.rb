@@ -11,7 +11,7 @@ numTeams = 5 # How many teams per division to add to database
 numPlayersPerTeam = 13 # How many players on each team to add to database
 teams = []
 
-Create initial user
+# Create initial user
 User.create!(name: "Example User",
               email: "example@railstutorial.org",
               password: "foobar",
