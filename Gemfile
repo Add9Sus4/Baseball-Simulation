@@ -57,7 +57,6 @@ end
 
 group :production do
   gem 'pg', '~> 0.18.4'
-  gem 'rails_12factor'
 end
 
 group :development do
@@ -67,3 +66,7 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
 end
+
+gem 'rails_12factor', group: :production
+
+ruby "2.3.1"
