@@ -7,7 +7,7 @@ def test_attribute(attributes_hash, game)
   @batter.set_initial_stats
   @pitcher.set_initial_stats
 
-  num_at_bats = 100
+  num_at_bats = 500
 
   puts "\nsimulating #{num_at_bats} at-bats with the following conditions:"
   attributes_hash.each do |key, value|
@@ -27,7 +27,7 @@ def test_attribute(attributes_hash, game)
 
   for i in 0..num_at_bats do
     @bases = Bases.new(@game)
-    @atBat = AtBat.new(@pitcher, @batter, @heat_maps, @game, @bases)
+    @atBat = AtBat.new(@pitcher, @batter, @game, @bases)
     @play = Play.new(@atBat, @game)
     if HitResult.is_a_home_run(@play.hit_result)
       num_home_runs += 1
@@ -100,21 +100,19 @@ describe Player do
   @team_one = FactoryGirl.create(:team_with_players)
   @team_two = FactoryGirl.create(:team_with_players)
   @game = Game.new(game_params(@team_one, @team_two))
-  @heat_maps = HeatMap.new
-  @game.heat_maps = @heat_maps
   @game.prepare
 
-  test_attribute({"contact" => 100}, @game)
-  test_attribute({"contact" => 0}, @game)
-  test_attribute({"patience" => 100}, @game)
-  test_attribute({"patience" => 0}, @game)
-  test_attribute({"plate_vision" => 100}, @game)
-  test_attribute({"plate_vision" => 0}, @game)
-  test_attribute({"power" => 100}, @game)
-  test_attribute({"power" => 0}, @game)
-  test_attribute({"batting_average" => 100}, @game)
-  test_attribute({"batting_average" => 0}, @game)
-  test_attribute({"uppercut_amount" => 100}, @game)
-  test_attribute({"uppercut_amount" => 0}, @game)
+  # test_attribute({"power" => 100}, @game)
+  # test_attribute({"power" => 0}, @game)
+  # test_attribute({"contact" => 100}, @game)
+  # test_attribute({"contact" => 0}, @game)
+  test_attribute({"patience" => 100, "plate_vision" => 100}, @game)
+  test_attribute({"patience" => 0, "plate_vision" => 0}, @game)
+  # test_attribute({"plate_vision" => 100}, @game)
+  # test_attribute({"plate_vision" => 0}, @game)
+  # test_attribute({"batting_average" => 100}, @game)
+  # test_attribute({"batting_average" => 0}, @game)
+  # test_attribute({"uppercut_amount" => 100}, @game)
+  # test_attribute({"uppercut_amount" => 0}, @game)
 
 end

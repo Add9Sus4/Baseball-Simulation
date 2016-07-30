@@ -1,21 +1,20 @@
 class AtBat
   include Reusable
   attr_accessor :result, :balls, :strikes, :over, :batter
-  def initialize(pitcher, batter, heat_maps, game, bases)
+  def initialize(pitcher, batter, game, bases)
     @bases = bases
     @balls = 0
     @strikes = 0
     @over = false
     @pitcher = pitcher
     @batter = batter
-    @heat_maps = heat_maps
     @result = AtBatResult::IN_PROGRESS
     @game = game
     @game.pbp += "\n<span>Now batting: #{@batter.full_name}</span>\n"
     # @game.pbp += "\nNow batting: #{@batter.full_name}"
     # Simulate at-bat
     while !@over do
-      @pitch = Pitch.new(@pitcher, @batter, @balls, @strikes, @heat_maps)
+      @pitch = Pitch.new(@pitcher, @batter, @balls, @strikes)
       if batterSwingsAt(@pitch)
         @pitcher.throws_strike
         if batterMakesContactWith(@pitch)

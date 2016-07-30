@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160615173603) do
+ActiveRecord::Schema.define(version: 20160728232802) do
 
   create_table "called_strike_percentages", force: :cascade do |t|
     t.integer "zone_id",                  limit: 4
@@ -100,6 +100,8 @@ ActiveRecord::Schema.define(version: 20160615173603) do
     t.string   "home_inning_scores",             limit: 255
     t.string   "away_inning_scores",             limit: 255
     t.text     "play_by_play",                   limit: 4294967295
+    t.integer  "season_id",                      limit: 4
+    t.integer  "game_number",                    limit: 4
   end
 
   create_table "pitch_locations", force: :cascade do |t|
@@ -253,6 +255,12 @@ ActiveRecord::Schema.define(version: 20160615173603) do
     t.string   "pitch_5",                   limit: 255
   end
 
+  create_table "seasons", force: :cascade do |t|
+    t.integer  "next_game",  limit: 4
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
   create_table "swing_percentages", force: :cascade do |t|
     t.integer "zone_id",          limit: 4
     t.decimal "swing_percentage",             precision: 10
@@ -270,8 +278,8 @@ ActiveRecord::Schema.define(version: 20160615173603) do
     t.string   "division",          limit: 255
     t.string   "stadium",           limit: 255
     t.integer  "capacity",          limit: 4
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
     t.integer  "catcher",           limit: 4
     t.integer  "designated_hitter", limit: 4
     t.integer  "first_base",        limit: 4
@@ -290,6 +298,11 @@ ActiveRecord::Schema.define(version: 20160615173603) do
     t.integer  "lineup7",           limit: 4
     t.integer  "lineup8",           limit: 4
     t.integer  "lineup9",           limit: 4
+    t.integer  "wins",              limit: 4
+    t.integer  "losses",            limit: 4
+    t.integer  "runs_scored",       limit: 4
+    t.integer  "runs_allowed",      limit: 4
+    t.text     "schedule",          limit: 4294967295
   end
 
   create_table "users", force: :cascade do |t|

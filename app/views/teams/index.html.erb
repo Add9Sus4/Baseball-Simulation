@@ -13,35 +13,62 @@
 <p id="notice"><%= notice %></p>
 
 
-  <h1>Teams</h1>
+  <h1 style="color:#243342;">Teams</h1>
 
-<table class="table_with_custom_border table-condensed table-striped table-bordered table-responsive sortable">
-  <thead>
-    <tr>
-      <th id=team_name_column_header data-defaultsort="asc">Name</th>
-      <th>League</th>
-      <th>Division</th>
-      <th>Stadium</th>
-      <th>Capacity</th>
-    </tr>
-  </thead>
+<% leagues = ["NL", "AL"] %>
+<% divisions = ["East", "Central", "West"] %>
 
-  <tbody>
-    <% @teams.each do |team| %>
-      <tr>
-        <td><%= link_to team.full_name, team, method: :get %></td>
-        <td><%= team.league %></td>
-        <td><%= team.division %></td>
-        <td><%= team.stadium %></td>
-        <td><%= team.capacity %></td>
-      </tr>
+<% leagues.each do |league| %>
+  <div class="league_div">
+    <% divisions.each do |division| %>
+      <h3 class="division_title"><%= league + " " + division %></h3>
+      <table class="table_with_custom_border table-condensed table-striped table-bordered table-responsive sortable">
+        <thead>
+          <tr>
+            <th id=team_name_column_header>Name</th>
+            <th data-defaultsort="desc">Wins</th>
+            <th>Losses</th>
+            <th>Stadium</th>
+            <th>Capacity</th>
+            <th>RS</th>
+            <th>RA</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @teams.where(:league => league, :division => division).each do |team| %>
+            <tr>
+              <td><%= link_to team.full_name, team, method: :get %></td>
+              <td><%= team.wins %></td>
+              <td><%= team.losses %></td>
+              <td><%= team.stadium %></td>
+              <td><%= team.capacity %></td>
+              <td><%= team.runs_scored %></td>
+              <td><%= team.runs_allowed %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table></br>
     <% end %>
-  </tbody>
-</table>
+  </div>
+<% end %>
 
 <style>
 .teams {
   pointer-events: none;
   opacity: 0.5;
+}
+
+.division_title {
+  color: #52677a;
+}
+
+.league_div {
+  border: 2px solid #52677a;
+  border-radius: 20px;
+  display: inline-block;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 15px;
 }
 </style>

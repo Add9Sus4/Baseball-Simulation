@@ -6,8 +6,8 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-numUsers = 50 # How many users to add to database
-numTeams = 10 # How many teams to add to database
+numUsers = 2 # How many users to add to database
+numTeams = 5 # How many teams per division to add to database
 numPlayersPerTeam = 13 # How many players on each team to add to database
 teams = []
 
@@ -381,53 +381,169 @@ def completely_average_player(team_id)
                               pitch_5: pitches[4])
 end
 
-# Create teams
-numTeams.times do
-  city = Faker::Address.city
-  name = Faker::Team.creature.capitalize
-  league = ["NL","AL"].sample
-  division = ["East","Central","West"].sample
-  stadium = name + " " + ["Stadium","Field","Park","Coliseum","Center"].sample
-  capacity = 45000
-  newTeam = Team.create!(city: city,
-  name: name,
-  league: league,
-  division: division,
-  stadium: stadium,
-  capacity: capacity)
-  teams.unshift(newTeam)
+# Create season
+season = Season.create!(next_game: 0)
+
+["NL", "AL"].each do |current_league|
+  ["East", "Central", "West"].each do |current_division|
+    # Create teams
+    numTeams.times do
+      city = Faker::Address.city
+      name = Faker::Team.creature.capitalize
+      league = current_league
+      division = current_division
+      stadium = name + " " + ["Stadium","Field","Park","Coliseum","Center"].sample
+      capacity = 45000
+      newTeam = Team.create!(city: city,
+      name: name,
+      league: league,
+      division: division,
+      stadium: stadium,
+      capacity: capacity)
+      teams.unshift(newTeam)
+    end
+
+    # Create players for each team
+    teams.each do |team|
+      players = []
+      numPlayersPerTeam.times do
+        newPlayer = completely_random_player(team.id)
+        players.unshift(newPlayer)
+      end
+      team.update(
+      catcher: players[12].id,
+      designated_hitter: players[11].id,
+      first_base: players[10].id,
+      second_base: players[9].id,
+      third_base: players[8].id,
+      shortstop: players[7].id,
+      left_field: players[6].id,
+      center_field: players[5].id,
+      right_field: players[4].id,
+      lineup1: 0,
+      lineup2: 1,
+      lineup3: 2,
+      lineup4: 3,
+      lineup5: 4,
+      lineup6: 5,
+      lineup7: 6,
+      lineup8: 7,
+      lineup9: 8,
+      wins: 0,
+      losses: 0,
+      runs_scored: 0,
+      runs_allowed: 0,
+      schedule: "")
+    end
+
+    teams.clear
+
+  end
 end
 
-# Create players for each team
-teams.each do |team|
-  players = []
-  numPlayersPerTeam.times do
-    newPlayer = completely_random_player(team.id)
-    players.unshift(newPlayer)
-  end
-  city = Faker::Address.city
-  name = Faker::Team.creature.capitalize
-  league = ["NL","AL"].sample
-  division = ["East","Central","West"].sample
-  stadium = name + " " + ["Stadium","Field","Park","Coliseum","Center"].sample
-  capacity = 45000
+# Reload the teams
+@all_teams = Team.all
+
+# Create the schedules
+
+# First, determine series lengths
+TOTAL_TWO_GAME_SERIES = 2
+TOTAL_THREE_GAME_SERIES = 38
+TOTAL_FOUR_GAME_SERIES = 11
+
+@two_game_series = 0
+@three_game_series = 0
+@four_game_series = 0
+
+def two_game_series_remaining
+    TOTAL_TWO_GAME_SERIES - @two_game_series
+end
+
+def three_game_series_remaining
+    TOTAL_THREE_GAME_SERIES - @three_game_series
+end
+
+def four_game_series_remaining
+    TOTAL_FOUR_GAME_SERIES - @four_game_series
+end
+
+@series_lengths = []
+
+def add_series
+    # determine length of new series
+    rand = Random.new.rand(two_game_series_remaining + three_game_series_remaining + four_game_series_remaining)
+    if rand < two_game_series_remaining
+        @series_lengths.push(2)
+        @two_game_series += 1
+    elsif rand < two_game_series_remaining + three_game_series_remaining
+        @series_lengths.push(3)
+        @three_game_series += 1
+    else
+        @series_lengths.push(4)
+        @four_game_series += 1
+    end
+end
+
+
+
+51.times do
+    add_series
+end
+
+# @counts = Hash.new 0
+
+# @series_lengths.each do |series|
+#     @counts[series] += 1
+# end
+
+# puts @series_lengths
+
+# puts @counts
+
+# Next, determine matchups
+@all_teams = Team.all
+@teams = []
+
+@all_teams.each do |team|
+  @teams.push(team.id)
+end
+
+@season_matchups = Hash.new 0
+
+51.times do |index|
+
+    @matchups = Hash.new 0
+    @current_series_teams = Array.new(@teams)
+
+    15.times do
+        home_team = @current_series_teams.delete(@current_series_teams.sample)
+        away_team = @current_series_teams.delete(@current_series_teams.sample)
+        @matchups[home_team] = away_team
+        @matchups[away_team] = home_team
+    end
+
+    @season_matchups[index] = @matchups
+
+end
+
+# puts @season_matchups
+
+@team_schedules = Hash.new 0
+
+30.times do |index|
+    schedule = []
+    51.times do |j|
+        @series_lengths[j].times do
+            schedule.push(@season_matchups[j][@teams[index]])
+        end
+    end
+    @team_schedules[@teams[index]] = schedule
+end
+
+# @team_schedules is a hash where the key is the team id (here, 0 to 29) and the value is an array of opponent team ids (0 to 29)
+# puts @team_schedules
+
+@all_teams.each do |team|
   team.update(
-  catcher: players[12].id,
-  designated_hitter: players[11].id,
-  first_base: players[10].id,
-  second_base: players[9].id,
-  third_base: players[8].id,
-  shortstop: players[7].id,
-  left_field: players[6].id,
-  center_field: players[5].id,
-  right_field: players[4].id,
-  lineup1: 0,
-  lineup2: 1,
-  lineup3: 2,
-  lineup4: 3,
-  lineup5: 4,
-  lineup6: 5,
-  lineup7: 6,
-  lineup8: 7,
-  lineup9: 8)
+  schedule: @team_schedules[team.id].to_s.chop[1..-1])
 end

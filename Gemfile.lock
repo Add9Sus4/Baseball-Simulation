@@ -129,6 +129,7 @@ GEM
     notiffany (0.1.0)
       nenv (~> 0.1)
       shellany (~> 0.0)
+    pg (0.18.4)
     pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -246,6 +247,7 @@ DEPENDENCIES
   jquery-ui-rails
   launchy
   mysql2 (>= 0.3.13, < 0.5)
+  pg (= 0.18.4)
   rails (= 4.2.5)
   rspec-rails
   sass-rails (~> 5.0)

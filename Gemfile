@@ -55,6 +55,10 @@ group :test do
   gem 'launchy'
 end
 
+group :production do
+  gem 'pg', '0.18.4'
+end
+
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0'

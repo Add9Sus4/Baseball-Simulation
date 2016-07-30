@@ -1,5 +1,7 @@
 module ApplicationHelper
 
+
+
   # Takes number 1 through 100 and prints zone number
   def table_index_to_zone(index)
     case index

@@ -24,13 +24,38 @@ class GamesController < ApplicationController
   # POST /games
   # POST /games.json
   def create
-    @heat_maps = HeatMap.new
-    20.times do
-    @game = Game.new(game_params)
-    # Play game here
-      @game.heat_maps = @heat_maps
-      @game.play
+
+    8.times do
+
+    # hash to determine if a team has already played a game (to avoid duplicate games)
+    @already_played_hash = Hash.new 0
+    @game_number = Season.first.next_game
+
+    Team.find_each do |team|
+      unless @already_played_hash[team.id] == 1 then
+        @game = Game.new(game_params)
+        schedule = team.schedule.split(", ").map {|s| s.to_i} # array of opponent ids
+        @game.away_team_id = schedule[@game_number] # Assume opponent is away team (this will be changed later)
+        @game.home_team_id = team.id
+        # Add both teams to list of already played teams
+        @already_played_hash[schedule[@game_number]] = 1
+        @already_played_hash[team.id] = 1
+        @game.play
+      end
     end
+
+    # increment game number in season
+    Season.first.update_attributes(next_game: Season.first.next_game + 1)
+
+    end
+
+    # 30.times do
+    #
+    # @game.home_team_id = 772
+    # @game.away_team_id = 773
+    # # Play game here
+    #   @game.play
+    # end
 
 
     # respond_to do |format|

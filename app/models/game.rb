@@ -7,7 +7,7 @@
 # heat maps are loaded into a hash before the game begins
 class Game < ActiveRecord::Base
   validate :teams_must_be_different
-  attr_accessor :pbp, :bad, :good, :home_team, :away_team, :heat_maps, :inning_status, :inning_number, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score, :home_team_inning_scores, :away_team_inning_scores, :over
+  attr_accessor :pbp, :bad, :good, :home_team, :away_team, :inning_status, :inning_number, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score, :home_team_inning_scores, :away_team_inning_scores, :over
 
   def teams_must_be_different
     errors.add(:base, "Teams cannot be the same") if home_team_id == away_team_id
@@ -38,12 +38,27 @@ class Game < ActiveRecord::Base
         @over = true
       end
       @inning_number = @inning_number + 1
-    end
+    end # game is over here
 
     collect_stats
   end
 
   def collect_stats
+
+    # team win/loss stats
+    if @home_team_score > @away_team_score
+      @home_team.update_attribute(:wins, @home_team.wins + 1)
+      @away_team.update_attribute(:losses, @away_team.losses + 1)
+    else
+      @home_team.update_attribute(:losses, @home_team.losses + 1)
+      @away_team.update_attribute(:wins, @away_team.wins + 1)
+    end
+
+    # team runs scored and allowed
+    @home_team.update_attribute(:runs_scored, @home_team.runs_scored + @home_team_score)
+    @away_team.update_attribute(:runs_scored, @away_team.runs_scored + @away_team_score)
+    @home_team.update_attribute(:runs_allowed, @home_team.runs_allowed + @away_team_score)
+    @away_team.update_attribute(:runs_allowed, @away_team.runs_allowed + @home_team_score)
 
     # player stats
     @home_team.players.each do |player|
@@ -416,6 +431,10 @@ class Game < ActiveRecord::Base
 
     # play by play
     self.update_attributes(play_by_play: @pbp)
+
+    # game number (needs to be changed from first to the current season when there are more than 1 seasons)
+    self.update_attributes(game_number: Season.first.next_game)
+    self.update_attributes(season_id: Season.first.id)
   end
 
   # Creates instance variables to use in the game

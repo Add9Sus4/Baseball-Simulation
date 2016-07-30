@@ -16,14 +16,11 @@ class Inning
       @fielding_team = game.away_team
       @lineup_position = game.home_team_lineup_position
     end
-
-    @heat_maps = game.heat_maps
-
     # Simulate inning
     while !@over do
       @batter = @hitting_team.find_player_by_lineup_index(@lineup_position)
       @pitcher = @fielding_team.players[0]
-      atBat = AtBat.new(@pitcher, @batter, @heat_maps, @game, @bases)
+      atBat = AtBat.new(@pitcher, @batter, @game, @bases)
       play = Play.new(atBat, @game)
       if play.result == PlayResult::OUT
         @pitcher.records_out(1)

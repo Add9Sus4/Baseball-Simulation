@@ -75,7 +75,7 @@ class Hit
     when HitType::GROUND_BALL
 
       # Weak grounder
-      if @power < 20
+      if rand() > 0.80
         if rand() > 0.50
           @location = HitLocation::CATCHER
         else
@@ -180,232 +180,232 @@ class Hit
       case @type
       when HitType::GROUND_BALL
         if rand() < chanceOfReachingBall
-          @result = HitResult::GROUNDER_TO_PITCHER
+           hits_grounder("PITCHER")
         else
-          @result = HitResult::INFIELD_SINGLE_TO_PITCHER
+          hits_single("PITCHER")
         end
       when HitType::LINE_DRIVE
         if rand() < chanceOfReachingBall
-          @result = HitResult::LINER_TO_PITCHER
+          hits_liner("PITCHER")
         else
-          @result = HitResult::SINGLE_TO_CENTER
+          hits_single("CENTER")
         end
       when HitType::POP_UP
         if rand() < chanceOfReachingBall
-          @result = HitResult::POPUP_TO_PITCHER
+          hits_popup("PITCHER")
         else
-          @result = HitResult::INFIELD_SINGLE_TO_PITCHER
+          hits_single("PITCHER")
         end
       end
     when HitLocation::CATCHER
       case @type
       when HitType::GROUND_BALL
         if rand() < chanceOfReachingBall
-          @result = HitResult::GROUNDER_TO_CATCHER
+          hits_grounder("CATCHER")
         else
-          @result = HitResult::INFIELD_SINGLE_TO_CATCHER
+          hits_single("CATCHER")
         end
       when HitType::POP_UP
         if rand() < chanceOfReachingBall
-          @result = HitResult::POPUP_TO_CATCHER
+          hits_popup("CATCHER")
         else
-          @result = HitResult::INFIELD_SINGLE_TO_CATCHER
+          hits_single("CATCHER")
         end
       end
     when HitLocation::FIRST_BASEMAN
       case @type
       when HitType::GROUND_BALL
         if rand() < chanceOfReachingBall
-          @result = HitResult::GROUNDER_TO_FIRST
+          hits_grounder("FIRST")
         else
           if rand() > 0.30
-            @result = HitResult::SINGLE_TO_RIGHT
+            hits_single("RIGHT")
           else
-            @result = HitResult::DOUBLE_TO_RIGHT
+            hits_double("RIGHT")
           end
         end
       when HitType::LINE_DRIVE
         if rand() < chanceOfReachingBall
-          @result = HitResult::LINER_TO_FIRST
+          hits_liner("FIRST")
         else
           random = rand()
           if random > 0.30
-            @result = HitResult::SINGLE_TO_RIGHT
-          elsif random > 0.80
-            @result = HitResult::DOUBLE_TO_RIGHT
+            hits_single("RIGHT")
+          elsif random < Constants::PERCENT_DOUBLES_TO_TRIPLES
+            hits_double("RIGHT")
           else
-            @result = HitResult::TRIPLE_TO_RIGHT
+            hits_triple("RIGHT")
           end
         end
       when HitType::POP_UP
         if rand() < chanceOfReachingBall
-          @result = HitResult::POPUP_TO_FIRST
+          hits_popup("FIRST")
         else
-          @result = HitResult::INFIELD_SINGLE_TO_FIRST
+          hits_single("FIRST")
         end
       end
     when HitLocation::SECOND_BASEMAN
       case @type
       when HitType::GROUND_BALL
         if rand() < chanceOfReachingBall
-          @result = HitResult::GROUNDER_TO_SECOND
+          hits_grounder("SECOND")
         else
           if rand() > 0.75
-            @result = HitResult::SINGLE_TO_RIGHT
+            hits_single("RIGHT")
           else
-            @result = HitResult::SINGLE_TO_CENTER
+            hits_single("CENTER")
           end
         end
       when HitType::LINE_DRIVE
         if rand() < chanceOfReachingBall
-          @result = HitResult::LINER_TO_SECOND
+          hits_liner("SECOND")
         else
           random = rand()
           if random < 0.50
             if rand() > 0.75
-              @result = HitResult::SINGLE_TO_RIGHT
+              hits_single("RIGHT")
             else
-              @result = HitResult::SINGLE_TO_CENTER
+              hits_single("CENTER")
             end
           else
-            if rand() > 0.75
-              @result = HitResult::DOUBLE_TO_RIGHT_CENTER
+            if rand() < Constants::PERCENT_DOUBLES_TO_TRIPLES
+              hits_double("RIGHT_CENTER")
             else
               if rand() > 0.50
-                @result = HitResult::TRIPLE_TO_RIGHT
+                hits_triple("RIGHT")
               else
-                @result = HitResult::TRIPLE_TO_CENTER
+                hits_triple("CENTER")
               end
             end
           end
         end
       when HitType::POP_UP
         if rand() < chanceOfReachingBall
-          @result = HitResult::POPUP_TO_SECOND
+          hits_popup("SECOND")
         else
-          @result = HitResult::INFIELD_SINGLE_TO_SECOND
+          hits_single("SECOND")
         end
       end
     when HitLocation::THIRD_BASEMAN
       case @type
       when HitType::GROUND_BALL
         if rand() < chanceOfReachingBall
-          @result = HitResult::GROUNDER_TO_THIRD
+          hits_grounder("THIRD")
         else
           if rand() > 0.30
-            @result = HitResult::SINGLE_TO_LEFT
+            hits_single("LEFT")
           else
-            @result = HitResult::DOUBLE_TO_LEFT
+            hits_double("LEFT")
           end
         end
       when HitType::LINE_DRIVE
         if rand() < chanceOfReachingBall
-          @result = HitResult::LINER_TO_THIRD
+          hits_liner("THIRD")
         else
           random = rand()
           if random > 0.30
-            @result = HitResult::SINGLE_TO_LEFT
-          elsif random > 0.80
-            @result = HitResult::DOUBLE_TO_LEFT
+            hits_single("LEFT")
+          elsif random < Constants::PERCENT_DOUBLES_TO_TRIPLES
+            hits_double("LEFT")
           else
-            @result = HitResult::TRIPLE_TO_LEFT
+            hits_triple("LEFT")
           end
         end
       when HitType::POP_UP
         if rand() < chanceOfReachingBall
-          @result = HitResult::POPUP_TO_THIRD
+          hits_popup("THIRD")
         else
-          @result = HitResult::INFIELD_SINGLE_TO_THIRD
+          hits_single("THIRD")
         end
       end
     when HitLocation::SHORTSTOP
       case @type
       when HitType::GROUND_BALL
         if rand() < chanceOfReachingBall
-          @result = HitResult::GROUNDER_TO_SHORT
+          hits_grounder("SHORT")
         else
           if rand() > 0.75
-            @result = HitResult::SINGLE_TO_LEFT
+            hits_single("LEFT")
           else
-            @result = HitResult::SINGLE_TO_CENTER
+            hits_single("CENTER")
           end
         end
       when HitType::LINE_DRIVE
         if rand() < chanceOfReachingBall
-          @result = HitResult::LINER_TO_SHORT
+          hits_liner("SHORT")
         else
           random = rand()
           if random < 0.50
             if rand() > 0.75
-              @result = HitResult::SINGLE_TO_LEFT
+              hits_single("LEFT")
             else
-              @result = HitResult::SINGLE_TO_CENTER
+              hits_single("CENTER")
             end
           else
-            if rand() > 0.75
-              @result = HitResult::DOUBLE_TO_LEFT_CENTER
+            if rand() < Constants::PERCENT_DOUBLES_TO_TRIPLES
+              hits_double("LEFT_CENTER")
             else
               if rand() > 0.50
-                @result = HitResult::TRIPLE_TO_LEFT
+                hits_triple("LEFT")
               else
-                @result = HitResult::TRIPLE_TO_CENTER
+                hits_triple("CENTER")
               end
             end
           end
         end
       when HitType::POP_UP
         if rand() < chanceOfReachingBall
-          @result = HitResult::POPUP_TO_SHORT
+          hits_popup("SHORT")
         else
-          @result = HitResult::INFIELD_SINGLE_TO_SHORT
+          hits_single("SHORT")
         end
       end
     when HitLocation::LEFT_FIELDER
       if rand() < chanceOfReachingBall
-        @result = HitResult::FLY_BALL_TO_LEFT
+        hits_fly_ball("LEFT")
       elsif rand(60..100) < @power
-        @result = HitResult::HOME_RUN_TO_LEFT
+        hits_home_run("LEFT")
       else
-        if rand() < 0.75
+        if rand() < Constants::PERCENT_DOUBLES_TO_TRIPLES
           if rand() < 0.50
-            @result = HitResult::DOUBLE_TO_LEFT
+            hits_double("LEFT")
           else
-            @result = HitResult::DOUBLE_TO_LEFT_CENTER
+            hits_double("LEFT_CENTER")
           end
         else
-          @result = HitResult::TRIPLE_TO_LEFT
+          hits_triple("LEFT")
         end
       end
     when HitLocation::CENTER_FIELDER
       if rand() < chanceOfReachingBall
-        @result = HitResult::FLY_BALL_TO_CENTER
+        hits_fly_ball("CENTER")
       elsif rand(0..100) < @power
-        @result = HitResult::HOME_RUN_TO_CENTER
+        hits_home_run("CENTER")
       else
-        if rand() < 0.75
+        if rand() < Constants::PERCENT_DOUBLES_TO_TRIPLES
           if rand() < 0.50
-            @result = HitResult::DOUBLE_TO_LEFT_CENTER
+            hits_double("LEFT_CENTER")
           else
-            @result = HitResult::DOUBLE_TO_RIGHT_CENTER
+            hits_double("RIGHT_CENTER")
           end
         else
-          @result = HitResult::TRIPLE_TO_CENTER
+          hits_triple("CENTER")
         end
       end
     when HitLocation::RIGHT_FIELDER
       if rand() < chanceOfReachingBall
-        @result = HitResult::FLY_BALL_TO_RIGHT
+        hits_fly_ball("RIGHT")
       elsif rand(0..100) < @power
-        @result = HitResult::HOME_RUN_TO_RIGHT
+        hits_home_run("RIGHT")
       else
-        if rand() < 0.75
+        if rand() < Constants::PERCENT_DOUBLES_TO_TRIPLES
           if rand() < 0.50
-            @result = HitResult::DOUBLE_TO_RIGHT
+            hits_double("RIGHT")
           else
-            @result = HitResult::DOUBLE_TO_RIGHT_CENTER
+            hits_double("RIGHT_CENTER")
           end
         else
-          @result = HitResult::TRIPLE_TO_RIGHT
+          hits_triple("RIGHT")
         end
       end
     end
@@ -415,7 +415,126 @@ class Hit
     else
       @game.pbp += "\n<span style=\"color:" + @game.good + "\">#{@atbat.batter.full_name} hits a #{@result}</span>\n"
     end
+  end
 
+  def hits_single(location)
+    case location
+    when "LEFT"
+      @result = HitResult::SINGLE_TO_LEFT
+    when "CENTER"
+      @result = HitResult::SINGLE_TO_CENTER
+    when "RIGHT"
+      @result = HitResult::SINGLE_TO_RIGHT
+    when "PITCHER"
+      @result = HitResult::INFIELD_SINGLE_TO_PITCHER
+    when "CATCHER"
+      @result = HitResult::INFIELD_SINGLE_TO_CATCHER
+    when "FIRST"
+      @result = HitResult::INFIELD_SINGLE_TO_FIRST
+    when "SECOND"
+      @result = HitResult::INFIELD_SINGLE_TO_SECOND
+    when "SHORT"
+      @result = HitResult::INFIELD_SINGLE_TO_SHORT
+    when "THIRD"
+      @result = HitResult::INFIELD_SINGLE_TO_THIRD
+    end
+  end
+
+  def hits_double(location)
+    case location
+    when "LEFT"
+      @result = HitResult::DOUBLE_TO_LEFT
+    when "LEFT_CENTER"
+      @result = HitResult::DOUBLE_TO_LEFT_CENTER
+    when "RIGHT_CENTER"
+      @result = HitResult::DOUBLE_TO_RIGHT_CENTER
+    when "RIGHT"
+      @result = HitResult::DOUBLE_TO_RIGHT
+    end
+  end
+
+  def hits_triple(location)
+    case location
+    when "LEFT"
+      @result = HitResult::TRIPLE_TO_LEFT
+    when "CENTER"
+      @result = HitResult::TRIPLE_TO_CENTER
+    when "RIGHT"
+      @result = HitResult::TRIPLE_TO_RIGHT
+    end
+  end
+
+  def hits_fly_ball(location)
+    case location
+    when "LEFT"
+      @result = HitResult::FLY_BALL_TO_LEFT
+    when "CENTER"
+      @result = HitResult::FLY_BALL_TO_CENTER
+    when "RIGHT"
+      @result = HitResult::FLY_BALL_TO_RIGHT
+    end
+  end
+
+  def hits_home_run(location)
+    case location
+    when "LEFT"
+      @result = HitResult::HOME_RUN_TO_LEFT
+    when "CENTER"
+      @result = HitResult::HOME_RUN_TO_CENTER
+    when "RIGHT"
+      @result = HitResult::HOME_RUN_TO_RIGHT
+    end
+  end
+
+  def hits_grounder(location)
+    case location
+    when "THIRD"
+      @result = HitResult::GROUNDER_TO_THIRD
+    when "SHORT"
+      @result = HitResult::GROUNDER_TO_SHORT
+    when "SECOND"
+      @result = HitResult::GROUNDER_TO_SECOND
+    when "FIRST"
+      @result = HitResult::GROUNDER_TO_FIRST
+    when "PITCHER"
+      @result = HitResult::GROUNDER_TO_PITCHER
+    when "CATCHER"
+      @result = HitResult::GROUNDER_TO_CATCHER
+    end
+  end
+
+  def hits_liner(location)
+    case location
+    when "THIRD"
+      @result = HitResult::LINER_TO_THIRD
+    when "SHORT"
+      @result = HitResult::LINER_TO_SHORT
+    when "SECOND"
+      @result = HitResult::LINER_TO_SECOND
+    when "FIRST"
+      @result = HitResult::LINER_TO_FIRST
+    when "PITCHER"
+      @result = HitResult::LINER_TO_PITCHER
+    when "CATCHER"
+      @result = HitResult::LINER_TO_CATCHER
+    end
+  end
+
+  def hits_popup(location)
+    case location
+    when "THIRD"
+      @result = HitResult::POPUP_TO_THIRD
+    when "SHORT"
+      @result = HitResult::POPUP_TO_SHORT
+    when "SECOND"
+      @result = HitResult::POPUP_TO_SECOND
+    when "FIRST"
+      @result = HitResult::POPUP_TO_FIRST
+    when "PITCHER"
+      @result = HitResult::POPUP_TO_PITCHER
+    when "CATCHER"
+      @result = HitResult::POPUP_TO_CATCHER
+    end
   end
 
 end

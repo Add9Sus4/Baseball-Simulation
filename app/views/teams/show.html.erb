@@ -48,13 +48,14 @@
 }
 
 #roster_div {
-  padding-top: 1px;
+  padding-top: 30px;
+  padding-bottom: 10px;
 }
 
 #lineup_div {
   padding-top: 3px;
   float: left;
-  width: 275px;
+  width: 300px;
 }
 
 #lineup_title:hover {
@@ -97,6 +98,11 @@
     <%= @team.capacity %>
   </p>
 
+  <p>
+    <strong>Record:</strong>
+    <%= @team.wins.to_s + "-" + @team.losses.to_s %>
+  </p>
+
   <h3 id="lineup_title" data-toggle="tooltip" data-placement="top" title="Drag from roster to set positions.
   Reorder table to set lineup.">Lineup</h3>
 
@@ -112,7 +118,7 @@
     </thead>
     <tbody>
       <% for i in 1..9 do %>
-      <tr><td><%= i %></td></tr>
+      <tr><td class="lineup_number"><%= i %></td></tr>
       <% end %>
     </tbody>
   </table>
@@ -353,46 +359,55 @@
   </tbody>
 </table>
 
-<h3>Games</h3>
+<h3>Schedule</h3>
 <table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
   <thead>
     <tr>
-      <th>Game</th>
+      <th>Team</th>
+      <th>Result</th>
     </tr>
   </thead>
+  <% @schedule = @team.schedule.split(", ").map {|s| s.to_i} %>
   <tbody>
-    <% Game.where("home_team_id = ? OR away_team_id =?", @team.id, @team.id).each do |game| %>
-    <% @home_team_runs = game.home_runs_scored.split("_").map(&:to_i).sum %>
-    <% @away_team_runs = game.away_runs_scored.split("_").map(&:to_i).sum %>
+    <% game_number = 0 %>
+    <% @schedule.each do |opponent_id| %>
     <tr>
+      <td>
+        <% @opponent = Team.find(opponent_id) %>
+      <%= link_to @opponent.full_name, @opponent, method: :get %>
+    </td>
+    <td>
+      <% game = Game.where("(home_team_id = ? OR away_team_id = ?) AND game_number = ?", @team.id, @team.id, game_number).first %>
       <% @game_display = "" %>
-      <% if game.home_team_id != nil %>
-      <% if @home_team_runs > @away_team_runs %>
-      <% @game_display += "<strong>" + Team.find(game.home_team_id).name + " " + @home_team_runs.to_s + "</strong>" %>
-      <% else %>
-      <% @game_display += Team.find(game.home_team_id).name + " " + @home_team_runs.to_s %>
+      <% if !game.nil? %>
+        <% @home_team_runs = game.home_runs_scored.split("_").map(&:to_i).sum %>
+        <% @away_team_runs = game.away_runs_scored.split("_").map(&:to_i).sum %>
+        <% if @team.id == game.home_team_id %>
+          <% if @home_team_runs > @away_team_runs %>
+            <% @game_display += "W, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
+          <% else %>
+            <% @game_display += "L, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
+          <% end %>
+        <% else %>
+          <% if @home_team_runs > @away_team_runs %>
+            <% @game_display += "L, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
+          <% else %>
+            <% @game_display += "W, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
+          <% end %>
+        <% end %>
+        <% @num_innings = game.home_inning_scores.split("_").map(&:to_i).length %>
+        <% if @num_innings > 9 %>
+          <% @game_display += " (F/" + @num_innings.to_s + ")" %>
+        <% end %>
       <% end %>
-      <% end %>
-      <% @game_display += ", " %>
-      <% if game.away_team_id != nil %>
-      <% if @away_team_runs > @home_team_runs %>
-      <% @game_display += "<strong>" + Team.find(game.away_team_id).name + " " + @away_team_runs.to_s + "</strong>" %>
-      <% else %>
-      <% @game_display += Team.find(game.away_team_id).name + " " + @away_team_runs.to_s %>
-      <% end %>
-      <% end %>
-      <% if game.home_inning_scores != nil %>
-      <% @num_innings = game.home_inning_scores.split("_").map(&:to_i).length %>
-      <% if @num_innings > 9 %>
-      <% @game_display += " (F/" + @num_innings.to_s + ")" %>
-      <% end %>
-      <% end %>
-      <td><%= link_to simple_format(@game_display), game, method: :get %></td>
+      <%= link_to @game_display, game, method: :get %>
+    </td>
     </tr>
-
+    <% game_number += 1 %>
     <% end %>
   </tbody>
 </table>
+
 
 <script>
 
@@ -596,6 +611,8 @@ var fixHelperModified = function(e, tr) {
   return $helper;
 };
 
+var colors = [];
+
 $(".roster tbody tr").draggable({
   helper: 'clone',
   delay: 150,
@@ -604,9 +621,17 @@ $(".roster tbody tr").draggable({
   start: function(event, ui) {
     $(this).toggleClass('dragging');
     console.log("I am dragging " + $(this).find("span").text());
+
+    $(".lineup_number").each(function() {
+      colors.push($(this).css("background-color"));
+      $(this).css("background-color","green");
+    });
   },
   stop: function(event, ui) {
     $(this).toggleClass('dragging');
+    $(".lineup_number").each(function() {
+      $(this).css("background-color", colors.shift());
+    });
   },
   // containment: "#roster_div",
 }).disableSelection();
@@ -652,7 +677,6 @@ function createDroppable() {
             console.log(data);
             $("#view_lineup").load("/teams/" + data.id + " #view_lineup", function(responseText, textStatus, XMLHttpRequest) {
 
-
               createDroppable();
 
               $(".lineup tbody").sortable({
@@ -688,12 +712,21 @@ function createDroppable() {
                 start: function(event, ui) {
                   $(this).toggleClass('dragging');
                   console.log("I am dragging " + $(this).find("span").text());
+
+                  $(".lineup_number").each(function() {
+                    colors.push($(this).css("background-color"));
+                    $(this).css("background-color","green");
+                  });
                 },
                 stop: function(event, ui) {
                   $(this).toggleClass('dragging');
+                  $(".lineup_number").each(function() {
+                    $(this).css("background-color", colors.shift());
+                  });
                 },
                 // containment: "#roster_div",
               }).disableSelection();
+
               formatData();
             });
           }
