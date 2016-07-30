@@ -11,14 +11,14 @@ numTeams = 5 # How many teams per division to add to database
 numPlayersPerTeam = 13 # How many players on each team to add to database
 teams = []
 
-# Create initial user
-# User.create!(name: "Example User",
-#               email: "example@railstutorial.org",
-#               password: "foobar",
-#               password_confirmation: "foobar",
-#               admin: true,
-#               activated: true,
-#               activated_at: Time.zone.now)
+Create initial user
+User.create!(name: "Example User",
+              email: "example@railstutorial.org",
+              password: "foobar",
+              password_confirmation: "foobar",
+              admin: true,
+              activated: true,
+              activated_at: Time.zone.now)
 
 # Create additional users
 # (numUsers-1).times do |n|
