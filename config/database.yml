@@ -49,6 +49,7 @@ test:
 #
 production:
   <<: *default
+  adapter: postgresql
   database: add_baseball_app_production
   username: add_baseball_app
   password: <%= ENV['ADD_BASEBALL_APP_DATABASE_PASSWORD'] %>
