@@ -9,7 +9,7 @@ task :simulate_games => :environment do
   Team.find_each do |team|
     unless @already_played_hash[team.id] == 1 then
 
-      current_game_params = {:home_team_id => team.id, :away_team_id => schedule[@game_number],
+      current_game_params = {:home_team_id => 1, :away_team_id => 2,
         :attendance => 45000, :stadium_name => "", :home_lineup => "",
         :away_lineup => "", :home_atbats => "", :home_runs_scored => "",
         :home_hits => "", :home_doubles => "", :home_triples => "",
