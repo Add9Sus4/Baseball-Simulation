@@ -33,7 +33,7 @@ task :simulate_games => :environment do
         :away_strikes_thrown => "", :away_balls_thrown => "",
         :away_intentional_walks_allowed => "", :player_of_the_game => ""}
 
-      @game = Game.new(game_params)
+      @game = Game.new(current_game_params)
       schedule = team.schedule.split(", ").map {|s| s.to_i} # array of opponent ids
       @game.away_team_id = schedule[@game_number] # Assume opponent is away team (this will be changed later)
       @game.home_team_id = team.id
