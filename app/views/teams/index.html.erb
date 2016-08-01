@@ -28,10 +28,9 @@
             <th id=team_name_column_header>Name</th>
             <th data-defaultsort="desc">Wins</th>
             <th>Losses</th>
-            <th>Stadium</th>
-            <th>Capacity</th>
             <th>RS</th>
             <th>RA</th>
+            <th>+/-</th>
           </tr>
         </thead>
 
@@ -41,10 +40,9 @@
               <td><%= link_to team.full_name, team, method: :get %></td>
               <td><%= team.wins %></td>
               <td><%= team.losses %></td>
-              <td><%= team.stadium %></td>
-              <td><%= team.capacity %></td>
               <td><%= team.runs_scored %></td>
               <td><%= team.runs_allowed %></td>
+              <td><%= team.runs_scored - team.runs_allowed %></td>
             </tr>
           <% end %>
         </tbody>
