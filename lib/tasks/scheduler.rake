@@ -31,7 +31,7 @@ task :simulate_games => :environment do
         :away_walks_allowed => "", :away_strikeouts_recorded => "",
         :away_home_runs_allowed => "", :away_total_pitches => "",
         :away_strikes_thrown => "", :away_balls_thrown => "",
-        :away_intentional_walks_allowed => "", :player_of_the_game => ""}
+        :away_intentional_walks_allowed => "", :player_of_the_game => "", :play_by_play => ""}
 
       @game = Game.new(current_game_params)
       schedule = team.schedule.split(", ").map {|s| s.to_i} # array of opponent ids
