@@ -5,7 +5,7 @@ task :simulate_games => :environment do
   # hash to determine if a team has already played a game (to avoid duplicate games)
   @already_played_hash = Hash.new 0
   @game_number = Season.first.next_game
-
+  puts "game number: #{@game_number}"
   unless @game_number >= 161 then
 
     Team.find_each do |team|
