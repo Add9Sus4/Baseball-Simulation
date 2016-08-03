@@ -430,7 +430,7 @@ class Game < ActiveRecord::Base
     self.update_attributes(home_intentional_walks_allowed: home_intentional_walks_allowed_string)
 
     # play by play
-    self.update_attributes(play_by_play: @pbp)
+    self.update_attributes(pbp: @pbp)
 
     # game number (needs to be changed from first to the current season when there are more than 1 seasons)
     self.update_attributes(game_number: Season.first.next_game)
