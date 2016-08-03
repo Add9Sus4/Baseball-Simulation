@@ -227,7 +227,7 @@
     <tr><% for j in 1..10 do %>
       <td class="pitch_location_percentage tooltip_enable" title="<%= @player["zone_#{table_index_to_zone(i*10 + j)}_pitches".to_sym] %> total pitches thrown in this zone." width="50" height="50" style="text-align:center">
         <span class="num_pitches" hidden="true">
-          <%= @player["zone_#{table_index_to_zone(i*10 + j)}_pitches".to_sym] %>
+          <%= @player.pitches_in_specific_zone(table_index_to_zone(i*10 + j)) %>
         </span>
         <span class="max_pitches" hidden="true">
           <%= @player.max_zone_pitches.to_f %>

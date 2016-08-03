@@ -213,21 +213,34 @@ class Player < ActiveRecord::Base
     @game_intentional_walks_allowed = @game_intentional_walks_allowed + 1
   end
 
+  # determines how many pitches were thrown in each zone, adjusting for larger size of outer zones
+  def pitches_in_specific_zone(i)
+
+    @current_value = self["zone_#{i}_pitches".to_sym]
+    if i == 1 || i == 3 || i == 70 || i == 72
+      @current_value /= 5
+    elsif i == 2 || i == 28 || i == 37 || i == 71
+      @current_value /= 4
+    end
+    @current_value
+  end
+
   # determines the maximum number of pitches thrown in any zone
   def max_zone_pitches
     max = 0
+    @current_value = 0
     for i in 1..72 do
 
-      @current_max = self["zone_#{i}_pitches".to_sym]
+      @current_value = self["zone_#{i}_pitches".to_sym]
 
       if i == 1 || i == 3 || i == 70 || i == 72
-        @current_max /= 5
+        @current_value /= 5
       elsif i == 2 || i == 28 || i == 37 || i == 71
-        @current_max /= 4
+        @current_value /= 4
       end
 
-      if @current_max > max
-        max = @current_max
+      if @current_value > max
+        max = @current_value
       end
     end
     max
