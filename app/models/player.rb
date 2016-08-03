@@ -217,8 +217,17 @@ class Player < ActiveRecord::Base
   def max_zone_pitches
     max = 0
     for i in 1..72 do
-      if self["zone_#{i}_pitches".to_sym] > max
-        max = self["zone_#{i}_pitches".to_sym]
+
+      @current_max = self["zone_#{i}_pitches".to_sym]
+
+      if i == 1 || i == 3 || i == 70 || i == 72
+        @current_max /= 5
+      elsif i == 2 || i == 28 || i == 37 || i == 71
+        @current_max /= 4
+      end
+
+      if @current_max > max
+        max = @current_max
       end
     end
     max
