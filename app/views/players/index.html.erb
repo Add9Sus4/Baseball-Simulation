@@ -1,5 +1,9 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-1.12.3.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css">
 <%= stylesheet_link_tag "jquery-ui.min", 'data-turbolinks-track' => true %>
 <%= javascript_include_tag "jquery-ui.min", 'data-turbolinks-track' => true %>
 <%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
@@ -19,10 +23,117 @@
 
 <h1>Players</h1>
 <br/>
-<h5>Search: <input type="text" id="player_search" class="search_box" onkeyup="doSearch()" /></h5>
-<br/>
+<form>
+  <fieldset>
+    <legend>Stat Type</legend>
+    <div id="radio">
+      <input type="radio" name="stat" id="batting" checked="checked">
+      <label for="batting">Batting</label>
+      <input type="radio" name="stat" id="pitching">
+      <label for="pitching">Pitching</label>
+    </div>
+  </fieldset>
+</form>
 
-<table id="player_index_table" class="table_with_custom_border table-condensed table-striped table-bordered table-responsive sortable">
+<script>
+  $("#radio").buttonset();
+
+  var tableOptionsShow = {
+    'bFilter': true,
+    'bInfo': true,
+    'paging': true,
+    "sDom": '<"H"<"length"l>frp>t<"F"ip>'
+  };
+  var tableOptionsHide = {
+    'bFilter': false,
+    'bInfo': false,
+    'paging': false,
+    "sDom": '<"H"<"length"l>frp>t<"F"ip>'
+  };
+
+  $("#batting").click(function() {
+    var bTable = $("#player_index_table");
+    var pTable = $("#player_pitching_table");
+    bTable.show();
+    pTable.hide();
+    bTable.DataTable().destroy();
+    pTable.DataTable().destroy();
+    bTable.DataTable(tableOptionsShow);
+    pTable.DataTable(tableOptionsHide);
+    $(".batting").show();
+    $(".pitching").hide();
+  });
+  $("#pitching").click(function() {
+    var bTable = $("#player_index_table");
+    var pTable = $("#player_pitching_table");
+    bTable.hide();
+    pTable.show();
+    bTable.DataTable().destroy();
+    pTable.DataTable().destroy();
+    bTable.DataTable(tableOptionsHide);
+    pTable.DataTable(tableOptionsShow);
+    $(".batting").hide();
+    $(".pitching").show();
+  });
+
+  $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+    var minIP = parseInt($("#minIP").val(), 10);
+    var ip = parseFloat(data[7]) || 0;
+    if (isNaN(minIP) || minIP <= ip) {
+      return true;
+    }
+    return false;
+  });
+
+  $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+    var minAB = parseInt($("#minAB").val(), 10);
+    var ab = parseFloat(data[7]) || 0;
+    if (isNaN(minAB) || minAB <= ab) {
+      return true;
+    }
+    return false;
+  });
+
+  $(document).ready(function() {
+    var battingTable = $('#player_index_table').DataTable({
+      bFilter: true,
+      bInfo: true,
+      paging: true,
+      "sDom": '<"H"<"length"l>frp>t<"F"ip>'
+    });
+    var pitchingTable = $('#player_pitching_table').DataTable({
+      bFilter: false,
+      bInfo: false,
+      paging: false,
+      "sDom": '<"H"<"length"l>frp>t<"F"ip>'
+    });
+    $('#minIP').keyup(function() {
+      $("#player_pitching_table").DataTable().destroy();
+      $("#player_pitching_table").DataTable(tableOptionsShow);
+    });
+    $('#minAB').keyup(function() {
+      $("#player_index_table").DataTable().destroy();
+      $("#player_index_table").DataTable(tableOptionsShow);
+    });
+});
+</script>
+
+<style>
+  .length {
+    float:left;
+    padding-top: 15px;
+  }
+</style>
+
+<!-- <h5>Search: <input type="text" id="player_search" class="search_box" onkeyup="searchPlayers()" /></h5> -->
+<br/>
+<input hidden type="text" id="minIP" class="pitching" name="minIP"/>
+<label hidden class="pitching" for="minIP">min IP</label>
+
+<input type="text" id="minAB" class="batting" name="minIP"/>
+<label class="batting" for="minAB">min AB</label>
+
+<table id="player_index_table" class="table table-striped table-bordered">
   <thead>
     <tr>
       <th id=name_column_header data-defaultsort="asc">Name</th>
@@ -78,6 +189,57 @@
         <td><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
         <td><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
         <td><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<table hidden id="player_pitching_table" class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th id=name_column_header data-defaultsort="asc">Name</th>
+      <th>Team</th>
+      <th>Age</th>
+      <th>Height</th>
+      <th>Weight</th>
+      <th>Position</th>
+      <th>Salary</th>
+      <th class="tooltip_enable" title="Innings pitched">IP</th>
+      <th class="tooltip_enable" title="Hits allowed">H</th>
+      <th class="tooltip_enable" title="Runs allowed">R</th>
+      <th class="tooltip_enable" title="Earned runs allowed">ER</th>
+      <th class="tooltip_enable" title="Home runs allowed">HR</th>
+      <th class="tooltip_enable" title="Walks allowed">BB</th>
+      <th class="tooltip_enable" title="Strikeouts recorded">K</th>
+      <th class="tooltip_enable" title="Strikeout to walk ratio">K/BB</th>
+      <th class="tooltip_enable" title="Earned run average">ERA</th>
+      <th class="tooltip_enable" title="Walks plus hits per inning pitched">WHIP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @players.each do |player| %>
+      <tr>
+        <td><%= link_to player.full_name, player, method: :get %></td>
+        <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+        <td><%= player.age %></td>
+        <td class="height"><%= player.height %></td>
+        <td><%= player.weight %> lb.</td>
+        <td class="position"><%= player.position %></td>
+        <td class="salary"><%= number_to_currency(player.salary) %></td>
+        <td><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td>
+        <td class="tooltip_enable" title="<%= number_with_precision(player.hits_allowed.to_f*27/player.outs_recorded.to_f, precision: 2) %> H/9"><%= player.hits_allowed %></td>
+        <td><%= player.runs_allowed %></td>
+        <td class="tooltip_enable"><%= player.earned_runs_allowed %></td>
+        <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(player.home_runs_allowed.to_f*27/player.outs_recorded.to_f, precision: 2) %> HR/9"><%= player.home_runs_allowed %></td>
+        <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(player.walks_allowed.to_f*27/player.outs_recorded.to_f, precision: 2) %> BB/9"><%= player.walks_allowed %></td>
+        <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(player.strikeouts_recorded.to_f*27/player.outs_recorded.to_f, precision: 2) %> K/9"><%= player.strikeouts_recorded %></td>
+        <td><% if (player.strikeouts_recorded.to_f/player.walks_allowed.to_f).nan? %>
+          <%= 0.00 %>
+          <% else %>
+          <%= number_with_precision(player.strikeouts_recorded.to_f/player.walks_allowed.to_f, precision: 2) %>
+        <% end %></td>
+        <td><%= number_with_precision(zero_if_nan(player.earned_runs_allowed.to_f*27/player.outs_recorded.to_f), precision: 2) %></td>
+        <td><%= number_with_precision(zero_if_nan((player.walks_allowed + player.hits_allowed).to_f*3/player.outs_recorded.to_f), precision: 2) %></td>
       </tr>
     <% end %>
   </tbody>
@@ -164,10 +326,15 @@ $('.height').each(function() {
   $(this).attr('data-value', height);
 });
 
-function doSearch() {
-  console.log("doSearch just got called");
+function searchPlayers() {
+  var battingTable = document.getElementById('player_index_table');
+  var pitchingTable = document.getElementById('player_pitching_table');
+  doSearch(battingTable);
+  doSearch(pitchingTable);
+}
+
+function doSearch(table) {
   var searchText = document.getElementById('player_search').value;
-  var table = document.getElementById('player_index_table');
   var numColumns;
 
   // Loop through all the rows of the table
