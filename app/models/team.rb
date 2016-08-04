@@ -20,6 +20,18 @@ class Team < ActiveRecord::Base
 
   end
 
+  # format streak for display on page
+  def streak_display
+    case streak
+    when 0
+      "N/A"
+    when 1..Inf
+      "W#{streak}"
+    when -Inf..-1
+      "L#{streak*-1}"
+    end
+  end
+
   def position_name(index)
     position_names = ['DH', 'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF']
     position_names[index]

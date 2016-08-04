@@ -31,6 +31,8 @@
             <th>RS</th>
             <th>RA</th>
             <th>+/-</th>
+            <th>Streak</th>
+            <!-- <th>Last 10</th> -->
           </tr>
         </thead>
 
@@ -47,6 +49,8 @@
                 <% @plus_minus.prepend("+") %>
               <% end %>
               <td><%= @plus_minus %></td>
+              <td><%= team.streak_display %></td>
+              <!-- <td>TODO</td> -->
             </tr>
           <% end %>
         </tbody>
