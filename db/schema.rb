@@ -94,19 +94,19 @@ ActiveRecord::Schema.define(version: 20160804005007) do
     t.string   "away_balls_thrown",              limit: 255
     t.string   "away_intentional_walks_allowed", limit: 255
     t.integer  "player_of_the_game",             limit: 4
-    t.datetime "created_at",                                        null: false
-    t.datetime "updated_at",                                        null: false
+    t.datetime "created_at",                                   null: false
+    t.datetime "updated_at",                                   null: false
     t.string   "away_stolen_bases",              limit: 255
     t.string   "home_inning_scores",             limit: 255
     t.string   "away_inning_scores",             limit: 255
-    t.text     "play_by_play",                   limit: 4294967295
+    t.text     "pbp",                            limit: 65535
     t.integer  "season_id",                      limit: 4
     t.integer  "game_number",                    limit: 4
   end
 
   create_table "pitch_locations", force: :cascade do |t|
     t.integer "zone_id",          limit: 4
-    t.float   "pitch_percentage", limit: 53
+    t.decimal "pitch_percentage",             precision: 10
     t.string  "pitcher_hand",     limit: 255
     t.string  "batter_hand",      limit: 255
     t.integer "balls",            limit: 4
@@ -278,8 +278,8 @@ ActiveRecord::Schema.define(version: 20160804005007) do
     t.string   "division",          limit: 255
     t.string   "stadium",           limit: 255
     t.integer  "capacity",          limit: 4
-    t.datetime "created_at",                           null: false
-    t.datetime "updated_at",                           null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
     t.integer  "catcher",           limit: 4
     t.integer  "designated_hitter", limit: 4
     t.integer  "first_base",        limit: 4
@@ -302,7 +302,7 @@ ActiveRecord::Schema.define(version: 20160804005007) do
     t.integer  "losses",            limit: 4
     t.integer  "runs_scored",       limit: 4
     t.integer  "runs_allowed",      limit: 4
-    t.text     "schedule",          limit: 4294967295
+    t.text     "schedule",          limit: 65535
     t.integer  "streak",            limit: 4
   end
 

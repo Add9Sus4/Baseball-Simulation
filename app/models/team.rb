@@ -25,7 +25,7 @@ class Team < ActiveRecord::Base
     case streak
     when 0
       "N/A"
-    when 1..10000 
+    when 1..10000
       "W#{streak}"
     when -10000..-1
       "L#{streak*-1}"
