@@ -399,7 +399,8 @@ season = Season.create!(next_game: 0)
       league: league,
       division: division,
       stadium: stadium,
-      capacity: capacity)
+      capacity: capacity,
+      streak: 0)
       teams.unshift(newTeam)
     end
 

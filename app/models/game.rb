@@ -7,7 +7,7 @@
 # heat maps are loaded into a hash before the game begins
 class Game < ActiveRecord::Base
   validate :teams_must_be_different
-  attr_accessor :pbp, :bad, :good, :home_team, :away_team, :inning_status, :inning_number, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score, :home_team_inning_scores, :away_team_inning_scores, :play_by_play, :over
+  attr_accessor :streak, :pbp, :bad, :good, :home_team, :away_team, :inning_status, :inning_number, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score, :home_team_inning_scores, :away_team_inning_scores, :play_by_play, :over
 
   def teams_must_be_different
     errors.add(:base, "Teams cannot be the same") if home_team_id == away_team_id
@@ -46,12 +46,28 @@ class Game < ActiveRecord::Base
   def collect_stats
 
     # team win/loss stats
+    # Home team wins
     if @home_team_score > @away_team_score
       @home_team.update_attribute(:wins, @home_team.wins + 1)
       @away_team.update_attribute(:losses, @away_team.losses + 1)
+
+      # Home team streak
+      @home_team.streak >= 0 ? @home_team.update_attribute(:streak, @home_team.streak + 1) : @home_team.update_attribute(:streak, 0)
+
+      # Away team streak
+      @away_team.streak <= 0 ? @away_team.update_attribute(:streak, @away_team.streak - 1) : @away_team.update_attribute(:streak, 0)
+
+    # Away team wins
     else
       @home_team.update_attribute(:losses, @home_team.losses + 1)
       @away_team.update_attribute(:wins, @away_team.wins + 1)
+
+      # Home team streak
+      @home_team.streak <= 0 ? @home_team.update_attribute(:streak, @home_team.streak - 1) : @home_team.update_attribute(:streak, 0)
+
+      # Away team streak
+      @away_team.streak >= 0 ? @away_team.update_attribute(:streak, @away_team.streak + 1) : @away_team.update_attribute(:streak, 0)
+
     end
 
     # team runs scored and allowed
