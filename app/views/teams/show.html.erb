@@ -576,7 +576,7 @@ function formatData() {
 
   $('.salary').each(function() {
     var item = $(this).text();
-    var num = Number(item).toLocaleString('en');
+    var num = localeString(Number(item), ',', 3);
 
     if(Number(item) < 0) {
       num = num.replace('-','');
