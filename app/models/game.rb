@@ -446,7 +446,10 @@ class Game < ActiveRecord::Base
     self.update_attributes(home_intentional_walks_allowed: home_intentional_walks_allowed_string)
 
     # play by play
+    puts "updating pbp"
+    puts "#{@pbp}"
     self.update_attributes(pbp: @pbp)
+    puts "updating pbp done"
 
     # game number (needs to be changed from first to the current season when there are more than 1 seasons)
     self.update_attributes(game_number: Season.first.next_game)
