@@ -52,10 +52,10 @@ class Game < ActiveRecord::Base
       @away_team.update_attribute(:losses, @away_team.losses + 1)
 
       # Home team streak
-      @home_team.streak >= 0 ? @home_team.update_attribute(:streak, @home_team.streak + 1) : @home_team.update_attribute(:streak, 0)
+      @home_team.streak >= 0 ? @home_team.update_attribute(:streak, @home_team.streak + 1) : @home_team.update_attribute(:streak, 1)
 
       # Away team streak
-      @away_team.streak <= 0 ? @away_team.update_attribute(:streak, @away_team.streak - 1) : @away_team.update_attribute(:streak, 0)
+      @away_team.streak <= 0 ? @away_team.update_attribute(:streak, @away_team.streak - 1) : @away_team.update_attribute(:streak, -1)
 
     # Away team wins
     else
@@ -63,10 +63,10 @@ class Game < ActiveRecord::Base
       @away_team.update_attribute(:wins, @away_team.wins + 1)
 
       # Home team streak
-      @home_team.streak <= 0 ? @home_team.update_attribute(:streak, @home_team.streak - 1) : @home_team.update_attribute(:streak, 0)
+      @home_team.streak <= 0 ? @home_team.update_attribute(:streak, @home_team.streak - 1) : @home_team.update_attribute(:streak, -1)
 
       # Away team streak
-      @away_team.streak >= 0 ? @away_team.update_attribute(:streak, @away_team.streak + 1) : @away_team.update_attribute(:streak, 0)
+      @away_team.streak >= 0 ? @away_team.update_attribute(:streak, @away_team.streak + 1) : @away_team.update_attribute(:streak, 1)
 
     end
 
