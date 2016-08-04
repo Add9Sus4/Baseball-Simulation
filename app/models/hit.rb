@@ -411,9 +411,9 @@ class Hit
     end
 
     if HitResult.fielded(@result)
-      @game.pbp += "\n<span style=\"color:" + @game.bad + "\">#{@atbat.batter.full_name} hits a #{@result}</span>\n"
+      @game.play_by_play += "\n<span style=\"color:" + @game.bad + "\">#{@atbat.batter.full_name} hits a #{@result}</span>\n"
     else
-      @game.pbp += "\n<span style=\"color:" + @game.good + "\">#{@atbat.batter.full_name} hits a #{@result}</span>\n"
+      @game.play_by_play += "\n<span style=\"color:" + @game.good + "\">#{@atbat.batter.full_name} hits a #{@result}</span>\n"
     end
   end
 
