@@ -2,7 +2,6 @@ class Inning
   include Reusable
   def initialize(game)
     @game = game
-    @pbp = @game.pbp
     @outs = 0
     @bases = Bases.new(game)
     @over = false
@@ -26,10 +25,10 @@ class Inning
         @pitcher.records_out(1)
         @outs = @outs + 1
       elsif play.result == PlayResult::DOUBLE_PLAY
-        @game.pbp += "\nDouble play\n"
+        @game.play_by_play += "\nDouble play\n"
         @outs = @outs + 2
       elsif play.result == PlayResult::TRIPLE_PLAY
-        @game.pbp += "\nTriple play\n"
+        @game.play_by_play += "\nTriple play\n"
         @outs = @outs + 3
       elsif atBat.result == AtBatResult::WALK || atBat.result == AtBatResult::HBP
         @bases.updateStatusOnWalkOrHBP(@batter, @pitcher)
@@ -76,7 +75,7 @@ class Inning
       game.home_team_inning_scores += "_"
     end
 
-    @game.pbp += "\n<h5><strong>Score: #{@game.away_team.full_name}: #{@game.away_team_score}, #{@game.home_team.full_name}: #{@game.home_team_score}</strong></h5>\n"
+    @game.play_by_play += "\n<h5><strong>Score: #{@game.away_team.full_name}: #{@game.away_team_score}, #{@game.home_team.full_name}: #{@game.home_team_score}</strong></h5>\n"
   end
 
 end

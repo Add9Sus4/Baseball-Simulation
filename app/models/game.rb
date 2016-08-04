@@ -7,7 +7,7 @@
 # heat maps are loaded into a hash before the game begins
 class Game < ActiveRecord::Base
   validate :teams_must_be_different
-  attr_accessor :pbp, :bad, :good, :home_team, :away_team, :inning_status, :inning_number, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score, :home_team_inning_scores, :away_team_inning_scores, :over
+  attr_accessor :play_by_play, :bad, :good, :home_team, :away_team, :inning_status, :inning_number, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score, :home_team_inning_scores, :away_team_inning_scores, :over
 
   def teams_must_be_different
     errors.add(:base, "Teams cannot be the same") if home_team_id == away_team_id
@@ -21,17 +21,17 @@ class Game < ActiveRecord::Base
     while !@over do
       # Top of inning
       unless @inning_number == 1 && @inning_status == InningStatus::TOP
-        @pbp += "\n____________________________________________________________________________\n"
+        @play_by_play += "\n____________________________________________________________________________\n"
       end
-      @pbp += "\n<h4><strong>Top of inning #{@inning_number} (#{@away_team.full_name} batting):</strong></h4>\n"
+      @play_by_play += "\n<h4><strong>Top of inning #{@inning_number} (#{@away_team.full_name} batting):</strong></h4>\n"
       @inning_status = InningStatus::TOP
       inning = Inning.new(self)
       # Bottom of inning
       if @inning_number == 9 && @home_team_score > @away_team_score
         @over = true
       end
-      @pbp += "\n____________________________________________________________________________\n"
-      @pbp += "\n<h4><strong>Bottom of inning #{@inning_number} (#{@home_team.full_name} batting):</strong></h4>\n"
+      @play_by_play += "\n____________________________________________________________________________\n"
+      @play_by_play += "\n<h4><strong>Bottom of inning #{@inning_number} (#{@home_team.full_name} batting):</strong></h4>\n"
       @inning_status = InningStatus::BOTTOM
       inning = Inning.new(self)
       if @inning_number > 8 && @home_team_score != @away_team_score
@@ -446,10 +446,7 @@ class Game < ActiveRecord::Base
     self.update_attributes(home_intentional_walks_allowed: home_intentional_walks_allowed_string)
 
     # play by play
-    puts "updating pbp"
-    puts "#{@pbp}"
-    self.update_attributes(pbp: @pbp)
-    puts "updating pbp done"
+    self.update_attributes(pbp: @play_by_play)
 
     # game number (needs to be changed from first to the current season when there are more than 1 seasons)
     self.update_attributes(game_number: Season.first.next_game)
@@ -468,7 +465,7 @@ class Game < ActiveRecord::Base
     @away_team_score = 0
     @home_team_inning_scores = ""
     @away_team_inning_scores = ""
-    @pbp = ""
+    @play_by_play = ""
     @good = "#267373"
     @bad = "#854747"
 

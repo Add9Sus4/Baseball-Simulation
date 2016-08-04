@@ -25,7 +25,7 @@ class GamesController < ApplicationController
   # POST /games.json
   def create
 
-    8.times do
+    1.times do
 
       # hash to determine if a team has already played a game (to avoid duplicate games)
       @already_played_hash = Hash.new 0

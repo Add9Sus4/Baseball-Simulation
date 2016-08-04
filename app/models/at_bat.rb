@@ -10,8 +10,8 @@ class AtBat
     @batter = batter
     @result = AtBatResult::IN_PROGRESS
     @game = game
-    @game.pbp += "\n<span>Now batting: #{@batter.full_name}</span>\n"
-    # @game.pbp += "\nNow batting: #{@batter.full_name}"
+    @game.play_by_play += "\n<span>Now batting: #{@batter.full_name}</span>\n"
+    # @game.play_by_play += "\nNow batting: #{@batter.full_name}"
     # Simulate at-bat
     while !@over do
       @pitch = Pitch.new(@pitcher, @batter, @balls, @strikes)
@@ -19,7 +19,7 @@ class AtBat
         @pitcher.throws_strike
         if batterMakesContactWith(@pitch)
           if ballIsHitFair
-            @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, hit in play.</span>\n"
+            @game.play_by_play += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, hit in play.</span>\n"
             fairBall
           else
             foulBall
@@ -70,17 +70,17 @@ class AtBat
     if @strikes < 2
       @strikes = @strikes + 1
     end
-    @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, fouled off. Count: #{@balls}-#{@strikes}</span>\n"
+    @game.play_by_play += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, fouled off. Count: #{@balls}-#{@strikes}</span>\n"
   end
 
   # Batter swings and misses
   def swingAndAMiss
     if @strikes < 2
       @strikes = @strikes + 1
-      @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, swing and a miss. Count: #{@balls}-#{@strikes}</span>\n"
+      @game.play_by_play += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, swing and a miss. Count: #{@balls}-#{@strikes}</span>\n"
       steal_opportunity
     else
-      @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, swing and a miss for strike 3.</span>\n"
+      @game.play_by_play += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, swing and a miss for strike 3.</span>\n"
       strikeout
     end
   end
@@ -100,10 +100,10 @@ class AtBat
   def batterTakesStrike
     if @strikes < 2
       @strikes = @strikes + 1
-      @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for a strike. Count: #{@balls}-#{@strikes}</span>\n"
+      @game.play_by_play += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for a strike. Count: #{@balls}-#{@strikes}</span>\n"
       steal_opportunity
     else
-      @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for strike 3.</span>\n"
+      @game.play_by_play += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for strike 3.</span>\n"
       strikeout
     end
   end
@@ -112,17 +112,17 @@ class AtBat
   def batterTakesBall
     if @balls < 3
       @balls = @balls + 1
-      @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for a ball. Count: #{@balls}-#{@strikes}</span>\n"
+      @game.play_by_play += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for a ball. Count: #{@balls}-#{@strikes}</span>\n"
       steal_opportunity
     else
-      @game.pbp += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for ball 4.</span>\n"
+      @game.play_by_play += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for ball 4.</span>\n"
       walk
     end
   end
 
   # Batter walks
   def walk
-    @game.pbp += "\n<span style=\"color:" + @game.good + "\">#{@batter.full_name} walks.</span>\n"
+    @game.play_by_play += "\n<span style=\"color:" + @game.good + "\">#{@batter.full_name} walks.</span>\n"
     @pitcher.allows_walk
     @batter.receives_walk
     @over = true
@@ -131,7 +131,7 @@ class AtBat
 
   # Batter strikes out
   def strikeout
-    @game.pbp += "\n<span style=\"color:" + @game.bad + "\">#{@batter.full_name} strikes out.</span>\n"
+    @game.play_by_play += "\n<span style=\"color:" + @game.bad + "\">#{@batter.full_name} strikes out.</span>\n"
     @pitcher.records_strikeout
     @batter.strikes_out
     @batter.logs_at_bat

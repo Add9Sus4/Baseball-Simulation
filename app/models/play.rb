@@ -11,7 +11,7 @@ class Play
     when AtBatResult::STRIKEOUT
       @result = PlayResult::OUT
     when AtBatResult::HBP
-      @game.pbp += "\nhit by pitch\n"
+      @game.play_by_play += "\nhit by pitch\n"
       @result = PlayResult::SAFE
     else
       puts "\nthis should never be reached\n"
