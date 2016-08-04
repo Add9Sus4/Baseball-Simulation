@@ -17,7 +17,15 @@
  */
 
 #app_body {
-  background-color: #F2F9FF;
+  background-color: #132639;
+}
+
+.app_text_main {
+  color: #9fbfdf;
+}
+
+.app_text_2 {
+  color: #7598bd;
 }
 
 .table-striped>tbody>tr:nth-child(even)>td {

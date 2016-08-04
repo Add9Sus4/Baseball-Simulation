@@ -8,65 +8,65 @@
 
 
 <p>
-  <h2><%= @player.full_name %></h2>
+  <h2 class="app_text_main"><%= @player.full_name %></h2>
 </p>
 
 </br>
 
 <div class="player_info_data">
-  <p>
+  <p class="app_text_main">
     <strong>Team:</strong>
     <%= link_to @player.team.full_name, @player.team, method: :get %>
   </p>
 
-  <p>
+  <p class="app_text_main">
     <strong>Age:</strong>
     <%= @player.age %>
   </p>
 
-  <p>
+  <p class="app_text_main">
     <strong>Height:</strong>
     <span class="height"><%= @player.height %></span>
   </p>
 
-  <p>
+  <p class="app_text_main">
     <strong>Weight:</strong>
     <%= @player.weight %> lb.
   </p>
 
-  <p>
+  <p class="app_text_main">
     <strong>Position:</strong>
     <span class="position"><%= @player.position %></span>
   </p>
 
-  <p>
+  <p class="app_text_main">
     <strong>Salary:</strong>
     <span><%= number_to_currency(@player.salary) %></span>
   </p>
 
-  <p>
+  <p class="app_text_main">
     <strong>Bats:</strong>
     <%= @player.hitting_side.capitalize %>
   </p>
 
-  <p>
+  <p class="app_text_main">
     <strong>Throws:</strong>
     <%= @player.throwing_hand.capitalize %>
   </p>
 
-  <p>
+  <p class="app_text_main">
     <strong>Pitches:</strong>
     <%= @player.pitches %>
   </p>
 
 </div>
 </br>
-<%= link_to 'Edit Player Info', edit_player_path(@player), method: :get %> |
-<%= link_to 'Delete Player', @player, method: :delete, data: { confirm: 'Are you sure you want to delete ' + @player.full_name + '?' } %> |
-<%= link_to 'All Players', players_path, method: :get %> |
-<%= link_to 'Back', 'javascript:history.go(-1);' %>
+<!-- <%= link_to 'Edit Player Info', edit_player_path(@player), method: :get %> | -->
+<!-- <%= link_to 'Delete Player', @player, method: :delete, data: { confirm: 'Are you sure you want to delete ' + @player.full_name + '?' } %> | -->
+<!-- <%= link_to 'All Players', players_path, method: :get %> | -->
+<!-- <%= link_to 'Back', 'javascript:history.go(-1);' %> -->
 
-<h3>Batting Attributes</h3>
+<h3 class="app_text_main">Batting Attributes</h3>
 
 <table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
   <thead>
@@ -95,7 +95,7 @@
   </tbody>
 </table>
 
-<h3>Pitching Attributes</h3>
+<h3 class="app_text_main">Pitching Attributes</h3>
 
 <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
   <thead>
@@ -114,7 +114,7 @@
   </tbody>
 </table>
 
-<h3>Fielding Attributes</h3>
+<h3 class="app_text_main">Fielding Attributes</h3>
 
 <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
   <thead>
@@ -141,7 +141,7 @@
   </tbody>
 </table>
 
-<h3>Batting Stats</h3>
+<h3 class="app_text_main">Batting Stats</h3>
 <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
   <thead>
     <tr>
@@ -187,7 +187,7 @@
   </tbody>
 </table>
 
-<h3>Pitching Stats</h3>
+<h3 class="app_text_main">Pitching Stats</h3>
 </br>
 <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
   <thead>
@@ -217,7 +217,7 @@
     </tr>
   </tbody>
 </table>
-<h3>Pitch Locations</h3>
+<h3 class="app_text_main">Pitch Locations</h3>
 <br/><br/>
 <table id="pitch_locations_table">
   <thead>

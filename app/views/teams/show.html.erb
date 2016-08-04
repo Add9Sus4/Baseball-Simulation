@@ -65,45 +65,45 @@
 
 </style>
 
-<h2>
+<h2 class="app_text_main">
   <%= @team.city %>
   <%= @team.name %>
 </h2>
 <p>
-  <%= link_to 'Edit Team Info', edit_team_path(@team), method: :get %> |
+  <!-- <%= link_to 'Edit Team Info', edit_team_path(@team), method: :get %> |
   <%= link_to 'Delete Team', @team, method: :delete, data: { confirm: 'Are you sure you want to delete the ' + @team.name + '?' } %> |
   <%= link_to 'All Teams', teams_path, method: :get %> |
-  <%= link_to 'Back', 'javascript:history.go(-1);', method: :get %>
+  <%= link_to 'Back', 'javascript:history.go(-1);', method: :get %> -->
 </p>
 
 
 <div id="lineup_div">
-  <p>
+  <p class="app_text_2">
     <strong>League:</strong>
     <%= @team.league %>
   </p>
 
-  <p>
+  <p class="app_text_2">
     <strong>Division:</strong>
     <%= @team.division %>
   </p>
 
-  <p>
+  <p class="app_text_2">
     <strong>Stadium:</strong>
     <%= @team.stadium %>
   </p>
 
-  <p>
+  <p class="app_text_2">
     <strong>Capacity:</strong>
     <%= @team.capacity %>
   </p>
 
-  <p>
+  <p class="app_text_2">
     <strong>Record:</strong>
     <%= @team.wins.to_s + "-" + @team.losses.to_s %>
   </p>
 
-  <h3 id="lineup_title" data-toggle="tooltip" data-placement="top" title="Drag from roster to set positions.
+  <h3 class="app_text_main" id="lineup_title" data-toggle="tooltip" data-placement="top" title="Drag from roster to set positions.
   Reorder table to set lineup.">Lineup</h3>
 
   <div id="view_lineup">
@@ -160,7 +160,7 @@
 </div>
 
 <div id="roster_div">
-  <h3>Roster</h3>
+  <h3 class="app_text_main">Roster</h3>
   <table class="table_with_custom_border roster">
     <thead>
       <tr>
@@ -185,20 +185,20 @@
           <% end %>
           <span "hidden_id" hidden><%= player.id %></span>
         </td>
-        <td><%= player.age %></td>
-        <td class="height"><%= player.height %></td>
-        <td><%= player.weight %> lb.</td>
-        <td><%= player.hitting_side.capitalize %></td>
-        <td><%= player.throwing_hand.capitalize %></td>
-        <td class="position"><%= player.position %></td>
-        <td><%= number_to_currency(player.salary) %></td>
+        <td class="app_text_main"><%= player.age %></td>
+        <td class="app_text_main height"><%= player.height %></td>
+        <td class="app_text_main"><%= player.weight %> lb.</td>
+        <td class="app_text_main"><%= player.hitting_side.capitalize %></td>
+        <td class="app_text_main"><%= player.throwing_hand.capitalize %></td>
+        <td class="app_text_main position"><%= player.position %></td>
+        <td class="app_text_main"><%= number_to_currency(player.salary) %></td>
       </tr>
       <% end %>
     </tbody>
   </table>
 </div>
 
-<h3>Batting Stats</h3>
+<h3 class="app_text_main">Batting Stats</h3>
 <table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
   <thead>
     <tr>
@@ -294,7 +294,7 @@
   </tbody>
 </table>
 
-<h3>Pitching Stats</h3>
+<h3 class="app_text_main">Pitching Stats</h3>
 <table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
   <thead>
     <tr>
@@ -359,7 +359,7 @@
   </tbody>
 </table>
 
-<h3>Schedule</h3>
+<h3 class="app_text_main">Schedule</h3>
 <table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
   <thead>
     <tr>

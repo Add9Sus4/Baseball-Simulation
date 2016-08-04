@@ -13,7 +13,7 @@
 <p id="notice"><%= notice %></p>
 
 
-  <h1 style="color:#243342;">Teams</h1>
+  <h1 class="app_text_main">Teams</h1>
 
 <% leagues = ["NL", "AL"] %>
 <% divisions = ["East", "Central", "West"] %>
@@ -21,7 +21,7 @@
 <% leagues.each do |league| %>
   <div class="league_div">
     <% divisions.each do |division| %>
-      <h3 class="division_title"><%= league + " " + division %></h3>
+      <h3 class="app_text_main division_title"><%= league + " " + division %></h3>
       <table class="table_with_custom_border table-condensed table-striped table-bordered table-responsive sortable">
         <thead>
           <tr>
@@ -63,10 +63,6 @@
 .teams {
   pointer-events: none;
   opacity: 0.5;
-}
-
-.division_title {
-  color: #52677a;
 }
 
 .league_div {

@@ -2,20 +2,19 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <p id="notice"><%= notice %></p>
 
-<p><%= link_to 'Back', games_path, method: :get %>
-</p>
+<!-- <p><%= link_to 'Back', games_path, method: :get %></p> -->
 
 <% @home_team = Team.find(@game.home_team_id) %>
 <% @away_team = Team.find(@game.away_team_id) %>
 
 <!-- <%= image_tag "bases_runner_on_first.png" %> -->
 
-<p>
+<p class="app_text_main">
   <strong>Stadium name:</strong>
   <%= @game.stadium_name %>
 </p>
 
-<p>
+<p class="app_text_main">
   <strong>Attendance:</strong>
   <%= number_with_delimiter(@game.attendance, :delimiter => ',') %>
 </p>
@@ -33,11 +32,11 @@
 <% @game_display += " " + @away_team_runs.to_s %>
 <% if @home_team_runs > @away_team_runs %>
 <p>
-  <h3><%= link_to @home_team.name, @home_team, method: :get %> defeat the <%= link_to @away_team.name, @away_team, method: :get %>, <%= @home_team_runs.to_s %> to <%= @away_team_runs.to_s %></h3>
+  <h3 class="app_text_main"><%= link_to @home_team.name, @home_team, method: :get %> defeat the <%= link_to @away_team.name, @away_team, method: :get %>, <%= @home_team_runs.to_s %> to <%= @away_team_runs.to_s %></h3>
 </p>
 <% else %>
 <p>
-  <h3><%= link_to @away_team.name, @away_team, method: :get %> defeat the <%= link_to @home_team.name, @home_team, method: :get %>, <%= @away_team_runs.to_s %> to <%= @home_team_runs.to_s %></h3>
+  <h3 class="app_text_main"><%= link_to @away_team.name, @away_team, method: :get %> defeat the <%= link_to @home_team.name, @home_team, method: :get %>, <%= @away_team_runs.to_s %> to <%= @home_team_runs.to_s %></h3>
 </p>
 <% end %>
 
@@ -86,9 +85,7 @@
   </table>
 </div>
 
-<h2>
-  Batting
-</h2>
+<h2 class="app_text_main">Batting</h2>
 
 <div id="batting_box_score">
 
@@ -213,9 +210,7 @@
   </div>
 </div>
 
-<h2>
-  Pitching
-</h2>
+<h2 class="app_text_main">Pitching</h2>
 
 <div id="pitching_box_score">
 
