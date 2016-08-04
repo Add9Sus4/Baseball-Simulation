@@ -191,7 +191,7 @@
         <td><%= player.hitting_side.capitalize %></td>
         <td><%= player.throwing_hand.capitalize %></td>
         <td class="position"><%= player.position %></td>
-        <td class="salary"><%= player.salary %></td>
+        <td><%= number_to_currency(player.salary) %></td>
       </tr>
       <% end %>
     </tbody>
