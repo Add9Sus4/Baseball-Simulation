@@ -30,9 +30,9 @@ class GamesController < ApplicationController
       # hash to determine if a team has already played a game (to avoid duplicate games)
       @already_played_hash = Hash.new 0
       @game_number = Season.first.next_game
-
+      @done = false
       Team.find_each do |team|
-        unless @already_played_hash[team.id] == 1 then
+        unless @already_played_hash[team.id] == 1 || @done then
           @game = Game.new(game_params)
           schedule = team.schedule.split(", ").map {|s| s.to_i} # array of opponent ids
           @game.away_team_id = schedule[@game_number] # Assume opponent is away team (this will be changed later)
@@ -41,6 +41,7 @@ class GamesController < ApplicationController
           @already_played_hash[schedule[@game_number]] = 1
           @already_played_hash[team.id] = 1
           @game.play
+          @done = true
         end
       end
 

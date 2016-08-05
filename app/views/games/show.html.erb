@@ -248,21 +248,24 @@
         <% @away_total_pitches = @game.away_total_pitches.split("_").map(&:to_i) %>
         <% @away_strikes_thrown = @game.away_strikes_thrown.split("_").map(&:to_i) %>
         <% @away_balls_thrown = @game.away_balls_thrown.split("_").map(&:to_i) %>
-        <% for i in 0..0 do %>
-        <% @player = Player.find(@away_lineup[i]) %>
+        <% @away_pitcher_ids = @game.away_pitchers.split("_").map(&:to_i) %>
+        <% @counter = 0 %>
+        <% @away_pitcher_ids.each do |pitcher_id| %>
+        <% @pitcher = Player.find(pitcher_id) %>
         <tr>
-          <td><%= link_to @player.full_name, @player, method: :get %></td>
-          <td><%= @away_outs_recorded[i]/3 %></td>
-          <td><%= @away_hits_allowed[i] %></td>
-          <td><%= @away_runs_allowed[i] %></td>
-          <td><%= @away_earned_runs_allowed[i] %></td>
-          <td><%= @away_walks_allowed[i] %></td>
-          <td><%= @away_strikeouts_recorded[i] %></td>
-          <td><%= @away_home_runs_allowed[i] %></td>
-          <td><%= @away_total_pitches[i] %></td>
-          <td><%= @away_strikes_thrown[i] %></td>
-          <td><%= @away_balls_thrown[i] %></td>
+          <td><%= link_to @pitcher.full_name, @pitcher, method: :get %></td>
+          <td><%= @away_outs_recorded[@counter]/3 %></td>
+          <td><%= @away_hits_allowed[@counter] %></td>
+          <td><%= @away_runs_allowed[@counter] %></td>
+          <td><%= @away_earned_runs_allowed[@counter] %></td>
+          <td><%= @away_walks_allowed[@counter] %></td>
+          <td><%= @away_strikeouts_recorded[@counter] %></td>
+          <td><%= @away_home_runs_allowed[@counter] %></td>
+          <td><%= @away_total_pitches[@counter] %></td>
+          <td><%= @away_strikes_thrown[@counter] %></td>
+          <td><%= @away_balls_thrown[@counter] %></td>
         </tr>
+        <% @counter += 1 %>
         <% end %>
         <tr>
           <td><strong>Totals</strong></td>
@@ -315,21 +318,24 @@
         <% @home_total_pitches = @game.home_total_pitches.split("_").map(&:to_i) %>
         <% @home_strikes_thrown = @game.home_strikes_thrown.split("_").map(&:to_i) %>
         <% @home_balls_thrown = @game.home_balls_thrown.split("_").map(&:to_i) %>
-        <% for i in 0..0 do %>
-        <% @player = Player.find(@home_lineup[i]) %>
+        <% @home_pitcher_ids = @game.home_pitchers.split("_").map(&:to_i) %>
+        <% @counter = 0 %>
+        <% @home_pitcher_ids.each do |pitcher_id| %>
+        <% @pitcher = Player.find(pitcher_id) %>
         <tr>
-          <td><%= link_to @player.full_name, @player, method: :get %></td>
-          <td><%= @home_outs_recorded[i]/3 %></td>
-          <td><%= @home_hits_allowed[i] %></td>
-          <td><%= @home_runs_allowed[i] %></td>
-          <td><%= @home_earned_runs_allowed[i] %></td>
-          <td><%= @home_walks_allowed[i] %></td>
-          <td><%= @home_strikeouts_recorded[i] %></td>
-          <td><%= @home_home_runs_allowed[i] %></td>
-          <td><%= @home_total_pitches[i] %></td>
-          <td><%= @home_strikes_thrown[i] %></td>
-          <td><%= @home_balls_thrown[i] %></td>
+          <td><%= link_to @pitcher.full_name, @pitcher, method: :get %></td>
+          <td><%= @home_outs_recorded[@counter]/3 %></td>
+          <td><%= @home_hits_allowed[@counter] %></td>
+          <td><%= @home_runs_allowed[@counter] %></td>
+          <td><%= @home_earned_runs_allowed[@counter] %></td>
+          <td><%= @home_walks_allowed[@counter] %></td>
+          <td><%= @home_strikeouts_recorded[@counter] %></td>
+          <td><%= @home_home_runs_allowed[@counter] %></td>
+          <td><%= @home_total_pitches[@counter] %></td>
+          <td><%= @home_strikes_thrown[@counter] %></td>
+          <td><%= @home_balls_thrown[@counter] %></td>
         </tr>
+        <% @counter += 1 %>
         <% end %>
         <tr>
           <td><strong>Totals</strong></td>

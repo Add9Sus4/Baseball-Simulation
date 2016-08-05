@@ -684,7 +684,8 @@ season = Season.create!(next_game: 0)
       division: division,
       stadium: stadium,
       capacity: capacity,
-      streak: 0)
+      streak: 0,
+      rotation_position: 1)
       teams.unshift(newTeam)
     end
 

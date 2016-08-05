@@ -327,7 +327,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @team.players.each do |player| %>
+    <% @team.players.where("position != ?", 'P').each do |player| %>
     <tr>
       <td><%= link_to player.full_name, player, method: :get %></td>
       <td><%= player.atbats %></td>
@@ -417,7 +417,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @team.players.each do |player| %>
+    <% @team.players.where("position = ?", 'P').each do |player| %>
     <tr>
       <td title="" class="player_link tooltip_enable">
         <span hidden="true" class="player_id_span"><%= player.id %></span>

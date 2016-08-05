@@ -32,6 +32,32 @@ class Team < ActiveRecord::Base
     end
   end
 
+  # returns the team's current starting pitcher
+  def starting_pitcher
+    case rotation_position
+
+    when 1
+      Player.find(sp1)
+    when 2
+      Player.find(sp2)
+    when 3
+      Player.find(sp3)
+    when 4
+      Player.find(sp4)
+    when 5
+      Player.find(sp5)
+    end
+  end
+
+  # returns the next rotation position
+  def increment_rotation
+    new_rotation_position = rotation_position + 1
+    if new_rotation_position > 5
+      new_rotation_position = 1
+    end
+    new_rotation_position
+  end
+
   def position_name(index)
     position_names = ['DH', 'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF']
     position_names[index]
