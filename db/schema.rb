@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160804005007) do
+ActiveRecord::Schema.define(version: 20160804232518) do
 
   create_table "called_strike_percentages", force: :cascade do |t|
     t.integer "zone_id",                  limit: 4
@@ -304,6 +304,18 @@ ActiveRecord::Schema.define(version: 20160804005007) do
     t.integer  "runs_allowed",      limit: 4
     t.text     "schedule",          limit: 65535
     t.integer  "streak",            limit: 4
+    t.integer  "sp1",               limit: 4
+    t.integer  "sp2",               limit: 4
+    t.integer  "sp3",               limit: 4
+    t.integer  "sp4",               limit: 4
+    t.integer  "sp5",               limit: 4
+    t.integer  "lr",                limit: 4
+    t.integer  "mr1",               limit: 4
+    t.integer  "mr2",               limit: 4
+    t.integer  "mr3",               limit: 4
+    t.integer  "su1",               limit: 4
+    t.integer  "su2",               limit: 4
+    t.integer  "cl",                limit: 4
   end
 
   create_table "users", force: :cascade do |t|

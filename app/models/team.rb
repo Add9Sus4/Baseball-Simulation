@@ -4,7 +4,7 @@ class Team < ActiveRecord::Base
   has_many :players, :dependent => :destroy
   accepts_nested_attributes_for :players
 
-  MAX_PLAYERS = 13
+  MAX_PLAYERS = 25
 
   def full_name
     city + ' ' + name

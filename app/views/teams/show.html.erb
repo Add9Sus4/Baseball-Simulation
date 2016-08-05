@@ -23,7 +23,21 @@
   border-left: 4px solid #54708C;
   border-bottom: 4px solid #54708C;
 }
+
+.rotation_roles {
+  float: left;
+  border-top: 4px solid #54708C;
+  border-left: 4px solid #54708C;
+  border-bottom: 4px solid #54708C;
+}
+
 .lineup {
+  border-top: 4px solid #54708C;
+  border-right: 4px solid #54708C;
+  border-bottom: 4px solid #54708C;
+}
+
+.rotation {
   border-top: 4px solid #54708C;
   border-right: 4px solid #54708C;
   border-bottom: 4px solid #54708C;
@@ -47,7 +61,7 @@
   padding-top: 10px;
 }
 
-#roster_div {
+#position_player_table_div {
   padding-top: 30px;
   padding-bottom: 10px;
 }
@@ -103,10 +117,10 @@
     <%= @team.wins.to_s + "-" + @team.losses.to_s %>
   </p>
 
-  <h3 class="app_text_main" id="lineup_title" data-toggle="tooltip" data-placement="top" title="Drag from roster to set positions.
+  <h3 class="app_text_main" id="lineup_title" data-toggle="tooltip" data-placement="top" title="Drag from position players to set positions.
   Reorder table to set lineup.">Lineup</h3>
 
-  <div id="view_lineup">
+<div id="view_lineup">
   </br>
   <table class="multi-table order table-condensed table-striped table-bordered">
     <thead>
@@ -154,14 +168,67 @@
   </table>
 </div>
 
+<!-- <h3 class="app_text_main" id="lineup_title" data-toggle="tooltip" data-placement="top" title="Drag from pitchers to set pitching roles.">Pitching roles</h3> -->
+<h3 class="app_text_main" id="rotation_title">Pitching Roles</h3>
+<div id="view_rotation">
+  </br>
+
+  <table class="multi-table rotation_roles table-condensed table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>
+          Role
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="role">SP1</td></tr>
+      <tr><td class="role">SP2</td></tr>
+      <tr><td class="role">SP3</td></tr>
+      <tr><td class="role">SP4</td></tr>
+      <tr><td class="role">SP5</td></tr>
+      <tr><td class="role">LR</td></tr>
+      <tr><td class="role">MR1</td></tr>
+      <tr><td class="role">MR2</td></tr>
+      <tr><td class="role">MR3</td></tr>
+      <tr><td class="role">SU1</td></tr>
+      <tr><td class="role">SU2</td></tr>
+      <tr><td class="role">CL</td></tr>
+    </tbody>
+  </table>
+
+  <table id="rotation" class="multi-table rotation table-condensed table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Player</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><% @current_player = Player.find(@team.sp1) %><span hidden class="hidden_pitcher_id"><%= @current_player.id %></span><%= link_to @current_player.full_name, @current_player, method: :get %></td></tr>
+      <tr><td><% @current_player = Player.find(@team.sp2) %><span hidden class="hidden_pitcher_id"><%= @current_player.id %></span><%= link_to @current_player.full_name, @current_player, method: :get %></td></tr>
+      <tr><td><% @current_player = Player.find(@team.sp3) %><span hidden class="hidden_pitcher_id"><%= @current_player.id %></span><%= link_to @current_player.full_name, @current_player, method: :get %></td></tr>
+      <tr><td><% @current_player = Player.find(@team.sp4) %><span hidden class="hidden_pitcher_id"><%= @current_player.id %></span><%= link_to @current_player.full_name, @current_player, method: :get %></td></tr>
+      <tr><td><% @current_player = Player.find(@team.sp5) %><span hidden class="hidden_pitcher_id"><%= @current_player.id %></span><%= link_to @current_player.full_name, @current_player, method: :get %></td></tr>
+      <tr><td><% @current_player = Player.find(@team.lr) %><span hidden class="hidden_pitcher_id"><%= @current_player.id %></span><%= link_to @current_player.full_name, @current_player, method: :get %></td></tr>
+      <tr><td><% @current_player = Player.find(@team.mr1) %><span hidden class="hidden_pitcher_id"><%= @current_player.id %></span><%= link_to @current_player.full_name, @current_player, method: :get %></td></tr>
+      <tr><td><% @current_player = Player.find(@team.mr2) %><span hidden class="hidden_pitcher_id"><%= @current_player.id %></span><%= link_to @current_player.full_name, @current_player, method: :get %></td></tr>
+      <tr><td><% @current_player = Player.find(@team.mr3) %><span hidden class="hidden_pitcher_id"><%= @current_player.id %></span><%= link_to @current_player.full_name, @current_player, method: :get %></td></tr>
+      <tr><td><% @current_player = Player.find(@team.su1) %><span hidden class="hidden_pitcher_id"><%= @current_player.id %></span><%= link_to @current_player.full_name, @current_player, method: :get %></td></tr>
+      <tr><td><% @current_player = Player.find(@team.su2) %><span hidden class="hidden_pitcher_id"><%= @current_player.id %></span><%= link_to @current_player.full_name, @current_player, method: :get %></td></tr>
+      <tr><td><% @current_player = Player.find(@team.cl) %><span hidden class="hidden_pitcher_id"><%= @current_player.id %></span><%= link_to @current_player.full_name, @current_player, method: :get %></td></tr>
+    </tbody>
+  </table>
+</div>
+
+
 <div id="lineup_changed" hidden>
   <button id="save_lineup_changes" onclick="saveLineupChanges()">Save Lineup Changes</button>
 </div>
 </div>
 
-<div id="roster_div">
-  <h3 class="app_text_main">Roster</h3>
-  <table class="table_with_custom_border roster">
+<div id="position_player_table_div">
+  <h3 class="app_text_main">Position Players</h3>
+  <table class="table_with_custom_border position_player_table">
     <thead>
       <tr>
         <th>Name</th>
@@ -175,7 +242,46 @@
       </tr>
     </thead>
     <tbody>
-      <% @team.players.each do |player| %>
+      <% @team.players.where("position != ?", 'P').each do |player| %>
+      <tr class="player_row">
+        <td>
+          <% if @team.is_in_starting_lineup(player.id) %>
+          <strong><%= link_to player.full_name + @team.find_position_of_player(player.id), player, method: :get %></strong>
+          <% else %>
+          <%= link_to player.full_name + @team.find_position_of_player(player.id), player, method: :get %>
+          <% end %>
+          <span "hidden_id" hidden><%= player.id %></span>
+        </td>
+        <td class="app_text_main"><%= player.age %></td>
+        <td class="app_text_main height"><%= player.height %></td>
+        <td class="app_text_main"><%= player.weight %> lb.</td>
+        <td class="app_text_main"><%= player.hitting_side.capitalize %></td>
+        <td class="app_text_main"><%= player.throwing_hand.capitalize %></td>
+        <td class="app_text_main position"><%= player.position %></td>
+        <td class="app_text_main"><%= number_to_currency(player.salary) %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div id="pitcher_div">
+  <h3 class="app_text_main">Pitchers</h3>
+  <table class="table_with_custom_border pitcher_table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Height</th>
+        <th>Weight</th>
+        <th>Bats</th>
+        <th>Throws</th>
+        <th id="position_column_header">Natural Position</th>
+        <th>Salary</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @team.players.where("position = ?", 'P').each do |player| %>
       <tr class="player_row">
         <td>
           <% if @team.is_in_starting_lineup(player.id) %>
@@ -469,12 +575,18 @@ $('.player_link').mouseenter(function() {
 });
 
 var initial_player_ids;
+var initial_pitcher_ids;
 
 $(document).ready(function() {
 
   initial_player_ids = $.map($(".lineup tbody").find("tr"), function(element) {
     return $(element).find("td span.hidden_position_index").text();
   })
+
+  initial_pitcher_ids = $.map($(".rotation tbody").find("tr"), function(element) {
+    return $(element).find("td span.hidden_pitcher_id").text();
+  })
+
 });
 
 function battingOrderChanged() {
@@ -492,6 +604,52 @@ function battingOrderChanged() {
     }
   }
   return false;
+}
+
+function pitchingRotationChanged() {
+  pitcher_ids = $.map($(".rotation tbody").find("tr"), function(element) {
+    // console.log("id: " + $(element).find("td span.hidden_pitcher_id").text());
+    return $(element).find("td span.hidden_pitcher_id").text();
+  });
+
+  if(pitcher_ids.length !== initial_pitcher_ids.length) {
+    return true;
+  }
+  var i;
+  for (i=0; i<pitcher_ids.length; i++) {
+    if (pitcher_ids[i] !== initial_pitcher_ids[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function saveRotationChanges() {
+  rotation_indices = $.map($(".rotation tbody").find("tr"), function(element) {
+    return $(element).find("td span.hidden_pitcher_id").text();
+  });
+
+  console.log(rotation_indices);
+
+  $.ajax({
+    url: window.location.href,
+    type: 'PATCH',
+    dataType: 'json',
+    data: { "team": { "sp1": rotation_indices[0],
+    "sp2": rotation_indices[1],
+    "sp3": rotation_indices[2],
+    "sp4": rotation_indices[3],
+    "sp5": rotation_indices[4],
+    "lr": rotation_indices[5],
+    "mr1": rotation_indices[6],
+    "mr2": rotation_indices[7],
+    "mr3": rotation_indices[8],
+    "su1": rotation_indices[9],
+    "su2": rotation_indices[10],
+    "cl": rotation_indices[11]
+    }
+    },
+  });
 }
 
 function saveLineupChanges() {
@@ -611,9 +769,10 @@ var fixHelperModified = function(e, tr) {
   return $helper;
 };
 
-var colors = [];
+var lineup_colors = [];
+var rotation_colors = [];
 
-$(".roster tbody tr").draggable({
+$(".position_player_table tbody tr").draggable({
   helper: 'clone',
   delay: 150,
   revert: true,
@@ -623,17 +782,17 @@ $(".roster tbody tr").draggable({
     console.log("I am dragging " + $(this).find("span").text());
 
     $(".lineup_number").each(function() {
-      colors.push($(this).css("background-color"));
+      lineup_colors.push($(this).css("background-color"));
       $(this).css("background-color","green");
     });
   },
   stop: function(event, ui) {
     $(this).toggleClass('dragging');
     $(".lineup_number").each(function() {
-      $(this).css("background-color", colors.shift());
+      $(this).css("background-color", lineup_colors.shift());
     });
   },
-  // containment: "#roster_div",
+  // containment: "#position_player_table_div",
 }).disableSelection();
 
 $(".lineup tbody").sortable({
@@ -657,11 +816,29 @@ $(".lineup tbody").sortable({
   // containment: "#view_lineup"
 }).disableSelection();
 
+$(".rotation tbody").sortable({
+  helper: 'clone',
+  delay: 150,
+  tolerance: "pointer",
+
+  start: function(event, ui) {
+    $(this).toggleClass('dragging');
+
+  },
+  stop: function(event, ui) {
+    if (pitchingRotationChanged()) {
+      saveRotationChanges();
+    }
+    $(this).toggleClass('dragging');
+  },
+  // containment: "#view_lineup"
+}).disableSelection();
+
 function createDroppable() {
   $("#batting_order tbody tr").droppable({
     drop: function dropFunction(event, ui) {
       var player_id = ui.draggable.find("span");
-      if (player_id.closest("div").is("#roster_div")) {
+      if (player_id.closest("div").is("#position_player_table_div")) {
         var defense_position = $(this).find("span.hidden_position_name");
         console.log("player " + player_id.text() + " is now at " + defense_position.text());
         var lineupData = { };
@@ -700,11 +877,27 @@ function createDroppable() {
                 // containment: "#view_lineup"
               }).disableSelection();
 
+              $(".rotation tbody").sortable({
+                helper: 'clone',
+                delay: 150,
+                tolerance: "pointer",
 
+                start: function(event, ui) {
+                  $(this).toggleClass('dragging');
+
+                },
+                stop: function(event, ui) {
+                  if (pitchingRotationChanged()) {
+                    saveRotationChanges();
+                  }
+                  $(this).toggleClass('dragging');
+                },
+                // containment: "#view_lineup"
+              }).disableSelection();
 
             });
-            $("#roster_div").load("/teams/" + data.id + " #roster_div", function(responseText, textStatus, XMLHttpRequest) {
-              $(".roster tbody tr").draggable({
+            $("#position_player_table_div").load("/teams/" + data.id + " #position_player_table_div", function(responseText, textStatus, XMLHttpRequest) {
+              $(".position_player_table tbody tr").draggable({
                 helper: 'clone',
                 delay: 150,
                 revert: true,
@@ -714,17 +907,17 @@ function createDroppable() {
                   console.log("I am dragging " + $(this).find("span").text());
 
                   $(".lineup_number").each(function() {
-                    colors.push($(this).css("background-color"));
+                    lineup_colors.push($(this).css("background-color"));
                     $(this).css("background-color","green");
                   });
                 },
                 stop: function(event, ui) {
                   $(this).toggleClass('dragging');
                   $(".lineup_number").each(function() {
-                    $(this).css("background-color", colors.shift());
+                    $(this).css("background-color", lineup_colors.shift());
                   });
                 },
-                // containment: "#roster_div",
+                // containment: "#position_player_table_div",
               }).disableSelection();
 
               formatData();
