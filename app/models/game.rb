@@ -48,6 +48,16 @@ class Game < ActiveRecord::Base
     # team win/loss stats
     # Home team wins
     if @home_team_score > @away_team_score
+
+      # pitcher w/l
+      @home_pitcher_list.first.update_attribute(:wins, @home_pitcher_list.first.wins + 1)
+      @away_pitcher_list.first.update_attribute(:losses, @away_pitcher_list.first.losses + 1)
+
+      # Game w/l
+      self.update_attributes(winning_pitcher: @home_pitcher_list.first.id)
+      self.update_attributes(losing_pitcher: @away_pitcher_list.first.id)
+
+      # team w/l
       @home_team.update_attribute(:wins, @home_team.wins + 1)
       @away_team.update_attribute(:losses, @away_team.losses + 1)
 
@@ -59,6 +69,16 @@ class Game < ActiveRecord::Base
 
     # Away team wins
     else
+
+      # pitcher w/l
+      @home_pitcher_list.first.update_attribute(:losses, @home_pitcher_list.first.losses + 1)
+      @away_pitcher_list.first.update_attribute(:wins, @away_pitcher_list.first.wins + 1)
+
+      # Game w/l
+      self.update_attributes(winning_pitcher: @away_pitcher_list.first.id)
+      self.update_attributes(losing_pitcher: @home_pitcher_list.first.id)
+
+      # team w/l
       @home_team.update_attribute(:losses, @home_team.losses + 1)
       @away_team.update_attribute(:wins, @away_team.wins + 1)
 
@@ -383,7 +403,7 @@ class Game < ActiveRecord::Base
     # home pitching stats
     @home_pitcher_list.each do |pitcher|
       home_outs_recorded_string.push(pitcher.game_outs_recorded)
-      home_hits_allowed_string.push(pitcher.game_outs_recorded)
+      home_hits_allowed_string.push(pitcher.game_hits_allowed)
       home_runs_allowed_string.push(pitcher.game_runs_allowed)
       home_earned_runs_allowed_string.push(pitcher.game_earned_runs_allowed)
       home_walks_allowed_string.push(pitcher.game_walks_allowed)

@@ -405,6 +405,8 @@
   <thead>
     <tr>
       <th>Player</th>
+      <th class="tooltip_enable" title="Wins">W</th>
+      <th class="tooltip_enable" title="Losses">L</th>
       <th class="tooltip_enable" title="Innings pitched">IP</th>
       <th class="tooltip_enable" title="Hits allowed">H</th>
       <th class="tooltip_enable" title="Runs allowed">R</th>
@@ -423,6 +425,8 @@
         <span hidden="true" class="player_id_span"><%= player.id %></span>
         <%= link_to player.full_name, player, method: :get %>
       </td>
+      <td><%= player.wins %></td>
+      <td><%= player.losses %></td>
       <td><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td>
       <td><%= player.hits_allowed %></td>
       <td><%= player.runs_allowed %></td>
@@ -435,6 +439,8 @@
     </tr>
     <% end %>
     <tr>
+      <% @total_wins = 0 %>
+      <% @total_losses = 0 %>
       <% @total_outs_recorded = 0 %>
       <% @total_hits_allowed = 0 %>
       <% @total_runs_allowed = 0 %>
@@ -450,8 +456,12 @@
       <% @total_home_runs_allowed += player.home_runs_allowed %>
       <% @total_walks_allowed += player.walks_allowed %>
       <% @total_strikeouts_recorded += player.strikeouts_recorded %>
+      <% @total_wins += player.wins %>
+      <% @total_losses += player.losses %>
       <% end %>
       <td><strong>Total</strong></td>
+      <td><strong><%= @total_wins %></strong></td>
+      <td><strong><%= @total_losses %></strong></td>
       <td><strong><%= number_with_precision(@total_outs_recorded.to_f/3, precision: 1) %></strong></td>
       <td><strong><%= @total_hits_allowed %></strong></td>
       <td><strong><%= @total_runs_allowed %></strong></td>
@@ -461,6 +471,7 @@
       <td><strong><%= @total_strikeouts_recorded %></strong></td>
       <td><strong><%= number_with_precision(zero_if_nan(@total_earned_runs_allowed.to_f*27/@total_outs_recorded.to_f), precision: 2) %></strong></td>
       <td><strong><%= number_with_precision(zero_if_nan((@total_walks_allowed + @total_hits_allowed).to_f*3/@total_outs_recorded.to_f), precision: 2) %></strong></td>
+
     </tr>
   </tbody>
 </table>
@@ -471,6 +482,8 @@
     <tr>
       <th>Team</th>
       <th>Result</th>
+      <th>Winning Pitcher</th>
+      <th>Losing Pitcher</th>
     </tr>
   </thead>
   <% @schedule = @team.schedule.split(", ").map {|s| s.to_i} %>
@@ -508,6 +521,14 @@
       <% end %>
       <%= link_to @game_display, game, method: :get %>
     </td>
+    <% if !game.nil? %>
+    <td><%= link_to Player.find(game.winning_pitcher).full_name, Player.find(game.winning_pitcher), method: :get %></td>
+    <td><%= link_to Player.find(game.losing_pitcher).full_name, Player.find(game.losing_pitcher), method: :get %></td>
+    <% else %>
+    <td></td>
+    <td></td>
+    <% end %>
+
     </tr>
     <% game_number += 1 %>
     <% end %>

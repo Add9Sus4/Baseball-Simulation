@@ -171,7 +171,9 @@ def completely_random_player(team_id)
                               pitch_2: "--",
                               pitch_3: "--",
                               pitch_4: "--",
-                              pitch_5: "--")
+                              pitch_5: "--",
+                              wins: 0,
+                              losses: 0)
 
 
 
@@ -314,7 +316,9 @@ def completely_average_player(team_id)
                               pitch_2: "--",
                               pitch_3: "--",
                               pitch_4: "--",
-                              pitch_5: "--")
+                              pitch_5: "--",
+                              wins: 0,
+                              losses: 0)
 end
 
 def completely_random_pitcher(team_id)
@@ -487,7 +491,9 @@ def completely_random_pitcher(team_id)
                               pitch_2: pitches[1],
                               pitch_3: pitches[2],
                               pitch_4: pitches[3],
-                              pitch_5: pitches[4] )
+                              pitch_5: pitches[4],
+                              wins: 0,
+                              losses: 0 )
 
 
 
@@ -662,7 +668,9 @@ def completely_average_pitcher(team_id)
                               pitch_2: pitches[1],
                               pitch_3: pitches[2],
                               pitch_4: pitches[3],
-                              pitch_5: pitches[4])
+                              pitch_5: pitches[4],
+                              wins: 0,
+                              losses: 0)
 end
 
 # Create season
