@@ -2,26 +2,26 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
 <% provide(:title, "Sign up") %>
-<h1>Sign up</h1>
+<h1 class="app_text_main">Sign up</h1>
 
 <div class="row">
   <div class="col-md-6 col-md-offset-3">
     <%= form_for(@user) do |f| %>
       <%= render 'shared/error_messages' %>
 
-      <div class="field">
+      <div class="app_text_main field">
         <%= f.label :name %>
         <%= f.text_field :name %>
       </div>
-      <div class="field">
+      <div class="app_text_main field">
         <%= f.label :email %>
         <%= f.email_field :email %>
       </div>
-      <div class="field">
+      <div class="app_text_main field">
         <%= f.label :password %>
         <%= f.password_field :password %>
       </div>
-      <div class="field">
+      <div class="app_text_main field">
         <%= f.label :password_confirmation, "Confirmation" %>
         <%= f.password_field :password_confirmation %>
       </div>
