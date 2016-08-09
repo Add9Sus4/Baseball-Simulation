@@ -20,6 +20,21 @@
   .dataTable > thead > tr > th[class*="sort"]::after {
     display: none;
   }
+  #radio .ui-button.ui-state-default .ui-button-text {
+    color: #8cb3d9;
+    background-color: #33404d;
+  }
+  #radio .ui-button.ui-state-active .ui-button-text {
+    color: #ecf2f9;
+    background-color: #52667a;
+  }
+  #radio .ui-button .ui-button-text {
+    border-radius: 4px;
+  }
+  #radio .ui-widget {
+    border-color: #132639;
+    background-color: #132639;
+  }
 </style>
 
 <p id="notice"><%= notice %></p>
@@ -129,7 +144,7 @@
 </style>
 
 <!-- <h5>Search: <input type="text" id="player_search" class="search_box" onkeyup="searchPlayers()" /></h5> -->
-<br/>
+</br>
 <input hidden type="text" id="minIP" class="pitching" name="minIP"/>
 <label hidden class="app_text_main pitching" for="minIP">min IP</label>
 
