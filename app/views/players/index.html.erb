@@ -222,6 +222,8 @@
       <th>Weight</th>
       <!-- <th>Position</th> -->
       <!-- <th>Salary</th> -->
+      <th class="tooltip_enable" title="Wins">W</th>
+      <th class="tooltip_enable" title="Losses">L</th>
       <th class="tooltip_enable" title="Innings pitched">IP</th>
       <th class="tooltip_enable" title="Hits allowed">H</th>
       <th class="tooltip_enable" title="Runs allowed">R</th>
@@ -243,6 +245,8 @@
         <td><%= player.age %></td>
         <td class="height"><%= player.height %></td>
         <td><%= player.weight %> lb.</td>
+        <td><%= player.wins %></td>
+        <td><%= player.losses %></td>
         <!-- <td class="position"><%= player.position %></td> -->
         <!-- <td class="salary"><%= number_to_currency(player.salary) %></td> -->
         <td><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td>
