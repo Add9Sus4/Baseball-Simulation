@@ -242,7 +242,7 @@
           <% else %>
           <%= number_with_precision(player.strikeouts_recorded.to_f/player.walks_allowed.to_f, precision: 2) %>
         <% end %></td>
-        <td><%= number_with_precision(player.strikeouts_recorded.to_f*27/player.outs_recorded.to_f, precision: 2) %></td>
+        <td><%= number_with_precision(player.strikeouts_recorded.to_f*27/player.outs_recorded.to_f, precision: 2).to_f %></td>
         <td><%= number_with_precision(zero_if_nan(player.earned_runs_allowed.to_f*27/player.outs_recorded.to_f), precision: 2) %></td>
         <td><%= number_with_precision(zero_if_nan((player.walks_allowed + player.hits_allowed).to_f*3/player.outs_recorded.to_f), precision: 2) %></td>
       </tr>
