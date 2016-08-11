@@ -17,7 +17,7 @@ class Game < ActiveRecord::Base
   def play
     prepare
 
-    # Simulate game
+    # Simulate the game
     while !@over do
       # Top of inning
       unless @inning_number == 1 && @inning_status == InningStatus::TOP
