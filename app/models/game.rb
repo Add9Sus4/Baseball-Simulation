@@ -45,17 +45,17 @@ class Game < ActiveRecord::Base
 
   def collect_stats
 
+    # pitcher w/l
+    @in_line_for_win.update_attribute(:wins, @in_lin_for_win.wins + 1)
+    @in_line_for_loss.update_attribute(:losses, @in_lin_for_loss.losses + 1)
+
+    # Game w/l
+    self.update_attributes(winning_pitcher: @in_line_for_win.id)
+    self.update_attributes(losing_pitcher: @in_line_for_loss.id)
+
     # team win/loss stats
     # Home team wins
     if @home_team_score > @away_team_score
-
-      # pitcher w/l
-      @home_pitcher_list.first.update_attribute(:wins, @home_pitcher_list.first.wins + 1)
-      @away_pitcher_list.first.update_attribute(:losses, @away_pitcher_list.first.losses + 1)
-
-      # Game w/l
-      self.update_attributes(winning_pitcher: @home_pitcher_list.first.id)
-      self.update_attributes(losing_pitcher: @away_pitcher_list.first.id)
 
       # team w/l
       @home_team.update_attribute(:wins, @home_team.wins + 1)
@@ -69,14 +69,6 @@ class Game < ActiveRecord::Base
 
     # Away team wins
     else
-
-      # pitcher w/l
-      @home_pitcher_list.first.update_attribute(:losses, @home_pitcher_list.first.losses + 1)
-      @away_pitcher_list.first.update_attribute(:wins, @away_pitcher_list.first.wins + 1)
-
-      # Game w/l
-      self.update_attributes(winning_pitcher: @away_pitcher_list.first.id)
-      self.update_attributes(losing_pitcher: @home_pitcher_list.first.id)
 
       # team w/l
       @home_team.update_attribute(:losses, @home_team.losses + 1)
@@ -595,8 +587,8 @@ class Game < ActiveRecord::Base
     @play_by_play = ""
     @good = "#267373"
     @bad = "#854747"
-    @in_line_for_win = 0 # id of pitcher in line to get the win
-    @in_line_for_loss = 0 # id of pitcher in line to get the loss
+    @in_line_for_win = nil # id of pitcher in line to get the win
+    @in_line_for_loss = nil # id of pitcher in line to get the loss
 
     # home and away teams
     @home_team = Team.find(self.home_team_id)
