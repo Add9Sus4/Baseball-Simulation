@@ -46,8 +46,8 @@ class Game < ActiveRecord::Base
   def collect_stats
 
     # pitcher w/l
-    @in_line_for_win.update_attribute(:wins, @in_lin_for_win.wins + 1)
-    @in_line_for_loss.update_attribute(:losses, @in_lin_for_loss.losses + 1)
+    @in_line_for_win.update_attribute(:wins, @in_line_for_win.wins + 1)
+    @in_line_for_loss.update_attribute(:losses, @in_line_for_loss.losses + 1)
 
     # Game w/l
     self.update_attributes(winning_pitcher: @in_line_for_win.id)
