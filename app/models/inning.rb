@@ -27,7 +27,7 @@ class Inning
 
       atBat = AtBat.new(@pitcher, @batter, @game, @bases)
       play = Play.new(atBat, @game)
-      if play.result == PlayResult::OUT
+      if play.result == PlayResult::OUT # Play resulted in an out
         @pitcher.records_out(1)
         @outs = @outs + 1
       elsif play.result == PlayResult::DOUBLE_PLAY
@@ -38,7 +38,7 @@ class Inning
         @outs = @outs + 3
       elsif atBat.result == AtBatResult::WALK || atBat.result == AtBatResult::HBP
         @bases.updateStatusOnWalkOrHBP(@batter, @pitcher)
-      else
+      else # Play did not result in an out
         if HitResult.is_a_single(play.hit_result)
           @batter.hits_single
           @pitcher.allows_hit
@@ -54,7 +54,7 @@ class Inning
           @pitcher.allows_home_run
         end
         @bases.updateStatusOnHit(play.hit_result, @batter, @pitcher)
-      end
+      end # End play
       @runs_scored += @bases.runs_scored
       @bases.runs_scored = 0
       @lineup_position = @lineup_position + 1
@@ -64,7 +64,7 @@ class Inning
       if @outs == 3
         @over = true
       end
-    end
+    end # End inning
     if game.inning_status == InningStatus::TOP
       if @lineup_position > 8
         @lineup_position = 0
@@ -119,7 +119,7 @@ class Inning
       if @game.home_pitcher_list.any? {|player| player[:id] == @game.home_team.lr }
         put_in_middle_reliever
       else # Put in the long reliever
-        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.home_team.lr).full_name} enters for #{@game.home_pitcher_list.last.full_name}.</strong></h5>\n"
+        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.home_team.lr).full_name} (Long relief) enters for #{@game.home_pitcher_list.last.full_name}.</strong></h5>\n"
         @game.home_pitcher_list.push(Player.find(@game.home_team.lr))
         @game.home_pitcher_list.last.set_initial_stats
       end
@@ -128,7 +128,7 @@ class Inning
       if @game.away_pitcher_list.any? {|player| player[:id] == @game.away_team.lr }
         put_in_middle_reliever
       else # Put in the long reliever
-        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.away_team.lr).full_name} enters for #{@game.away_pitcher_list.last.full_name}.</strong></h5>\n"
+        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.away_team.lr).full_name} (Long relief) enters for #{@game.away_pitcher_list.last.full_name}.</strong></h5>\n"
         @game.away_pitcher_list.push(Player.find(@game.away_team.lr))
         @game.away_pitcher_list.last.set_initial_stats
       end
@@ -139,47 +139,47 @@ class Inning
     # Home team pitching
     if @game.inning_status == InningStatus::TOP
       # If the MR1 has already pitched
-      if @game.home_pitcher_list.any? {|player| player[:id] == @game.home_team.mr1}
+      if @game.home_pitcher_list.any? {|player| player[:id] == @game.home_team.mr1} || rand() > 0.50
         # If the MR2 has also already pitched
-        if @game.home_pitcher_list.any? {|player| player[:id] == @game.home_team.mr2}
+        if @game.home_pitcher_list.any? {|player| player[:id] == @game.home_team.mr2} || rand() > 0.50
           # If the MR3 has also already pitched
           if @game.home_pitcher_list.any? {|player| player[:id] == @game.home_team.mr3}
             put_in_setup
           else # The MR3 has not yet pitched
-            @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.home_team.mr3).full_name} enters for #{@game.home_pitcher_list.last.full_name}.</strong></h5>\n"
+            @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.home_team.mr3).full_name} (Middle relief) enters for #{@game.home_pitcher_list.last.full_name}.</strong></h5>\n"
             @game.home_pitcher_list.push(Player.find(@game.home_team.mr3))
             @game.home_pitcher_list.last.set_initial_stats
           end
         else # The MR2 has not yet pitched
-          @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.home_team.mr2).full_name} enters for #{@game.home_pitcher_list.last.full_name}.</strong></h5>\n"
+          @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.home_team.mr2).full_name} (Middle relief) enters for #{@game.home_pitcher_list.last.full_name}.</strong></h5>\n"
           @game.home_pitcher_list.push(Player.find(@game.home_team.mr2))
           @game.home_pitcher_list.last.set_initial_stats
         end
       else # The MR1 has not yet pitched
-        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.home_team.mr1).full_name} enters for #{@game.home_pitcher_list.last.full_name}.</strong></h5>\n"
+        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.home_team.mr1).full_name} (Middle relief) enters for #{@game.home_pitcher_list.last.full_name}.</strong></h5>\n"
         @game.home_pitcher_list.push(Player.find(@game.home_team.mr1))
         @game.home_pitcher_list.last.set_initial_stats
       end
     else # Away team pitching
       # If the MR1 has already pitched
-      if @game.away_pitcher_list.any? {|player| player[:id] == @game.away_team.mr1}
+      if @game.away_pitcher_list.any? {|player| player[:id] == @game.away_team.mr1} || rand() > 0.50
         # If the MR2 has also already pitched
-        if @game.away_pitcher_list.any? {|player| player[:id] == @game.away_team.mr2}
+        if @game.away_pitcher_list.any? {|player| player[:id] == @game.away_team.mr2} || rand() > 0.50
           # If the MR3 has also already pitched
           if @game.away_pitcher_list.any? {|player| player[:id] == @game.away_team.mr3}
             put_in_setup
           else # The MR3 has not yet pitched
-            @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.away_team.mr3).full_name} enters for #{@game.away_pitcher_list.last.full_name}.</strong></h5>\n"
+            @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.away_team.mr3).full_name} (Middle relief) enters for #{@game.away_pitcher_list.last.full_name}.</strong></h5>\n"
             @game.away_pitcher_list.push(Player.find(@game.away_team.mr3))
             @game.away_pitcher_list.last.set_initial_stats
           end
         else # The MR2 has not yet pitched
-          @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.away_team.mr2).full_name} enters for #{@game.away_pitcher_list.last.full_name}.</strong></h5>\n"
+          @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.away_team.mr2).full_name} (Middle relief) enters for #{@game.away_pitcher_list.last.full_name}.</strong></h5>\n"
           @game.away_pitcher_list.push(Player.find(@game.away_team.mr2))
           @game.away_pitcher_list.last.set_initial_stats
         end
       else # The MR1 has not yet pitched
-        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.away_team.mr1).full_name} enters for #{@game.away_pitcher_list.last.full_name}.</strong></h5>\n"
+        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.away_team.mr1).full_name} (Middle relief) enters for #{@game.away_pitcher_list.last.full_name}.</strong></h5>\n"
         @game.away_pitcher_list.push(Player.find(@game.away_team.mr1))
         @game.away_pitcher_list.last.set_initial_stats
       end
@@ -190,33 +190,33 @@ class Inning
     # Home team pitching
     if @game.inning_status == InningStatus::TOP
       # If the SU1 has already pitched
-      if @game.home_pitcher_list.any? {|player| player[:id] == @game.home_team.su1}
+      if @game.home_pitcher_list.any? {|player| player[:id] == @game.home_team.su1} || rand() > 0.66
         # If the SU2 has already pitched
         if @game.home_pitcher_list.any? {|player| player[:id] == @game.home_team.su2}
           put_in_closer
         else # The SU2 has not yet pitched
-          @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.home_team.su2).full_name} enters for #{@game.home_pitcher_list.last.full_name}.</strong></h5>\n"
+          @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.home_team.su2).full_name} (Setup) enters for #{@game.home_pitcher_list.last.full_name}.</strong></h5>\n"
           @game.home_pitcher_list.push(Player.find(@game.home_team.su2))
           @game.home_pitcher_list.last.set_initial_stats
         end
       else # The SU1 has not yet pitched
-        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.home_team.su1).full_name} enters for #{@game.home_pitcher_list.last.full_name}.</strong></h5>\n"
+        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.home_team.su1).full_name} (Setup) enters for #{@game.home_pitcher_list.last.full_name}.</strong></h5>\n"
         @game.home_pitcher_list.push(Player.find(@game.home_team.su1))
         @game.home_pitcher_list.last.set_initial_stats
       end
     else # Away team pitching
       # If the SU1 has already pitched
-      if @game.away_pitcher_list.any? {|player| player[:id] == @game.away_team.su1}
+      if @game.away_pitcher_list.any? {|player| player[:id] == @game.away_team.su1} || rand() > 0.66
         # If the SU2 has already pitched
         if @game.away_pitcher_list.any? {|player| player[:id] == @game.away_team.su2}
           put_in_closer
         else # The SU2 has not yet pitched
-          @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.away_team.su2).full_name} enters for #{@game.away_pitcher_list.last.full_name}.</strong></h5>\n"
+          @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.away_team.su2).full_name} (Setup) enters for #{@game.away_pitcher_list.last.full_name}.</strong></h5>\n"
           @game.away_pitcher_list.push(Player.find(@game.away_team.su2))
           @game.away_pitcher_list.last.set_initial_stats
         end
       else # The SU1 has not yet pitched
-        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.away_team.su1).full_name} enters for #{@game.away_pitcher_list.last.full_name}.</strong></h5>\n"
+        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.away_team.su1).full_name} (Setup) enters for #{@game.away_pitcher_list.last.full_name}.</strong></h5>\n"
         @game.away_pitcher_list.push(Player.find(@game.away_team.su1))
         @game.away_pitcher_list.last.set_initial_stats
       end
@@ -230,7 +230,7 @@ class Inning
       if @game.home_pitcher_list.any? {|player| player[:id] == @game.home_team.cl}
         put_in_long_reliever
       else # The CL has not yet pitched
-        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.home_team.cl).full_name} enters for #{@game.home_pitcher_list.last.full_name}.</strong></h5>\n"
+        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.home_team.cl).full_name} (Closer) enters for #{@game.home_pitcher_list.last.full_name}.</strong></h5>\n"
         @game.home_pitcher_list.push(Player.find(@game.home_team.cl))
         @game.home_pitcher_list.last.set_initial_stats
       end
@@ -239,7 +239,7 @@ class Inning
       if @game.away_pitcher_list.any? {|player| player[:id] == @game.away_team.cl}
         put_in_long_reliever
       else # The CL has not yet pitched
-        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.away_team.cl).full_name} enters for #{@game.away_pitcher_list.last.full_name}.</strong></h5>\n"
+        @game.play_by_play += "\n<h5><strong>Pitching change: #{Player.find(@game.away_team.cl).full_name} (Closer) enters for #{@game.away_pitcher_list.last.full_name}.</strong></h5>\n"
         @game.away_pitcher_list.push(Player.find(@game.away_team.cl))
         @game.away_pitcher_list.last.set_initial_stats
       end

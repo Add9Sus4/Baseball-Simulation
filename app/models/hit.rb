@@ -218,7 +218,7 @@ class Hit
         if rand() < chanceOfReachingBall
           hits_grounder("FIRST")
         else
-          if rand() > 0.30
+          if rand() > Constants::PERCENT_SINGLES_TO_EXTRA_BASE_HITS
             hits_single("RIGHT")
           else
             hits_double("RIGHT")
@@ -229,7 +229,7 @@ class Hit
           hits_liner("FIRST")
         else
           random = rand()
-          if random > 0.30
+          if random > Constants::PERCENT_SINGLES_TO_EXTRA_BASE_HITS
             hits_single("RIGHT")
           elsif random < Constants::PERCENT_DOUBLES_TO_TRIPLES
             hits_double("RIGHT")
@@ -292,7 +292,7 @@ class Hit
         if rand() < chanceOfReachingBall
           hits_grounder("THIRD")
         else
-          if rand() > 0.30
+          if rand() > Constants::PERCENT_SINGLES_TO_EXTRA_BASE_HITS
             hits_single("LEFT")
           else
             hits_double("LEFT")
@@ -303,7 +303,7 @@ class Hit
           hits_liner("THIRD")
         else
           random = rand()
-          if random > 0.30
+          if random > Constants::PERCENT_SINGLES_TO_EXTRA_BASE_HITS
             hits_single("LEFT")
           elsif random < Constants::PERCENT_DOUBLES_TO_TRIPLES
             hits_double("LEFT")

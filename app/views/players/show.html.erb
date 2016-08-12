@@ -44,20 +44,23 @@
     <span><%= number_to_currency(@player.salary) %></span>
   </p>
 
+  <% if !@player.is_pitcher %>
   <p class="app_text_main">
     <strong>Bats:</strong>
     <%= @player.hitting_side.capitalize %>
   </p>
+  <% end %>
 
   <p class="app_text_main">
     <strong>Throws:</strong>
     <%= @player.throwing_hand.capitalize %>
   </p>
-
+  <% if @player.is_pitcher %>
   <p class="app_text_main">
     <strong>Pitches:</strong>
     <%= @player.pitches %>
   </p>
+  <% end %>
 
 </div>
 </br>
@@ -66,6 +69,7 @@
 <!-- <%= link_to 'All Players', players_path, method: :get %> | -->
 <!-- <%= link_to 'Back', 'javascript:history.go(-1);' %> -->
 
+<% if !@player.is_pitcher %>
 <h3 class="app_text_main">Batting Attributes</h3>
 
 <table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
@@ -94,7 +98,9 @@
     </tr>
   </tbody>
 </table>
+<% end %>
 
+<% if @player.is_pitcher %>
 <h3 class="app_text_main">Pitching Attributes</h3>
 
 <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
@@ -113,6 +119,7 @@
     </tr>
   </tbody>
 </table>
+<% end %>
 
 <h3 class="app_text_main">Fielding Attributes</h3>
 
@@ -141,6 +148,7 @@
   </tbody>
 </table>
 
+<% if !@player.is_pitcher %>
 <h3 class="app_text_main">Batting Stats</h3>
 <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
   <thead>
@@ -186,12 +194,16 @@
     </tr>
   </tbody>
 </table>
+<% end %>
 
+<% if @player.is_pitcher %>
 <h3 class="app_text_main">Pitching Stats</h3>
 </br>
 <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
   <thead>
     <tr>
+      <th class="tooltip_enable" title="Wins">W</th>
+      <th class="tooltip_enable" title="Losses">L</th>
       <th class="tooltip_enable" title="Innings pitched">IP</th>
       <th class="tooltip_enable" title="Hits allowed">H</th>
       <th class="tooltip_enable" title="Runs allowed">R</th>
@@ -205,6 +217,8 @@
   </thead>
   <tbody>
     <tr>
+      <td><%= @player.wins %></td>
+      <td><%= @player.losses %></td>
       <td><%= number_with_precision(@player.outs_recorded.to_f/3, precision: 1) %></td>
       <td class="tooltip_enable" title="<%= number_with_precision(@player.hits_allowed.to_f*27/@player.outs_recorded.to_f, precision: 2) %> H/9"><%= @player.hits_allowed %></td>
       <td><%= @player.runs_allowed %></td>
@@ -237,8 +251,8 @@
     <% end %>
   </tbody>
 </table>
+<% end %>
 </br>
-
 <style media="screen">
 .ui-tooltip-content {
   font-size:8pt;

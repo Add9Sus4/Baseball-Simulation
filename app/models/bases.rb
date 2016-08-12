@@ -362,12 +362,39 @@ class Bases
   end
 
   def increase_score(num_runs)
-    if @game.inning_status == InningStatus::TOP
-      @game.away_team_score = @game.away_team_score + num_runs
-    else
-      @game.home_team_score = @game.home_team_score + num_runs
+
+    @home_team_winning = false
+    @away_team_winning = false
+    @tied = false
+
+    if @game.home_team_score > @game.away_team_score # Home team is winning
+      @home_team_winning = true
+    elsif @game.away_team_score > @game.home_team_score # Away team is winning
+      @away_team_winning = true
+    else # Game is tied
+      @tied = true
+    end
+
+    if @game.inning_status == InningStatus::TOP # Top of the inning
+      @game.away_team_score = @game.away_team_score + num_runs # Away team scores
+      # If the home team was winning or tied, but now is losing
+      if (@tied || @home_team_winning) && @game.home_team_score < @game.away_team_score
+        @game.in_line_for_loss = @game.home_pitcher_list.last # Current home pitcher is in line for the loss
+        @game.in_line_for_win = @game.away_pitcher_list.last # Current away pitcher is in line for the win
+      end
+    else # Bottom of the inning
+      @game.home_team_score = @game.home_team_score + num_runs # Home team scores
+      # If the away team was winning or tied, but now is losing
+      if (@tied || @away_team_winning) && @game.away_team_score < @game.home_team_score
+        @game.in_line_for_loss = @game.away_pitcher_list.last # Current away pitcher is in line for the loss
+        @game.in_line_for_win = @game.home_pitcher_list.last # Current home pitcher is in line for the win
+      end
     end
     @pitcher.allows_earned_run(num_runs)
+    # If it was a walk off
+    if @game.inning_number >= 9 && @game.home_team_score > @game.away_team_score
+      @game.over = true
+    end
   end
 
   def batter_scores

@@ -225,6 +225,10 @@ class Player < ActiveRecord::Base
     @current_value
   end
 
+  def is_pitcher
+    position == 'P' ? true : false
+  end
+
   # determines the maximum number of pitches thrown in any zone
   def max_zone_pitches
     max = 0

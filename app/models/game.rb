@@ -7,7 +7,7 @@
 # heat maps are loaded into a hash before the game begins
 class Game < ActiveRecord::Base
   validate :teams_must_be_different
-  attr_accessor :home_pitcher_list, :away_pitcher_list, :play_by_play, :bad, :good, :home_team, :away_team, :inning_status, :inning_number, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score, :home_team_inning_scores, :away_team_inning_scores, :over
+  attr_accessor :in_line_for_win, :in_line_for_loss, :home_pitcher_list, :away_pitcher_list, :play_by_play, :bad, :good, :home_team, :away_team, :inning_status, :inning_number, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score, :home_team_inning_scores, :away_team_inning_scores, :over
 
   def teams_must_be_different
     errors.add(:base, "Teams cannot be the same") if home_team_id == away_team_id
@@ -595,6 +595,8 @@ class Game < ActiveRecord::Base
     @play_by_play = ""
     @good = "#267373"
     @bad = "#854747"
+    @in_line_for_win = 0 # id of pitcher in line to get the win
+    @in_line_for_loss = 0 # id of pitcher in line to get the loss
 
     # home and away teams
     @home_team = Team.find(self.home_team_id)
