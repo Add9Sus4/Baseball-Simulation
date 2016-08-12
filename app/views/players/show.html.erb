@@ -40,6 +40,11 @@
   </p>
 
   <p class="app_text_main">
+    <strong>Role:</strong>
+    <span class="pitching_role"><%= @player.team.find_pitching_role_of_player(@player.id) %></span>
+  </p>
+
+  <p class="app_text_main">
     <strong>Salary:</strong>
     <span><%= number_to_currency(@player.salary) %></span>
   </p>
@@ -383,6 +388,52 @@ $(function() {
     var rgb = "rgb(" + Math.floor(red) + "," + Math.floor(green) + "," + Math.floor(blue) + ")";
     $(this).css({"color":rgb});
   })
+
+  $('.pitching_role').each(function() {
+    var pitchingRoleSymbol = $(this).text();
+    console.log("symbol:" + pitchingRoleSymbol)
+    var pitching_role = '';
+    switch (pitchingRoleSymbol) {
+      case 'SP1':
+        pitching_role = 'Starter';
+        break;
+      case 'SP2':
+        pitching_role = 'Starter';
+        break;
+      case 'SP3':
+        pitching_role = 'Starter';
+        break;
+      case 'SP4':
+        pitching_role = 'Starter';
+        break;
+      case 'SP5':
+        pitching_role = 'Starter';
+        break;
+      case 'LR':
+        pitching_role = 'Long Reliever';
+        break;
+      case 'MR1':
+        pitching_role = 'Middle Reliever';
+        break;
+      case 'MR2':
+        pitching_role = 'Middle Reliever';
+        break;
+      case 'MR3':
+        pitching_role = 'Middle Reliever';
+        break;
+      case 'SU1':
+        pitching_role = 'Setup';
+        break;
+      case 'SU2':
+        pitching_role = 'Setup';
+        break;
+      case 'CL':
+        pitching_role = 'Closer';
+        break;
+    }
+    console.log("text:" + pitching_role)
+    $(this).text(pitching_role);
+  });
 
   $('.position').each(function() {
     var positionSymbol = $(this).text();
