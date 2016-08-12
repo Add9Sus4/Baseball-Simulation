@@ -674,7 +674,7 @@ def completely_average_pitcher(team_id)
 end
 
 # Create season
-season = Season.create!(next_game: 0)
+season = Season.create!(next_game: 0, simulating: 1)
 
 ["NL", "AL"].each do |current_league|
   ["East", "Central", "West"].each do |current_division|
