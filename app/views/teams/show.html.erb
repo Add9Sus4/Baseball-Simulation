@@ -423,7 +423,7 @@
     <tr>
       <td title="" class="player_link tooltip_enable">
         <span hidden="true" class="player_id_span"><%= player.id %></span>
-        <%= link_to player.full_name, player, method: :get %>
+        <%= link_to @team.find_pitching_role_of_player(player.id) + " - " + player.full_name, player, method: :get %>
       </td>
       <td><%= player.wins %></td>
       <td><%= player.losses %></td>

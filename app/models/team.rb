@@ -213,6 +213,37 @@ class Team < ActiveRecord::Base
     lineup_ids[lineup_position]
   end
 
+  # Given a player id, find that player's current pitching role on the team
+  def find_pitching_role_of_player(player_id)
+    case player_id
+    when sp1
+      "SP1"
+    when sp2
+      "SP2"
+    when sp3
+      "SP3"
+    when sp4
+      "SP4"
+    when sp5
+      "SP5"
+    when lr
+      "LR"
+    when mr1
+      "MR1"
+    when mr2
+      "MR2"
+    when mr3
+      "MR3"
+    when su1
+      "SU1"
+    when su2
+      "SU2"
+    when cl
+      "CL"
+    else ""
+    end
+  end
+
   # Given a player id, find that player's current position on the team
   def find_position_of_player(player_id)
     case player_id
