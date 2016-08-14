@@ -20,6 +20,13 @@ class Inning
     end
     # Simulate inning
     while !@over do
+      # Exit on walk-off
+      if @game.inning_status == InningStatus::BOTTOM && @game.inning_number >= 9 && @game.home_team_score > @game.away_team_score
+        @game.over = true
+        @over = true
+        break
+      end
+
       @batter = @hitting_team.find_player_by_lineup_index(@lineup_position)
 
       # Check if a pitching change is needed

@@ -46,14 +46,16 @@ task :simulate_games => :environment do
           @already_played_hash[team.id] = 1
           @game.play
         end
-      end
+      end # end simulating games
 
       # increment game number in season
       Season.first.update_attributes(next_game: Season.first.next_game + 1)
 
     end
     Season.first.update_attribute(:simulating, 1)
-  else # Do nothing
+  elsif Season.first.simulating == 1
+    Season.first.update_attribute(:simulating, 2)
+  elsif Season.first.simulating == 2 # Do nothing
     Season.first.update_attribute(:simulating, 0)
   end
 
