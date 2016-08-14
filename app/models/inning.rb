@@ -93,29 +93,69 @@ class Inning
 
   # Check to see if a pitching change is necessary
   def check_for_pitching_change
-    @tiredness = (132 - @pitcher.endurance).to_f*@pitcher.game_total_pitches.to_f/78947.0
 
-    # If the pitcher is too tired, substitute
-    if @tiredness > rand()
-      case @game.inning_number
-      # Innings 1-4: LR
-      when 1..4
-        put_in_long_reliever
-      # Innings 5-7: MR
-      when 5..7
-        put_in_middle_reliever
-      # Inning 8: SU
-      when 8
-        put_in_setup
-      # Inning 9: CL
-      when 9..1000
-        put_in_closer
+    # First, check if the player is a starting pitcher
+
+    # Pitcher is starter
+    if @pitcher.is_starting_pitcher
+
+      # Check if runs allowed threshold has been reached
+      if @pitcher.game_runs_allowed >= 6 # Runs allowed threshold has been reached; pitcher is eligible for removal due to poor performance
+        if rand() < 0.25
+          make_pitching_change # Remove pitcher for poor performance
+        end
+      else # Runs allowed threshold has not been reached; pitcher cannot be removed due to poor performance
+
+        # Check if the pitcher has reached the pitches thrown threshold
+        if @pitcher.game_total_pitches >= @pitcher.endurance + 25 # Pitches thrown threshold has been reached; pitcher is eligible for removal due to tiredness
+          if rand() < 0.25
+            make_pitching_change # Remove pitcher due to tiredness
+          end
+        end
       end
-      if @game.inning_status == InningStatus::TOP
-        @pitcher = @game.home_pitcher_list.last
-      else
-        @pitcher = @game.away_pitcher_list.last
+    else # Pitcher is reliever
+
+      # Check if runs allowed threshold has been reached
+      if @pitcher.game_runs_allowed >= 3 # Runs allowed threshold has been reached; pitcher is eligible for removal due to poor performance
+        if rand() < 0.25
+          make_pitching_change # Remove pitcher for poor performance
+        end
+      else # Runs allowed threshold has not been reached; pitcher cannot be removed due to poor performance
+
+        # Check if the pitcher has reached the pitches thrown threshold
+        if @pitcher.game_total_pitches >= (11*@pitcher.endurance).to_f/20 + 20 # Pitches thrown threshold has been reached; pitcher is eligible for removal due to tiredness
+          if rand() < 0.25
+            make_pitching_change # Remove pitcher due to tiredness
+          end
+        end
+
+        # TODO: Check if the manager wishes to make a pitching change for strategic reasons
+
       end
+    end
+
+  end
+
+  # Perform a pitching change
+  def make_pitching_change
+    case @game.inning_number
+    # Innings 1-4: LR
+    when 1..4
+      put_in_long_reliever
+    # Innings 5-7: MR
+    when 5..7
+      put_in_middle_reliever
+    # Inning 8: SU
+    when 8
+      put_in_setup
+    # Inning 9: CL
+    when 9..1000
+      put_in_closer
+    end
+    if @game.inning_status == InningStatus::TOP
+      @pitcher = @game.home_pitcher_list.last
+    else
+      @pitcher = @game.away_pitcher_list.last
     end
   end
 

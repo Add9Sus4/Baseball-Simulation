@@ -229,6 +229,42 @@ class Player < ActiveRecord::Base
     position == 'P' ? true : false
   end
 
+  def is_starting_pitcher
+    ['sp1', 'sp2', 'sp3', 'sp4', 'sp5'].include? pitching_role
+  end
+
+  # Find the pitching role of the player
+  def pitching_role
+    case id
+    when team.sp1
+      "sp1"
+    when team.sp2
+      "sp2"
+    when team.sp3
+      "sp3"
+    when team.sp4
+      "sp4"
+    when team.sp5
+      "sp5"
+    when team.lr
+      "lr"
+    when team.mr1
+      "mr1"
+    when team.mr2
+      "mr2"
+    when team.mr3
+      "mr3"
+    when team.su1
+      "su1"
+    when team.su2
+      "su2"
+    when team.cl
+      "cl"
+    else
+      "n/a"
+    end
+  end
+
   # determines the maximum number of pitches thrown in any zone
   def max_zone_pitches
     max = 0
