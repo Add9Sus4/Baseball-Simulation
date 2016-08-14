@@ -223,6 +223,7 @@
     <table class="table_with_custom_border table-condensed table-striped table-bordered">
       <thead>
         <tr>
+          <th>Role</th>
           <th>Player</th>
           <th>IP</th>
           <th>H</th>
@@ -234,6 +235,7 @@
           <th>PT</th>
           <th>S</th>
           <th>B</th>
+          <th>%S</th>
         </tr>
       </thead>
 
@@ -253,7 +255,15 @@
         <% @away_pitcher_ids.each do |pitcher_id| %>
         <% @pitcher = Player.find(pitcher_id) %>
         <tr>
-          <td><%= link_to @pitcher.full_name, @pitcher, method: :get %></td>
+          <td><%= @pitcher.pitching_role_name %></td>
+          <td><% @pitcher_name = @pitcher.full_name %>
+            <% if @pitcher.id == @game.winning_pitcher %>
+            <% @pitcher_name += " (W)" %>
+            <% elsif @pitcher.id == @game.losing_pitcher %>
+            <% @pitcher_name += " (L)" %>
+            <% end %>
+            <%= link_to @pitcher_name, @pitcher, method: :get %>
+          </td>
           <td><%= @away_outs_recorded[@counter]/3 %></td>
           <td><%= @away_hits_allowed[@counter] %></td>
           <td><%= @away_runs_allowed[@counter] %></td>
@@ -264,11 +274,13 @@
           <td><%= @away_total_pitches[@counter] %></td>
           <td><%= @away_strikes_thrown[@counter] %></td>
           <td><%= @away_balls_thrown[@counter] %></td>
+          <td><%= number_to_percentage(100*@away_strikes_thrown[@counter].to_f/@away_total_pitches[@counter].to_f, :precision => 0) %></td>
         </tr>
         <% @counter += 1 %>
         <% end %>
         <tr>
           <td><strong>Totals</strong></td>
+          <td>-</td>
           <td><strong><%= @away_outs_recorded.sum/3 %></strong></td>
           <td><strong><%= @away_hits_allowed.sum %></strong></td>
           <td><strong><%= @away_runs_allowed.sum %></strong></td>
@@ -279,6 +291,7 @@
           <td><strong><%= @away_total_pitches.sum %></strong></td>
           <td><strong><%= @away_strikes_thrown.sum %></strong></td>
           <td><strong><%= @away_balls_thrown.sum %></strong></td>
+          <td><strong><%= number_to_percentage(100*@away_strikes_thrown.sum.to_f/@away_total_pitches.sum.to_f, :precision => 0) %></strong></td>
         </tr>
       </tbody>
     </table>
@@ -293,6 +306,7 @@
     <table class="table_with_custom_border table-condensed table-striped table-bordered">
       <thead>
         <tr>
+          <th>Role</th>
           <th>Player</th>
           <th>IP</th>
           <th>H</th>
@@ -304,6 +318,7 @@
           <th>PT</th>
           <th>S</th>
           <th>B</th>
+          <th>%S</th>
         </tr>
       </thead>
 
@@ -323,7 +338,14 @@
         <% @home_pitcher_ids.each do |pitcher_id| %>
         <% @pitcher = Player.find(pitcher_id) %>
         <tr>
-          <td><%= link_to @pitcher.full_name, @pitcher, method: :get %></td>
+          <td><%= @pitcher.pitching_role_name %></td>
+          <td><% @pitcher_name = @pitcher.full_name %>
+            <% if @pitcher.id == @game.winning_pitcher %>
+            <% @pitcher_name += " (W)" %>
+            <% elsif @pitcher.id == @game.losing_pitcher %>
+            <% @pitcher_name += " (L)" %>
+            <% end %>
+            <%= link_to @pitcher_name, @pitcher, method: :get %></td>
           <td><%= @home_outs_recorded[@counter]/3 %></td>
           <td><%= @home_hits_allowed[@counter] %></td>
           <td><%= @home_runs_allowed[@counter] %></td>
@@ -334,11 +356,13 @@
           <td><%= @home_total_pitches[@counter] %></td>
           <td><%= @home_strikes_thrown[@counter] %></td>
           <td><%= @home_balls_thrown[@counter] %></td>
+          <td><%= number_to_percentage(100*@home_strikes_thrown[@counter].to_f/@home_total_pitches[@counter].to_f, :precision => 0) %></td>
         </tr>
         <% @counter += 1 %>
         <% end %>
         <tr>
           <td><strong>Totals</strong></td>
+          <td>-</td>
           <td><strong><%= @home_outs_recorded.sum/3 %></strong></td>
           <td><strong><%= @home_hits_allowed.sum %></strong></td>
           <td><strong><%= @home_runs_allowed.sum %></strong></td>
@@ -349,6 +373,7 @@
           <td><strong><%= @home_total_pitches.sum %></strong></td>
           <td><strong><%= @home_strikes_thrown.sum %></strong></td>
           <td><strong><%= @home_balls_thrown.sum %></strong></td>
+          <td><strong><%= number_to_percentage(100*@home_strikes_thrown.sum.to_f/@home_total_pitches.sum.to_f, :precision => 0) %></strong></td>
         </tr>
       </tbody>
     </table>

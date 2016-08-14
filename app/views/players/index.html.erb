@@ -235,6 +235,7 @@
       <th class="tooltip_enable" title="Strikeouts per 9 innings">K/9</th>
       <th class="tooltip_enable" title="Earned run average">ERA</th>
       <th class="tooltip_enable" title="Walks plus hits per inning pitched">WHIP</th>
+      <th class="tooltip_enable" title="Percent of total pitches that were strikes">%S</th>
     </tr>
   </thead>
   <tbody>
@@ -264,6 +265,7 @@
         <td><%= number_with_precision(player.strikeouts_recorded.to_f*27/player.outs_recorded.to_f, precision: 2).to_f %></td>
         <td><%= number_with_precision(zero_if_nan(player.earned_runs_allowed.to_f*27/player.outs_recorded.to_f), precision: 2) %></td>
         <td><%= number_with_precision(zero_if_nan((player.walks_allowed + player.hits_allowed).to_f*3/player.outs_recorded.to_f), precision: 2) %></td>
+        <td><%= player.total_pitches == 0 ? '0.00%' : number_to_percentage(100*player.strikes_thrown.to_f/player.total_pitches.to_f, :precision => 2) %></td>
       </tr>
     <% end %>
   </tbody>

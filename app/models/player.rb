@@ -233,6 +233,22 @@ class Player < ActiveRecord::Base
     ['sp1', 'sp2', 'sp3', 'sp4', 'sp5'].include? pitching_role
   end
 
+  # Find the pitching role of the player (not abbreviated)
+  def pitching_role_name
+    case id
+    when team.sp1, team.sp2, team.sp3, team.sp4, team.sp5
+      "Starter"
+    when team.lr
+      "Long Relief"
+    when team.mr1, team.mr2, team.mr3
+      "Middle Relief"
+    when team.su1, team.su2
+      "Setup"
+    when team.cl
+      "Closer"
+    end
+  end
+
   # Find the pitching role of the player
   def pitching_role
     case id
