@@ -1,7 +1,7 @@
 desc "This task is called by the Heroku scheduler add-on"
 task :simulate_games => :environment do
 
-  if Season.first.simulating == 0 # Simulate games
+  if Season.first.simulating <= 10 # Simulate games
     puts "Simulating games..."
 
     # hash to determine if a team has already played a game (to avoid duplicate games)
