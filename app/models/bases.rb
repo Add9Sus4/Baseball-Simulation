@@ -33,15 +33,10 @@ class Bases
     @game.play_by_play += "\n#{@runner_on_first.full_name} steals second.\n"
     @runner_on_first.steals_base
     runner_on_first_advances_to_second
-  end
-
-  def steals_second
     case @status
     when BaseStatus::RUNNER_ON_FIRST
-      runner_on_first_steals_second
       @status = BaseStatus::RUNNER_ON_SECOND
     when BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
-      runner_on_first_steals_second
       @status = BaseStatus::RUNNERS_ON_SECOND_AND_THIRD
     end
   end
