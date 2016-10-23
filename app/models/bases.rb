@@ -1,6 +1,6 @@
 class Bases
   include Reusable
-  attr_accessor :runs_scored, :status, :runner_on_first
+  attr_accessor :runs_scored, :status, :runner_on_first, :runner_on_second, :runner_on_third
   def initialize(game)
     @game = game
     @status = BaseStatus::EMPTY
@@ -8,6 +8,10 @@ class Bases
     @runner_on_second = nil
     @runner_on_third = nil
     @runs_scored = 0
+  end
+
+  def getRunsScored
+    @runs_scored
   end
 
   # Update the bases on a hit

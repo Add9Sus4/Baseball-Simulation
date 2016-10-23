@@ -1,0 +1,40 @@
+
+
+
+
+
+
+
+
+Before a pitcher throws a pitch, only three properties must be determined:
+
+1. What type of pitch will the pitcher throw?
+2. In what location will the pitcher try to throw it?
+3. How fast will the pitcher try to throw it?
+
+The pitcher will always try to put as much movement on each pitch as possible (because
+pitches with more movement are always harder to hit), but different pitches will have
+different maximum movement amounts.
+
+After the pitcher throws the pitch, three additional properties must be determined:
+
+1. In what location did the pitcher actually throw the pitch?
+2. How fast did the pitcher actually throw the pitch?
+3. How much movement did the pitcher put on the pitch?
+
+We will assume that the pitcher will always successfully throw the pitch they were
+trying to throw, since in real life no pitcher tries to throw a fastball and accidentally
+throws a curveball, for example.
+
+After the pitcher throws the pitch, but before it reaches the batter, a single property must first be determined:
+
+1. Is the batter going to try to swing at this pitch?
+
+What happens next depends on whether the batter tries to swing at the pitch. If the
+batter swings at the pitch, then the next calculation is:
+
+1. Did the batter make contact with the pitch?
+
+If the batter did not swing, then the next calculation is:
+
+1. Did the umpire call the pitch a strike?

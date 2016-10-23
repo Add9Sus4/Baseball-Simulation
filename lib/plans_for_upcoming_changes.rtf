@@ -1,0 +1,74 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf460
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww28600\viewh18000\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0  - randomize between mr1, mr2, and mr3, as well as between su1 and su2\
+
+\b \
+ - more realistic algorithm for pitching changes (depends on pitches thrown, endurance, and whether the pitcher is doing well in the game or not). Don\'92t take pitchers out too early!\
+\
+\
+\
+\
+
+\b0 PITCHING CHANGES\
+\
+A pitcher can be removed from the game for the following reasons:\
+ - the pitcher is too tired to continue\
+ - the pitcher has been pitching poorly and the manager decides to make a pitching change\
+ - the manager decides to use a different pitcher late in the game for matchup purposes (only applies to relief pitchers)\
+\
+Endurance determines how many pitches a pitcher can throw before the manager can decide to take them out of the game due to tiredness alone. Before this pitch threshold is met, a pitcher can only be removed from the game for one of the two other reasons (poor performance, or matchup reasons).\
+\
+Furthermore, starting pitchers are never removed for matchup reasons before their pitch threshold is met. Therefore, the only way a starting pitcher can be removed from the game before they meet their pitch threshold (as determined by their endurance) is if they pitch poorly.\
+\
+REMOVING FOR POOR PERFORMANCE\
+\
+A pitcher is eligible for removal for poor performance if the following criteria are met:\
+\
+ - For starting pitchers: the pitcher has given up 6 or more runs in the game.\
+ - For relief pitchers: the pitcher has given up 3 or more runs in the game.\
+\
+\
+\
+\
+
+\b \
+\
+
+\b0  - give the win/loss to the correct pitcher\
+
+\b \
+
+\b0  - game should end on walk-off in the bottom of the 9th or later\
+
+\b \
+
+\b0  - For pitchers, only display pitching attributes\
+
+\b \
+
+\b0  - For batters, only display batting attributes (no pitch zones or pitch types either)\
+
+\b \
+
+\b0  - Display wins/losses on pitcher page\
+
+\b \
+
+\b0  - need to be half as many doubles\
+ - need to be half as many triples\
+ - max average should be a lot lower\
+ - min average should be a little higher\
+
+\b \
+Further Changes:\
+\
+ - Add games started and appearances to players table\
+ - Add complete games, shutouts, no-hitters, etc. to players table\
+ - Put L, W in game show statistics\
+ - Starting pitcher can only get the win if they go at least 5 full innings\
+ - Actually save pitcher win/loss based on who is in line to get the win/loss\
+}

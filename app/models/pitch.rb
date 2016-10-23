@@ -7,7 +7,7 @@ class Pitch
     @balls = balls
     @strikes = strikes
     # Calculate pitch location (which zone it will be in)
-    @location = determine_location(@pitcher.throwing_hand, @batter.hitting_side, @balls, @strikes, "FA")
+    @location = determine_location(@pitcher.throwing_hand, @batter.hitting_side, @balls, @strikes)
     @location_type = determine_location_type(@batter.hitting_side, @location)
     # Will batter swing?
     @swing_percentage = determine_swing_percentage(@location, @pitcher.throwing_hand, @batter.hitting_side, @balls, @strikes, "FA")
@@ -352,7 +352,7 @@ class Pitch
   end
 
   # Determine pitch location (which zone the pitch will be in)
-  def determine_location(pitcher_hand, batter_hand, balls, strikes, pitch_type)
+  def determine_location(pitcher_hand, batter_hand, balls, strikes)
 
     targets = [0.0, 0.0] # x_target, y_target
 
