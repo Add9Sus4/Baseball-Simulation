@@ -169,7 +169,7 @@ class Hit
     when HitType::POP_UP
       location_factor = 0.98
     end
-    0.85*location_factor*map_attribute_to_range(@atbat.batter.batting_average, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_FIELD_PROBABILITY_MIN, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_FIELD_PROBABILITY_MAX, true)
+    0.90*location_factor*map_attribute_to_range(@atbat.batter.batting_average, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_FIELD_PROBABILITY_MIN, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_FIELD_PROBABILITY_MAX, true)
   end
 
   # Result of the play
