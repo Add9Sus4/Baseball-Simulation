@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160812191533) do
+ActiveRecord::Schema.define(version: 20170116012313) do
 
   create_table "called_strike_percentages", force: :cascade do |t|
     t.integer "zone_id",                  limit: 4
@@ -322,6 +322,7 @@ ActiveRecord::Schema.define(version: 20160812191533) do
     t.integer  "su2",               limit: 4
     t.integer  "cl",                limit: 4
     t.integer  "rotation_position", limit: 4
+    t.integer  "user_id",           limit: 4
   end
 
   create_table "users", force: :cascade do |t|
@@ -337,6 +338,7 @@ ActiveRecord::Schema.define(version: 20160812191533) do
     t.datetime "activated_at"
     t.string   "reset_digest",      limit: 255
     t.datetime "reset_sent_at"
+    t.integer  "team_id",           limit: 4
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

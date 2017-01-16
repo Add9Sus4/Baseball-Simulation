@@ -85,6 +85,6 @@ class TeamsController < ApplicationController
                                   :right_field, :center_field, :bench1, :bench2, :bench3,
                                   :bench4, :lineup1, :lineup2, :lineup3, :lineup4, :lineup5,
                                   :lineup6, :lineup7, :lineup8, :lineup9, :sp1, :sp2, :sp3,
-                                  :sp4, :sp5, :lr, :mr1, :mr2, :mr3, :su1, :su2, :cl)
+                                  :sp4, :sp5, :lr, :mr1, :mr2, :mr3, :su1, :su2, :cl, :user_id)
     end
 end

@@ -39,7 +39,7 @@
         <tbody>
           <% @teams.where(:league => league, :division => division).each do |team| %>
             <tr>
-              <td><%= link_to team.full_name, team, method: :get %></td>
+              <td><%= link_to team.full_name_with_user, team, method: :get %></td>
               <td><%= team.wins %></td>
               <td><%= team.losses %></td>
               <td><%= team.runs_scored %></td>

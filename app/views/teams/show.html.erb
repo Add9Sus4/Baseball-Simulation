@@ -83,6 +83,25 @@
   <%= @team.city %>
   <%= @team.name %>
 </h2>
+
+<span id="current_user_id" hidden><%= current_user.id if current_user %></span>
+<span id="team_id" hidden><%= @team.id %></span>
+<span id="owner">
+<% if @team.user_id == -1 %>
+  <% if current_user && current_user.team_id == -1 %>
+  <button id="own_team">Own this team</button>
+  <% else %>
+  <h3 class="app_text_main">
+  Unowned
+  </h3>
+  <% end %>
+<% else %>
+<h3 class="app_text_main">
+Owner: <%= link_to @team.user.name, @team.user, method: :get %>
+</h3>
+<% end %>
+</span>
+
 <p>
   <!-- <%= link_to 'Edit Team Info', edit_team_path(@team), method: :get %> |
   <%= link_to 'Delete Team', @team, method: :delete, data: { confirm: 'Are you sure you want to delete the ' + @team.name + '?' } %> |
@@ -116,11 +135,14 @@
     <strong>Record:</strong>
     <%= @team.wins.to_s + "-" + @team.losses.to_s %>
   </p>
-
+  <% if current_user && @team.user_id == current_user.id %>
   <h3 class="app_text_main" id="lineup_title" data-toggle="tooltip" data-placement="top" title="Drag from position players to set positions.
   Reorder table to set lineup.">Lineup</h3>
+  <% else %>
+  <h3 class="app_text_main" id="lineup_title_no_tooltip" >Lineup</h3>
+  <% end %>
 
-<div id="view_lineup">
+<div id="<%= 'view_lineup' if current_user && @team.user_id == current_user.id %>">
   </br>
   <table class="multi-table order table-condensed table-striped table-bordered">
     <thead>
@@ -136,7 +158,7 @@
       <% end %>
     </tbody>
   </table>
-  <table id="batting_order" class="multi-table lineup table-condensed table-striped table-bordered">
+  <table id="<%= 'batting_order' if current_user && @team.user_id == current_user.id %>" class="multi-table <%= current_user && @team.user_id == current_user.id ? 'lineup' : 'order' %> table-condensed table-striped table-bordered">
     <thead>
       <tr>
         <th>Position</th>
@@ -197,7 +219,7 @@
     </tbody>
   </table>
 
-  <table id="rotation" class="multi-table rotation table-condensed table-striped table-bordered">
+  <table id="rotation" class="multi-table <%= current_user && @team.user_id == current_user.id ? 'rotation' : 'order' %> table-condensed table-striped table-bordered">
     <thead>
       <tr>
         <th>Player</th>
@@ -228,7 +250,7 @@
 
 <div id="position_player_table_div">
   <h3 class="app_text_main">Position Players</h3>
-  <table class="table_with_custom_border position_player_table">
+  <table class="table_with_custom_border <%= 'position_player_table' if current_user && @team.user_id == current_user.id %>">
     <thead>
       <tr>
         <th>Name</th>
@@ -545,6 +567,32 @@ $(function() {
     },
     content: function () {
       return $(this).prop('title');
+    }
+  });
+});
+
+$('#own_team').click(function() {
+  var current_user_id = $('#current_user_id').text();
+  var team_id = $('#team_id').text();
+  $.ajax({
+    url: '/users/' + current_user_id,
+    type: 'PATCH',
+    dataType: 'json',
+    data: { "user": { "team_id": team_id
+          }
+    },
+    success: function (data, textStatus, jqXHR) {
+    }
+  });
+  $.ajax({
+    url: window.location.href,
+    type: 'PATCH',
+    dataType: 'json',
+    data: { "team": { "user_id": current_user_id
+          }
+    },
+    success: function (data, textStatus, jqXHR) {
+      location.reload();
     }
   });
 });

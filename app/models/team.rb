@@ -3,11 +3,20 @@ class Team < ActiveRecord::Base
   validate :players_must_not_be_at_same_position
   has_many :players, :dependent => :destroy
   accepts_nested_attributes_for :players
+  belongs_to :user
 
   MAX_PLAYERS = 25
 
   def full_name
     city + ' ' + name
+  end
+
+  def full_name_with_user
+    if user
+      city + ' ' + name + ' (' + user.name + ')'
+    else
+      city + ' ' + name + ' (unowned)'
+    end
   end
 
   def players_must_not_be_at_same_position

@@ -19,7 +19,8 @@ User.create!(name: "Example User",
               password_confirmation: "foobar",
               admin: true,
               activated: true,
-              activated_at: Time.zone.now)
+              activated_at: Time.zone.now,
+              team_id: -1)
 
 # Create additional users
 # (numUsers-1).times do |n|
@@ -693,7 +694,8 @@ season = Season.create!(next_game: 0, simulating: 1)
       stadium: stadium,
       capacity: capacity,
       streak: 0,
-      rotation_position: 1)
+      rotation_position: 1,
+      user_id: -1)
       teams.unshift(newTeam)
     end
 

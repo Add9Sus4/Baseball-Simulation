@@ -9,6 +9,12 @@
   </h1>
 </div>
 
+
+<span class="app_text_main">
+  <h3>Team:</h3>
+<%= link_to @user.team.full_name, @user.team, method: :get %>
+</span>
+
 <style>
 
 .profile_link {
