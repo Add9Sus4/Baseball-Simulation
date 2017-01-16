@@ -12,7 +12,11 @@
 
 <span class="app_text_main">
   <h3>Team:</h3>
+  <% if @user.team %>
 <%= link_to @user.team.full_name, @user.team, method: :get %>
+<% else %>
+No teams yet! Click <%= link_to 'here', teams_path, method: :get %> to view all teams!
+<% end %>
 </span>
 
 <style>
