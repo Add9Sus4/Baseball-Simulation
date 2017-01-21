@@ -1,0 +1,213 @@
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<style>
+.stats {
+  padding-right: 15px;
+  float: left;
+}
+.leaders {
+  pointer-events: none;
+  opacity: 0.5;
+}
+</style>
+
+<h1 class="app_text_main">League Leaders - Batting</h1>
+<div id="hr_div" class="stats">
+<h3 class="app_text_main">Home Runs</h3>
+<table class="table_with_custom_border table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Team</th>
+      <th>Player</th>
+      <th>HR</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% Player.order('home_runs*-1').limit(10).each do |player| %>
+    <tr>
+      <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+      <td><%= link_to player.full_name, player, method: :get %></td>
+      <td><%= player.home_runs %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+<div id="runs_div" class="stats">
+<h3 class="app_text_main">Runs</h3>
+<table class="table_with_custom_border table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Team</th>
+      <th>Player</th>
+      <th>Runs</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% Player.order('runs*-1').limit(10).each do |player| %>
+    <tr>
+      <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+      <td><%= link_to player.full_name, player, method: :get %></td>
+      <td><%= player.runs %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+<div id="rbi_div" class="stats">
+<h3 class="app_text_main">RBI</h3>
+<table class="table_with_custom_border table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Team</th>
+      <th>Player</th>
+      <th>RBI</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% Player.order('rbi*-1').limit(10).each do |player| %>
+    <tr>
+      <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+      <td><%= link_to player.full_name, player, method: :get %></td>
+      <td><%= player.rbi %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+<div id="hits_div" class="stats">
+<h3 class="app_text_main">Hits</h3>
+<table class="table_with_custom_border table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Team</th>
+      <th>Player</th>
+      <th>Hits</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% Player.order('hits*-1').limit(10).each do |player| %>
+    <tr>
+      <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+      <td><%= link_to player.full_name, player, method: :get %></td>
+      <td><%= player.hits %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+<div id="2b_div" class="stats">
+<h3 class="app_text_main">Doubles</h3>
+<table class="table_with_custom_border table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Team</th>
+      <th>Player</th>
+      <th>Doubles</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% Player.order('doubles*-1').limit(10).each do |player| %>
+    <tr>
+      <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+      <td><%= link_to player.full_name, player, method: :get %></td>
+      <td><%= player.doubles %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+<div id="3b_div" class="stats">
+<h3 class="app_text_main">Triples</h3>
+<table class="table_with_custom_border table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Team</th>
+      <th>Player</th>
+      <th>Triples</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% Player.order('triples*-1').limit(10).each do |player| %>
+    <tr>
+      <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+      <td><%= link_to player.full_name, player, method: :get %></td>
+      <td><%= player.triples %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+</br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
+</br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
+</br></br></br></br></br></br></br></br></br></br>
+
+<h1 class="app_text_main">League Leaders - Pitching</h1>
+<div id="k_div" class="stats">
+<h3 class="app_text_main">Strikeouts</h3>
+<table class="table_with_custom_border table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Team</th>
+      <th>Player</th>
+      <th>Strikeouts</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% Player.order('strikeouts_recorded*-1').limit(10).each do |player| %>
+    <tr>
+      <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+      <td><%= link_to player.full_name, player, method: :get %></td>
+      <td><%= player.strikeouts_recorded %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+<div id="era_div" class="stats">
+<h3 class="app_text_main">ERA</h3>
+<table class="table_with_custom_border table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Team</th>
+      <th>Player</th>
+      <th>IP</th>
+      <th>ERA</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% Player.where("outs_recorded > ?", 20).order('earned_runs_allowed*27/outs_recorded').limit(10).each do |player| %>
+    <tr>
+      <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+      <td><%= link_to player.full_name, player, method: :get %></td>
+      <td><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td>
+      <td><%= number_with_precision(player.earned_runs_allowed.to_f * 27 / player.outs_recorded.to_f, precision: 2) %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+<div id="whip_div" class="stats">
+<h3 class="app_text_main">WHIP</h3>
+<table class="table_with_custom_border table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Team</th>
+      <th>Player</th>
+      <th>IP</th>
+      <th>WHIP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% Player.where("outs_recorded > ?", 20).order('(walks_allowed + hits_allowed)*3/outs_recorded').limit(10).each do |player| %>
+    <tr>
+      <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+      <td><%= link_to player.full_name, player, method: :get %></td>
+      <td><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td>
+      <td><%= number_with_precision(zero_if_nan((player.walks_allowed + player.hits_allowed).to_f*3/player.outs_recorded.to_f), precision: 2) %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>

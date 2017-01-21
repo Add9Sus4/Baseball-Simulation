@@ -14,6 +14,8 @@ Rails.application.routes.draw do
 
   get 'pages/login'
 
+  get 'pages/stats'
+
   get 'signup' => 'users#new'
 
   get 'login' => 'sessions#new'
