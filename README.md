@@ -25,6 +25,7 @@ Yes, it is! I played CSFBL (Computer Simulated Fantasy Baseball League) for many
   * Cy Young
   * Rookie of the Year
   * Gold Glove
+* Multiple seasons
 * Automatically generated summaries for games, highlights of week, month, and season. 
 * Trades
 * Free agents
