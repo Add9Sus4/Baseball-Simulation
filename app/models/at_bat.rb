@@ -1,6 +1,13 @@
+# The at-bat class.
 class AtBat
+
+  # Include some mathematical functions
   include Reusable
+
+  # Various attributes that need to be accessed by other classes
   attr_accessor :result, :balls, :strikes, :over, :batter
+
+  # Start the at-bat
   def initialize(pitcher, batter, game, bases)
     @bases = bases
     @balls = 0
@@ -11,7 +18,7 @@ class AtBat
     @result = AtBatResult::IN_PROGRESS
     @game = game
     @game.play_by_play += "\n<span>Now batting: #{@batter.full_name}</span>\n"
-    # @game.play_by_play += "\nNow batting: #{@batter.full_name}"
+
     # Simulate at-bat
     while !@over do
       @pitch = Pitch.new(@pitcher, @batter, @balls, @strikes)
@@ -33,7 +40,7 @@ class AtBat
     end
   end
 
-  # Calculates if a runner tries to steal a base
+  # Determine if a runner tries to steal a base (TODO: Implement caught stealing functionality. Right now, steals are always successful)
   def steal_opportunity
     if @bases.status == BaseStatus::RUNNER_ON_FIRST || @bases.status == BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
       if rand() > map_attribute_to_range(@bases.runner_on_first.speed, AttributeAdjustments::RUNNER_SPEED_AFFECTS_STEAL_PROBABILITY_MIN, AttributeAdjustments::RUNNER_SPEED_AFFECTS_STEAL_PROBABILITY_MAX, true)
@@ -42,19 +49,24 @@ class AtBat
     end
   end
 
+  # Is the pitch a strike?
+  def isStrike(pitch)
+    rand(100) < pitch.called_strike_percentage # This value is generated in Pitch and takes into account all the necessary variables there.
+  end
+
   # Returns true if the batter swings at a pitch
   def batterSwingsAt(pitch)
-    rand(100) < pitch.swing_percentage
+    rand(100) < pitch.swing_percentage # This value is generated in Pitch and takes into account all the necessary variables there.
   end
 
   # Returns true if the batter makes contact with a pitch
   def batterMakesContactWith(pitch)
-    rand(100) < pitch.contact_percentage
+    rand(100) < pitch.contact_percentage # This value is generated in Pitch and takes into account all the necessary variables there.
   end
 
   # Returns true if the ball is hit in fair territory
   def ballIsHitFair
-    percent_foul = 0.42
+    percent_foul = 0.42 # Hard coded value for foul balls. TODO: Eventually this will vary based on player attributes.
     rand() > percent_foul
   end
 
@@ -70,6 +82,7 @@ class AtBat
     if @strikes < 2
       @strikes = @strikes + 1
     end
+    # TODO: create different types of foul balls (fouled off to the left, fouled back to the screen, etc... maybe based on quality of contact, pull amount, etc.)
     @game.play_by_play += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, fouled off. Count: #{@balls}-#{@strikes}</span>\n"
   end
 
@@ -104,7 +117,7 @@ class AtBat
       steal_opportunity
     else
       @game.play_by_play += "\n<span style=\"font-size:8px\">Fastball #{@pitch.location_type}, taken for strike 3.</span>\n"
-      strikeout
+      strikeout # TODO: allow players to steal on a strikeout, unless it's the third out of the inning.
     end
   end
 
@@ -137,11 +150,6 @@ class AtBat
     @batter.logs_at_bat
     @over = true
     @result = AtBatResult::STRIKEOUT
-  end
-
-  # Is the pitch a strike?
-  def isStrike(pitch)
-    rand(100) < pitch.called_strike_percentage
   end
 
 end

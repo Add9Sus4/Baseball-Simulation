@@ -13,6 +13,7 @@ module Reusable
     val
   end
 
+  # Generates a number based on a pseudo-random gaussian distribution
   def randomGaussian
     ((rand() +
     rand() + rand() +
@@ -20,6 +21,7 @@ module Reusable
     rand()) - 3) / 3;
   end
 
+  # This function generates a distribution of 100 data points between a min and max value, with desired mean and standard deviation.
   def generateDistribution(min, max, mean, stdev)
     counter = 0
     idealMean = mean
@@ -65,6 +67,7 @@ module Reusable
     value = (mid + (range * (biasFactor / (biasFactor + Math.exp(-unitGaussian / skew)) - 0.5)))
   end
 
+  # Helper function for generateDistribution
   def calculateData(bias, skew, min, max, mean, stdev, numDataPts)
     randomData = Array.new(numDataPts)
     for i in 0..numDataPts-1
@@ -73,6 +76,7 @@ module Reusable
     randomData
   end
 
+  # Calculate mean of a set of data
   def calculateMean(randomData)
     numDataPts = randomData.length
     sum = 0
@@ -82,6 +86,7 @@ module Reusable
     mean = sum/numDataPts
   end
 
+  # Calculate the standard deviation from a set of data
   def calculateStDev(randomData)
     numDataPts = randomData.length
     mean = calculateMean(randomData)

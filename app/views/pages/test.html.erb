@@ -1,0 +1,81 @@
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<% @attributes = ["power", "contact", "plate_vision", "patience", "batting_average", "uppercut_amount"] %>
+<% @attributes.each do |attribute| %>
+<% if Test.where(:name => "#{attribute}_100").exists? %>
+<div class="test_div">
+  <h1 class="app_text_main"><%= attribute.capitalize %></h1>
+  <table class="test_table table_with_custom_border table-condensed table-striped table-bordered table-responsive">
+    <thead>
+      <tr>
+        <th>Attribute</th>
+        <th>Value</th>
+        <th>1B</th>
+        <th>2B</th>
+        <th>3B</th>
+        <th>HR</th>
+        <th>BB</th>
+        <th>K</th>
+        <th>AB</th>
+        <th>AVG</th>
+        <th>OBP</th>
+        <th>SLG</th>
+        <th>OPS</th>
+        <tr>
+    </thead>
+    <tbody>
+      <tr>
+        <% @test = Test.where(:name => "#{attribute}_100").first %>
+        <% @hits = @test.singles + @test.doubles + @test.triples + @test.homers %>
+        <% @avg = @hits.to_f/@test.atbats.to_f %>
+        <% @obp = (@hits + @test.walks).to_f/(@test.atbats + @test.walks).to_f %>
+        <% @slg = (@hits - @test.doubles - @test.triples - @test.homers + 2 * @test.doubles + 3 * @test.triples + 4 * @test.homers).to_f/@test.atbats.to_f %>
+        <% @ops = @obp + @slg %>
+        <td>Power</td>
+        <td>100</td>
+        <td><%= @test.singles %></td>
+        <td><%= @test.doubles %></td>
+        <td><%= @test.triples %></td>
+        <td><%= @test.homers %></td>
+        <td><%= @test.walks %></td>
+        <td><%= @test.strikeouts %></td>
+        <td><%= @test.atbats %></td>
+        <td><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></td>
+        <td><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
+        <td><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
+        <td><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
+      </tr>
+      <tr>
+        <% @test = Test.where(:name => "#{attribute}_0").first %>
+        <% @hits = @test.singles + @test.doubles + @test.triples + @test.homers %>
+        <% @avg = @hits.to_f/@test.atbats.to_f %>
+        <% @obp = (@hits + @test.walks).to_f/(@test.atbats + @test.walks).to_f %>
+        <% @slg = (@hits - @test.doubles - @test.triples - @test.homers + 2 * @test.doubles + 3 * @test.triples + 4 * @test.homers).to_f/@test.atbats.to_f %>
+        <% @ops = @obp + @slg %>
+        <td>Power</td>
+        <td>0</td>
+        <td><%= @test.singles %></td>
+        <td><%= @test.doubles %></td>
+        <td><%= @test.triples %></td>
+        <td><%= @test.homers %></td>
+        <td><%= @test.walks %></td>
+        <td><%= @test.strikeouts %></td>
+        <td><%= @test.atbats %></td>
+        <td><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></td>
+        <td><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
+        <td><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
+        <td><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<% end %>
+<% end %>
+
+<style media="screen">
+  .test_div {
+    padding-right: 15px;
+    float: left;
+  }
+</style>

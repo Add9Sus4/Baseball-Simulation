@@ -1,3 +1,4 @@
+# This represents the different possible states that the bases can be in
 module BaseStatus
   EMPTY = 1
   RUNNER_ON_FIRST = 2

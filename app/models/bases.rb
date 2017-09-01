@@ -1,6 +1,13 @@
+# The bases class. Used to handle all baserunning situations.
 class Bases
+
+  # Include some mathematical functions
   include Reusable
+
+  # Attributes to keep track of base runners and other variables.
   attr_accessor :runs_scored, :status, :runner_on_first, :runner_on_second, :runner_on_third
+
+  # Called at the beginning of the inning
   def initialize(game)
     @game = game
     @status = BaseStatus::EMPTY
@@ -10,6 +17,7 @@ class Bases
     @runs_scored = 0
   end
 
+  # Returns the number of runs scored in this inning.
   def getRunsScored
     @runs_scored
   end
@@ -21,6 +29,7 @@ class Bases
     @runs_scored = 0
     @hit_result = hit_result
 
+    # Call the appropriate function based on the type of hit.
     if HitResult.is_a_single(hit_result)
       single
     elsif HitResult.is_a_double(hit_result)
@@ -33,6 +42,7 @@ class Bases
 
   end
 
+  # The runner on first steals second base.
   def runner_on_first_steals_second
     @game.play_by_play += "\n#{@runner_on_first.full_name} steals second.\n"
     @runner_on_first.steals_base
@@ -45,6 +55,7 @@ class Bases
     end
   end
 
+  # The batter hits a single
   def single
     case @status
     when BaseStatus::EMPTY
@@ -198,6 +209,7 @@ class Bases
     end
   end
 
+  # Batter hits a double
   def double
     case @status
     when BaseStatus::EMPTY
@@ -239,6 +251,7 @@ class Bases
     end
   end
 
+  # Batter hits a triple
   def triple
     case @status
     when BaseStatus::EMPTY
@@ -280,6 +293,7 @@ class Bases
     end
   end
 
+  # Batter hits a home run
   def home_run
     case @status
     when BaseStatus::EMPTY
@@ -360,6 +374,7 @@ class Bases
     end
   end
 
+  # Increases the score by a given number. End the game if the home team just walked off. 
   def increase_score(num_runs)
 
     @home_team_winning = false

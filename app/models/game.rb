@@ -16,7 +16,6 @@ class Game < ActiveRecord::Base
   # Plays a game
   def play
     prepare
-
     # Simulate the game
     while !@over do
       # Top of inning
@@ -54,7 +53,7 @@ class Game < ActiveRecord::Base
     self.update_attributes(losing_pitcher: @in_line_for_loss.id)
 
     # team win/loss stats
-    # Home team wins
+    # If the home team wins
     if @home_team_score > @away_team_score
 
       # team w/l
@@ -67,7 +66,7 @@ class Game < ActiveRecord::Base
       # Away team streak
       @away_team.streak <= 0 ? @away_team.update_attribute(:streak, @away_team.streak - 1) : @away_team.update_attribute(:streak, -1)
 
-    # Away team wins
+    # If the away team wins
     else
 
       # team w/l
@@ -627,7 +626,6 @@ class Game < ActiveRecord::Base
     @away_pitcher_list = []
     @home_pitcher_list.push(@home_team.starting_pitcher)
     @away_pitcher_list.push(@away_team.starting_pitcher)
-
     @home_pitcher_list.each do |pitcher|
       pitcher.set_initial_stats
     end

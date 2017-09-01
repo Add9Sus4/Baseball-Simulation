@@ -1,24 +1,36 @@
+# Team class.
 class Team < ActiveRecord::Base
+  # A team must have all the following attributes when it is created:
   validates :city, :name, :league, :division, :stadium, :capacity, presence: true
+
+  # A team cannot have more than one player at the same position
   validate :players_must_not_be_at_same_position
+
+  # This line is necessary to establish the one-to-many relationship between team and player.
+  # It also ensures that when a team is removed from the database, all of its players are also removed.
   has_many :players, :dependent => :destroy
+
+  # This line is necessary so that when you edit the team, you can also edit players associated
+  # with the team using the same form
   accepts_nested_attributes_for :players
+
+  # This line is necessary to establish the one-to-many relationship between user and team.
   belongs_to :user
 
+  # A team can have a maximum of 25 players.
   MAX_PLAYERS = 25
 
+  # Displays the full name of the team
   def full_name
     city + ' ' + name
   end
 
+  # Displays the full name of the team, along with either the name of the team's user or "unowned"
   def full_name_with_user
-    if user
-      city + ' ' + name + ' (' + user.name + ')'
-    else
-      city + ' ' + name + ' (unowned)'
-    end
+    user ? full_name + ' (' + user.name + ')' : full_name + ' (unowned)'
   end
 
+  # Creates an error if the team has more than one player at the same position
   def players_must_not_be_at_same_position
     positions = [designated_hitter, catcher, first_base,
                     second_base, third_base, shortstop,
@@ -29,7 +41,7 @@ class Team < ActiveRecord::Base
 
   end
 
-  # format streak for display on page
+  # Takes the streak attribute and formats it so it looks nice on the page
   def streak_display
     case streak
     when 0
@@ -41,10 +53,9 @@ class Team < ActiveRecord::Base
     end
   end
 
-  # returns the team's current starting pitcher
+  # Returns the Player that is the team's current starting pitcher
   def starting_pitcher
     case rotation_position
-
     when 1
       Player.find(sp1)
     when 2
@@ -58,7 +69,7 @@ class Team < ActiveRecord::Base
     end
   end
 
-  # returns the next rotation position
+  # Returns the next rotation position (a number from 1 to 5)
   def increment_rotation
     new_rotation_position = rotation_position + 1
     if new_rotation_position > 5
@@ -67,11 +78,13 @@ class Team < ActiveRecord::Base
     new_rotation_position
   end
 
+  # Returns the desired position abbreviation.
   def position_name(index)
     position_names = ['DH', 'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF']
     position_names[index]
   end
 
+  # returns the Player who is currently at the specified lineup position.
   def find_player_by_lineup_index(lineup_index)
 
     lineup_ids = [lineup1, lineup2, lineup3, lineup4,
@@ -112,6 +125,7 @@ class Team < ActiveRecord::Base
     current_player
   end
 
+  # Returns the Player currently playing at the specified position
   def player_at_position(index)
     positions = [designated_hitter, catcher, first_base,
                     second_base, third_base, shortstop,
@@ -130,6 +144,7 @@ class Team < ActiveRecord::Base
     player_at_position
   end
 
+  # Returns the Player currently batting at the specified lineup position
   def find_batting_order(lineup_position)
     lineup_ids = [lineup1, lineup2, lineup3, lineup4,
                   lineup5, lineup6, lineup7, lineup8,
@@ -141,6 +156,7 @@ class Team < ActiveRecord::Base
     end
   end
 
+  # Returns the Player currently playing at the specified fielding position
   def find_player_at_position(position)
     position_ids = [designated_hitter, catcher, first_base, second_base,
                   third_base, shortstop, left_field, center_field,
@@ -152,6 +168,7 @@ class Team < ActiveRecord::Base
     end
   end
 
+  # Returns the id of the Player playing at the specified fielding position.
   def find_position_id(position)
     position_ids = [designated_hitter, catcher, first_base, second_base,
                   third_base, shortstop, left_field, center_field,
@@ -163,6 +180,7 @@ class Team < ActiveRecord::Base
     end
   end
 
+  # Returns the id of the Player currently batting in the specified lineup position
   def find_batting_order_id(lineup_position)
     lineup_ids = [lineup1, lineup2, lineup3, lineup4,
                   lineup5, lineup6, lineup7, lineup8,
@@ -174,6 +192,7 @@ class Team < ActiveRecord::Base
     end
   end
 
+  # Returns the fielding position of the player currently batting in the specified lineup position.
   def find_position(lineup_position)
     lineup_ids = [lineup1, lineup2, lineup3, lineup4,
                   lineup5, lineup6, lineup7, lineup8,
@@ -184,6 +203,7 @@ class Team < ActiveRecord::Base
     position_names[lineup_ids[lineup_position]]
   end
 
+  # Returns the Player currently batting in the specified lineup position.
   def find_player_by_position(lineup_position)
     lineup_ids = [lineup1, lineup2, lineup3, lineup4,
                   lineup5, lineup6, lineup7, lineup8,
@@ -199,6 +219,7 @@ class Team < ActiveRecord::Base
     end
   end
 
+  # Returns the id of the Player currently batting in the specified lineup position.
   def find_player_by_position_id(lineup_position)
     lineup_ids = [lineup1, lineup2, lineup3, lineup4,
                   lineup5, lineup6, lineup7, lineup8,
@@ -214,6 +235,7 @@ class Team < ActiveRecord::Base
     end
   end
 
+  # Returns the id of the specified lineup position.
   def find_lineup_index(lineup_position)
     lineup_ids = [lineup1, lineup2, lineup3, lineup4,
                   lineup5, lineup6, lineup7, lineup8,
@@ -290,6 +312,7 @@ class Team < ActiveRecord::Base
     end
   end
 
+  # Find the name of the position of a player in the specified lineup position.
   def find_position_name(lineup_position)
     lineup_ids = [lineup1, lineup2, lineup3, lineup4,
                   lineup5, lineup6, lineup7, lineup8,

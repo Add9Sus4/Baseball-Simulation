@@ -1,5 +1,8 @@
-# This class contains maximum and minimum values to be passed
-# in to the map_attribute_to_range function
+# This class contains maximum and minimum values to be passed in to the map_attribute_to_range function
+# Basically, the way this works is that each set of values represent the minimum and maximum amount
+# that a calculation in the simulation is affected by a particular attribute. A value of 1.0 represents
+# no change. Having all these valeus in this file makes it easy to change the effect that different
+# attributes have on the simulation by making just one adjustment in one location.
 class AttributeAdjustments
 
   #################### CONTACT PERCENTAGE ####################

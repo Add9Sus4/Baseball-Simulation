@@ -21,7 +21,7 @@ FactoryGirl.define do
 
     factory :team_with_players do
       after(:create) do |team|
-        13.times do
+        25.times do
           player = create(:player, :average, team: team)
           player.set_initial_stats
         end
@@ -34,6 +34,19 @@ FactoryGirl.define do
         team.update_attributes(left_field: team.players[6].id)
         team.update_attributes(center_field: team.players[7].id)
         team.update_attributes(right_field: team.players[8].id)
+        team.update_attributes(sp1: team.players[9].id)
+        team.update_attributes(sp2: team.players[10].id)
+        team.update_attributes(sp3: team.players[11].id)
+        team.update_attributes(sp4: team.players[12].id)
+        team.update_attributes(sp5: team.players[13].id)
+        team.update_attributes(lr: team.players[14].id)
+        team.update_attributes(mr1: team.players[15].id)
+        team.update_attributes(mr2: team.players[16].id)
+        team.update_attributes(mr3: team.players[17].id)
+        team.update_attributes(su1: team.players[18].id)
+        team.update_attributes(su2: team.players[19].id)
+        team.update_attributes(cl: team.players[20].id)
+        team.update_attributes(rotation_position: 1)
       end
     end
 

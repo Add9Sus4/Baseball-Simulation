@@ -17,6 +17,10 @@ Things you may want to cover:
 
 * How to run the test suite
 
+bundle exec rspec spec                              // All tests
+bundle exec rspec spec/models                       // All tests in the models folder
+bundle exec rspec spec/models/bases_spec.rb         // Run single test file
+
 * Services (job queues, cache servers, search engines, etc.)
 
 * Deployment instructions

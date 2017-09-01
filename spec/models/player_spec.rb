@@ -1,4 +1,5 @@
-desc "This task is called by the Heroku scheduler add-on"
+require 'spec_helper'
+
 def test_attribute(attributes_hash, game)
 
   @batter = FactoryGirl.create(:player, :average)
@@ -102,7 +103,17 @@ def game_params(home_team, away_team)
     :away_intentional_walks_allowed => "", :player_of_the_game => "", :pbp => ""}
 end
 
-task :run_attribute_tests => :environment do
+describe Player do
+  # it "has a valid factory" do
+  #   expect(FactoryGirl.build(:player)).to be_valid
+  # end
+  # it "is invalid without a firstname" do
+  #   expect(FactoryGirl.build(:player, first_name: nil)).to_not be_valid
+  # end
+  # it "is invalid without a lastname" do
+  #   expect(FactoryGirl.build(:player, last_name: nil)).to_not be_valid
+  # end
+
   @team_one = FactoryGirl.create(:team_with_players)
   @team_two = FactoryGirl.create(:team_with_players)
   @game = Game.new(game_params(@team_one, @team_two))
@@ -122,70 +133,9 @@ task :run_attribute_tests => :environment do
   test_attribute({"batting_average" => 0}, @game)
   test_attribute({"uppercut_amount" => 100}, @game)
   test_attribute({"uppercut_amount" => 0}, @game)
-end
 
-task :simulate_games => :environment do
-
-  if Season.first.simulating <= 10 # Simulate games
-    puts "Simulating games..."
-
-    # hash to determine if a team has already played a game (to avoid duplicate games)
-    @already_played_hash = Hash.new 0
-
-    # In the future, this will be Season.current (Once multiple seasons are supported)
-    @game_number = Season.first.next_game
-    puts "game number: #{@game_number}"
-    unless @game_number >= 161 then
-
-      Team.find_each do |team|
-        unless @already_played_hash[team.id] == 1 then
-
-          current_game_params = {:home_team_id => 1, :away_team_id => 2,
-            :attendance => 45000, :stadium_name => "", :home_lineup => "",
-            :away_lineup => "", :home_atbats => "", :home_runs_scored => "",
-            :home_hits => "", :home_doubles => "", :home_triples => "",
-            :home_home_runs => "", :home_RBI => "", :home_walks => "",
-            :home_strikeouts => "", :home_stolen_bases => "", :home_caught_stealing => "",
-            :home_errors => "", :home_assists => "", :home_putouts => "",
-            :home_chances => "", :away_atbats => "", :away_runs_scored => "",
-            :away_hits => "", :away_doubles => "", :away_triples => "",
-            :away_home_runs => "", :away_RBI => "", :away_walks => "",
-            :away_strikeouts => "", :away_caught_stealing => "", :away_errors => "",
-            :away_assists => "", :away_putouts => "", :away_chances => "",
-            :home_pitchers => "", :away_pitchers => "", :home_outs_recorded => "",
-            :home_hits_allowed => "", :home_runs_allowed => "", :home_earned_runs_allowed => "",
-            :home_walks_allowed => "", :home_strikeouts_recorded => "",
-            :home_home_runs_allowed => "", :home_total_pitches => "",
-            :home_strikes_thrown => "", :home_balls_thrown => "",
-            :home_intentional_walks_allowed => "", :away_outs_recorded => "",
-            :away_hits_allowed => "", :away_runs_allowed => "", :away_earned_runs_allowed => "",
-            :away_walks_allowed => "", :away_strikeouts_recorded => "",
-            :away_home_runs_allowed => "", :away_total_pitches => "",
-            :away_strikes_thrown => "", :away_balls_thrown => "",
-            :away_intentional_walks_allowed => "", :player_of_the_game => "", :pbp => "", :play_by_play => ""}
-
-          @game = Game.new(current_game_params)
-          schedule = team.schedule.split(", ").map {|s| s.to_i} # array of opponent ids
-          @game.away_team_id = schedule[@game_number] # Assume opponent is away team (this will be changed later)
-          @game.home_team_id = team.id
-          # Add both teams to list of already played teams
-          @already_played_hash[schedule[@game_number]] = 1
-          @already_played_hash[team.id] = 1
-          @game.play
-        end
-      end # end simulating games
-
-      # increment game number in season
-      Season.first.update_attributes(next_game: Season.first.next_game + 1)
-
-    end
-    Season.first.update_attribute(:simulating, 1)
-  elsif Season.first.simulating == 1
-    Season.first.update_attribute(:simulating, 2)
-  elsif Season.first.simulating == 2 # Do nothing
-    Season.first.update_attribute(:simulating, 0)
-  end
-
+  # Multi attribute tests
+  # test_attribute({"patience" => 100, "plate_vision" => 100}, @game)
+  # test_attribute({"patience" => 0, "plate_vision" => 0}, @game)
 
 end
-puts "done."

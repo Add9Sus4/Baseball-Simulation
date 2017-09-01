@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.5'
+# rake
+gem 'rake', '12.0.0'
 # will_paginate
 gem 'will_paginate', '~> 3.0.5'
 # Use bootstrap pagination styles
@@ -47,7 +49,7 @@ gem 'rails_12factor', group: :production
 group :development, :test, :production do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'factory_girl_rails', "~> 4.0"
-  gem 'rspec-rails'
+  gem 'rspec-rails', '3.5.0'
   gem 'byebug'
 end
 
