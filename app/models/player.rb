@@ -4,7 +4,7 @@ class Player < ActiveRecord::Base
   # Player attributes (aka this is where game stats are stored for each player. These values
   # are initialized at the beginning of each game and get updated as the game progresses. Then
   # at the end of the game, player stats are updated in the database using these values.)
-  attr_accessor :zone_pitches_thrown, :game_atbats, :game_runs_scored, :game_hits, :game_doubles, :game_triples, :game_home_runs, :game_rbi, :game_walks, :game_strikeouts, :game_stolen_bases, :game_caught_stealing, :game_errors_committed, :game_assists, :game_putouts, :game_chances, :game_outs_recorded, :game_hits_allowed, :game_runs_allowed, :game_earned_runs_allowed, :game_walks_allowed, :game_strikeouts_recorded, :game_home_runs_allowed, :game_total_pitches, :game_strikes_thrown, :game_balls_thrown, :game_intentional_walks_allowed
+  attr_accessor :zone_pitches_thrown, :game_atbats, :game_runs_scored, :game_hits, :game_doubles, :game_triples, :game_home_runs, :game_rbi, :game_walks, :game_strikeouts, :game_stolen_bases, :game_caught_stealing, :game_errors_committed, :game_assists, :game_putouts, :game_chances, :game_outs_recorded, :game_hits_allowed, :game_runs_allowed, :game_earned_runs_allowed, :game_walks_allowed, :game_strikeouts_recorded, :game_home_runs_allowed, :game_total_pitches, :game_strikes_thrown, :game_balls_thrown, :game_intentional_walks_allowed, :pitch_array
 
   # Make sure that all players have the following attributes when they are created
   validates :team, :first_name, :last_name, :age, :height, :weight, :position, :salary, presence: true
@@ -121,6 +121,12 @@ class Player < ActiveRecord::Base
     @game_balls_thrown = 0
     @game_intentional_walks_allowed = 0
     @zone_pitches_thrown = Array.new(72, 0)
+    @pitch_array = Array.new
+    if (pitch_1 != "--") then @pitch_array.push(pitch_1) end
+    if (pitch_2 != "--") then @pitch_array.push(pitch_2) end
+    if (pitch_3 != "--") then @pitch_array.push(pitch_3) end
+    if (pitch_4 != "--") then @pitch_array.push(pitch_4) end
+    if (pitch_5 != "--") then @pitch_array.push(pitch_5) end
   end
 
   # Called every time this player gets an at-bat

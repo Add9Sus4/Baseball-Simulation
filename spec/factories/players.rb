@@ -164,6 +164,13 @@ FactoryGirl.define do
     zone_72_pitches 0
     throwing_hand ["LEFT","RIGHT"].sample
     hitting_side ["LEFT","RIGHT"].sample
+    wins 0
+    losses 0
+    pitch_1 "FA"
+    pitch_2 "CU"
+    pitch_3 "SI"
+    pitch_4 "--"
+    pitch_5 "--"
 
   end
 

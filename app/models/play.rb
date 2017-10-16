@@ -1,8 +1,8 @@
 class Play
   include Reusable
-  attr_accessor :result, :hit_result, :hit
-  def initialize(atBat, game)
-    @game = game
+  attr_accessor :result, :hit_result, :hit, :play_by_play
+  def initialize(atBat)
+    @play_by_play = ""
     case atBat.result
     when AtBatResult::WALK
       @result = PlayResult::SAFE
@@ -11,7 +11,7 @@ class Play
     when AtBatResult::STRIKEOUT
       @result = PlayResult::OUT
     when AtBatResult::HBP
-      @game.play_by_play += "\nhit by pitch\n"
+      @play_by_play += "\nhit by pitch\n"
       @result = PlayResult::SAFE
     else
       puts "\nthis should never be reached\n"
@@ -19,7 +19,8 @@ class Play
   end
 
   def ballPutInPlay(atBat)
-    @hit = Hit.new(atBat, @game)
+    @hit = Hit.new(atBat)
+    @play_by_play += @hit.play_by_play
     if HitResult::fielded(hit.result)
       @result = PlayResult::OUT
     else

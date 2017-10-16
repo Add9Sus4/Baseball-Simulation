@@ -30,3 +30,196 @@ bundle exec rspec spec/models/bases_spec.rb         // Run single test file
 
 Please feel free to use a different markup language if you do not plan to run
 <tt>rake doc:app</tt>.
+
+
+
+
+
+PITCHING ALGORITHM
+
+Pitchers generally try to throw pitches near the corners. When ahead in the count,
+pitches will try to get hitters to chase. When behind in the count, pitchers will
+put more focus on throwing strikes.
+
+The strike zone is split into 72 small zones, and the pitcher will choose one of these
+zones on each pitch as the "target." The pitcher always throws to try to hit the target.
+
+Effect of pitching attribute "location:"
+
+The location attribute, roughly speaking, determines how well the pitcher can throw strikes.
+This attribute has the following effect on the algorithm:
+
+- Pitchers with high location will choose targets in the strike zone more often. Such a
+pitcher is "aggressive," trying to get ahead of hitters and put them away early.
+
+- Pitchers with low location will choose targets outside of the strike zone more often.
+These pitchers try to get batters to chase pitches more often and they throw a higher
+percentage of balls.
+
+Effect of pitching attribute "control:"
+
+The control attribute determines how well a pitcher can hit their spots. This has the
+following effect on the algorithm:
+
+- Pitchers with high control will be more likely to actually throw the pitch in the
+zone they are aiming at (or zones close to it).
+
+- Pitchers with low control are more wild and will be more likely to throw the pitch
+in a zone that is not as close to the zone they are aiming for.
+
+Effect of pitching attribute "intelligence:"
+
+The intelligence attribute determines how well a pitcher understands game situations
+and pitches to them. This has the following effects:
+
+- Pitchers with high intelligence understand that hitting the corners is usually better
+than throwing a pitch right down the middle. When throwing strikes, they will try to
+hit the corners more often.
+
+- Pitchers with low intelligence don't understand the importance of hitting the corners,
+and therefore when they try to throw strikes, they're more likely to choose target zones
+that are in the middle of the plate.
+
+- Pitchers with high intelligence take into account individual matchups and determine
+how much of an advantage they have. Factors taken into account include R/L matchup and
+strength/skill of opposing hitter. These pitchers use their intelligence to pitch more
+carefully to dangerous hitters, and more aggressively to weak hitters. They do this by
+choosing the correct approach for the situation (more on this in the Pitcher Approach/
+Objective section).
+
+- Pitchers with low intelligence don't take into account individual matchups. They have
+the same approach to every hitter. This results in more walks to weak hitters who
+shouldn't be walked, more pitches in the strike zone to powerful hitters, and less
+care taken in dangerous situations.
+
+
+PITCHER APPROACH/OBJECTIVE
+
+Before every pitch, the pitcher determines an "approach" to take, and an "objective" to
+try to achieve. An approach outlines broad guidelines for how to pitch to the hitter,
+while objectives are more specific. Let's look at approaches first:
+
+PITCHER APPROACH TYPES
+
+There are five main approach types: very careful, careful, normal, aggressive, and very aggressive.
+At the beginning of an at-bat, the pitcher determines what approach to use. As the name
+suggests, a careful approach means that the pitcher's priority is not letting the batter
+get a hit. An aggressive approach means that the pitcher's priority is not walking the batter.
+Here are some common situations where an intelligent pitcher would choose each approach:
+
+- Bottom of the 9th, runner on second, tie game, 2 outs, and a powerful hitter at the plate
+with a less powerful hitter on-deck.
+Here, the pitcher will usually choose "very careful" because the runner on second is the winning
+run, and there is strong incentive to make sure the powerful hitter doesn't get a big hit.
+
+- Up by 1, two outs and bases empty in the 6th, and a powerful hitter at the plate.
+Here, the pitcher will usually choose "careful" because it's a close game, and with no runners on
+base it's not as bad to walk this hitter as it is to give up a game-tying home run.
+
+- Middle innings, nobody on base, and a decent but not great hitter at the plate.
+Here, the pitcher will usually choose "normal" (this is the approach that is most common). The situation
+does not require the pitcher to pitch differently than they normally would, so the normal approach
+is most appropriate.
+
+- Up by 6 runs, 8th inning, and an average hitter at the plate.
+Here, the pitcher will usually choose "aggressive" because it's late in the game and they have a
+big lead, so it's better to challenge the hitter and make them get a hit rather than walk them.
+
+- A very weak hitter is at the plate, and the game is a blowout already.
+Here, the pitcher will usually choose "very aggressive" because they definitely don't want to
+walk a weak hitter in a game where the outcome is almost certainly decided already.
+
+PITCHER OBJECTIVES
+
+A pitcher's objective is set before every pitch (as opposed to the approach, which is set
+at the beginning of each at-bat). A pitcher can have the following objectives:
+
+- Challenge the hitter
+Here, the goal is to throw a strike no matter what
+
+- Get the hitter to chase
+Here, the goal is to throw a ball, with the hope of getting the hitter to swing at it
+and either swing and miss or hit a weak ball in play.
+
+- Pitch around the hitter
+Here, the goal is to not allow a big hit.
+
+- Do not walk the hitter
+Here, the goal is to make sure not to walk the hitter
+
+- Throw a ground ball
+Here, the goal is to try to get the hitter to hit a ground ball (usually to get a double play)
+
+PITCHER APPROACH + OBJECTIVE
+
+The combination of approach and objective determines how a pitcher pitches to a batter.
+For example, specific approaches lead to specific objectives (in the "very aggressive" approach,
+a pitcher will usually choose the "challenge the hitter" objective, for example).
+
+EFFECT of INTELLIGENCE on APPROACH and OBJECTIVES
+
+However, the intelligence attribute determines how objectives and approaches are chosen.
+As mentioned before, pitchers with low intelligence will always use the "normal" approach,
+which generally involves challenging the hitter early in the count and when behind in the
+count, and trying to get the hitter to chase when ahead in the count.
+
+Pitchers with low intelligence will also be more likely to choose an objective that makes
+no sense with the situation. For example, a pitcher with low intelligence will occasionally
+try to pitch around a hitter for no reason, or try to get the hitter to chase in a 3-0 count,
+or challenge a powerful hitter even when they are ahead in the count 0-2.
+
+Pitchers with high intelligence, on the other hand, choose objectives that fit the situation
+and the approach they have chosen.
+
+
+
+
+- randomize between mr1, mr2, and mr3, as well as between su1 and su2
+
+- more realistic algorithm for pitching changes (depends on pitches thrown, endurance, and whether the pitcher is doing well in the game or not). Don’t take pitchers out too early!
+
+PITCHING CHANGES
+
+A pitcher can be removed from the game for the following reasons:
+- the pitcher is too tired to continue
+- the pitcher has been pitching poorly and the manager decides to make a pitching change
+- the manager decides to use a different pitcher late in the game for matchup purposes (only applies to relief pitchers)
+
+Endurance determines how many pitches a pitcher can throw before the manager can decide to take them out of the game due to tiredness alone. Before this pitch threshold is met, a pitcher can only be removed from the game for one of the two other reasons (poor performance, or matchup reasons).
+
+Furthermore, starting pitchers are never removed for matchup reasons before their pitch threshold is met. Therefore, the only way a starting pitcher can be removed from the game before they meet their pitch threshold (as determined by their endurance) is if they pitch poorly.
+
+REMOVING FOR POOR PERFORMANCE
+
+A pitcher is eligible for removal for poor performance if the following criteria are met:
+
+- For starting pitchers: the pitcher has given up 6 or more runs in the game.
+- For relief pitchers: the pitcher has given up 3 or more runs in the game.
+
+
+
+
+
+
+- give the win/loss to the correct pitcher
+
+- game should end on walk-off in the bottom of the 9th or later
+
+- For pitchers, only display pitching attributes
+
+- For batters, only display batting attributes (no pitch zones or pitch types either)
+
+- Display wins/losses on pitcher page
+
+- need to be half as many doubles
+- need to be half as many triples
+- max average should be a lot lower
+- min average should be a little higher
+
+Further Changes:
+
+- Add games started and appearances to players table
+- Add complete games, shutouts, no-hitters, etc. to players table
+- Put L, W in game show statistics
+- Starting pitcher can only get the win if they go at least 5 full innings
+- Actually save pitcher win/loss based on who is in line to get the win/loss

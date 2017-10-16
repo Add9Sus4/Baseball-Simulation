@@ -6,16 +6,80 @@
 # memory. Therefore, game simulation runs almost 20 times faster if all the
 # heat maps are loaded into a hash before the game begins
 class Game < ActiveRecord::Base
+  include Reusable
   validate :teams_must_be_different
-  attr_accessor :in_line_for_win, :in_line_for_loss, :home_pitcher_list, :away_pitcher_list, :play_by_play, :bad, :good, :home_team, :away_team, :inning_status, :inning_number, :away_team_lineup_position, :home_team_lineup_position, :away_team_score, :home_team_score, :home_team_inning_scores, :away_team_inning_scores, :over
+  attr_accessor :play_by_play, :home_team, :away_team, :inning_status, :inning_number, :over
 
   def teams_must_be_different
     errors.add(:base, "Teams cannot be the same") if home_team_id == away_team_id
   end
 
+  # Prepare for the game
+  def prepare home_team, away_team, game_num, season_num
+    @home_team = home_team
+    @away_team = away_team
+    game_number = game_num
+    season_id = season_num
+
+    @over = false
+    @inning_number = 1
+    @inning_status = InningStatus::TOP
+    @play_by_play = ""
+
+    # home and away team stats
+    @home_team.game_score = 0
+    @away_team.game_score = 0
+    @home_team.game_inning_scores = ""
+    @away_team.game_inning_scores = ""
+    @home_team.in_line_for_win = nil # id of pitcher in line to get the win
+    @home_team.in_line_for_loss = nil # id of pitcher in line to get the loss
+    @away_team.in_line_for_win = nil # id of pitcher in line to get the win
+    @away_team.in_line_for_loss = nil # id of pitcher in line to get the loss
+    @home_team.game_lineup_position = 0
+    @away_team.game_lineup_position = 0
+
+    # put players on home team
+    @home_team.players.each do |player|
+      player.set_initial_stats
+    end
+
+    # put players on away team
+    @away_team.players.each do |player|
+      player.set_initial_stats
+    end
+
+    # stadium data
+    stadium_name = @home_team.stadium
+    attendance = rand(30000..60000) #TODO: make this more sophisticated (stadium size, team performance, etc)
+
+    # lineups
+    @home_team.game_lineup = ""
+    @away_team.game_lineup = ""
+    for i in 0..8 do
+      @home_team.game_lineup += "#{@home_team.find_player_by_lineup_index(i).id}"
+      @away_team.game_lineup += "#{@away_team.find_player_by_lineup_index(i).id}"
+      if i < 8
+        @home_team.game_lineup += "_"
+        @away_team.game_lineup += "_"
+      end
+    end
+
+    # pitching list
+    @home_team.game_pitcher_list = []
+    @away_team.game_pitcher_list = []
+    @home_team.game_pitcher_list.push(@home_team.starting_pitcher)
+    @away_team.game_pitcher_list.push(@away_team.starting_pitcher)
+    @home_team.game_pitcher_list.each do |pitcher|
+      pitcher.set_initial_stats
+    end
+
+    @away_team.game_pitcher_list.each do |pitcher|
+      pitcher.set_initial_stats
+    end
+  end
+
   # Plays a game
   def play
-    prepare
     # Simulate the game
     while !@over do
       # Top of inning
@@ -24,41 +88,42 @@ class Game < ActiveRecord::Base
       end
       @play_by_play += "\n<h4><strong>Top of inning #{@inning_number} (#{@away_team.full_name} batting):</strong></h4>\n"
       @inning_status = InningStatus::TOP
-      inning = Inning.new(self)
+      inning = Inning.new(@inning_status, @inning_number, @home_team, @away_team)
+      @play_by_play += inning.play_by_play
       # Bottom of inning
-      if @inning_number == 9 && @home_team_score > @away_team_score
+      if @inning_number == 9 && @home_team.game_score > @away_team.game_score
         @over = true
       end
       @play_by_play += "\n____________________________________________________________________________\n"
       @play_by_play += "\n<h4><strong>Bottom of inning #{@inning_number} (#{@home_team.full_name} batting):</strong></h4>\n"
       @inning_status = InningStatus::BOTTOM
-      inning = Inning.new(self)
-      if @inning_number > 8 && @home_team_score != @away_team_score
+      inning = Inning.new(@inning_status, @inning_number, @home_team, @away_team)
+      @play_by_play += inning.play_by_play
+      if @inning_number > 8 && @home_team.game_score != @away_team.game_score
         @over = true
       end
       @inning_number = @inning_number + 1
     end # game is over here
-
     collect_stats
   end
 
   def collect_stats
 
-    # pitcher w/l
-    @in_line_for_win.update_attribute(:wins, @in_line_for_win.wins + 1)
-    @in_line_for_loss.update_attribute(:losses, @in_line_for_loss.losses + 1)
-
-    # Game w/l
-    self.update_attributes(winning_pitcher: @in_line_for_win.id)
-    self.update_attributes(losing_pitcher: @in_line_for_loss.id)
-
     # team win/loss stats
     # If the home team wins
-    if @home_team_score > @away_team_score
+    if @home_team.game_score > @away_team.game_score
+
+      # Game w/l
+      winning_pitcher = @home_team.in_line_for_win.id
+      losing_pitcher = @away_team.in_line_for_loss.id
 
       # team w/l
       @home_team.update_attribute(:wins, @home_team.wins + 1)
       @away_team.update_attribute(:losses, @away_team.losses + 1)
+
+      # pitcher w/l
+      @home_team.in_line_for_win.update_attribute(:wins, @home_team.in_line_for_win.wins + 1)
+      @away_team.in_line_for_loss.update_attribute(:losses, @away_team.in_line_for_loss.losses + 1)
 
       # Home team streak
       @home_team.streak >= 0 ? @home_team.update_attribute(:streak, @home_team.streak + 1) : @home_team.update_attribute(:streak, 1)
@@ -69,9 +134,17 @@ class Game < ActiveRecord::Base
     # If the away team wins
     else
 
+      # Game w/l
+      winning_pitcher = @away_team.in_line_for_win.id
+      losing_pitcher = @home_team.in_line_for_loss.id
+
       # team w/l
       @home_team.update_attribute(:losses, @home_team.losses + 1)
       @away_team.update_attribute(:wins, @away_team.wins + 1)
+
+      # pitcher w/l
+      @away_team.in_line_for_win.update_attribute(:wins, @away_team.in_line_for_win.wins + 1)
+      @home_team.in_line_for_loss.update_attribute(:losses, @home_team.in_line_for_loss.losses + 1)
 
       # Home team streak
       @home_team.streak <= 0 ? @home_team.update_attribute(:streak, @home_team.streak - 1) : @home_team.update_attribute(:streak, -1)
@@ -82,10 +155,10 @@ class Game < ActiveRecord::Base
     end
 
     # team runs scored and allowed
-    @home_team.update_attribute(:runs_scored, @home_team.runs_scored + @home_team_score)
-    @away_team.update_attribute(:runs_scored, @away_team.runs_scored + @away_team_score)
-    @home_team.update_attribute(:runs_allowed, @home_team.runs_allowed + @away_team_score)
-    @away_team.update_attribute(:runs_allowed, @away_team.runs_allowed + @home_team_score)
+    @home_team.update_attribute(:runs_scored, @home_team.runs_scored + @home_team.game_score)
+    @away_team.update_attribute(:runs_scored, @away_team.runs_scored + @away_team.game_score)
+    @home_team.update_attribute(:runs_allowed, @home_team.runs_allowed + @away_team.game_score)
+    @away_team.update_attribute(:runs_allowed, @away_team.runs_allowed + @home_team.game_score)
 
     # increment rotation position
     @home_team.update_attribute(:rotation_position, @home_team.increment_rotation)
@@ -212,7 +285,7 @@ class Game < ActiveRecord::Base
     end
 
     # pitcher stats
-    @home_pitcher_list.each do |player|
+    @home_team.game_pitcher_list.each do |player|
       player.atbats ||= 0
       player.runs ||= 0
       player.hits ||= 0
@@ -271,7 +344,7 @@ class Game < ActiveRecord::Base
       end
     end
 
-    @away_pitcher_list.each do |player|
+    @away_team.game_pitcher_list.each do |player|
 
       player.atbats ||= 0
       player.runs ||= 0
@@ -392,7 +465,7 @@ class Game < ActiveRecord::Base
     away_intentional_walks_allowed_string = []
 
     # home pitching stats
-    @home_pitcher_list.each do |pitcher|
+    @home_team.game_pitcher_list.each do |pitcher|
       home_outs_recorded_string.push(pitcher.game_outs_recorded)
       home_hits_allowed_string.push(pitcher.game_hits_allowed)
       home_runs_allowed_string.push(pitcher.game_runs_allowed)
@@ -407,7 +480,7 @@ class Game < ActiveRecord::Base
     end
 
     # away pitching stats
-    @away_pitcher_list.each do |pitcher|
+    @away_team.game_pitcher_list.each do |pitcher|
       away_outs_recorded_string.push(pitcher.game_outs_recorded)
       away_hits_allowed_string.push(pitcher.game_hits_allowed)
       away_runs_allowed_string.push(pitcher.game_runs_allowed)
@@ -495,144 +568,154 @@ class Game < ActiveRecord::Base
     end
 
     # runs scored in each inning
-    self.update_attributes(away_inning_scores: @away_team_inning_scores.chop)
-    self.update_attributes(home_inning_scores: @home_team_inning_scores.chop)
+    away_inning_scores = @away_team.game_inning_scores.chop
+    home_inning_scores = @home_team.game_inning_scores.chop
 
     # home batting stats
-    self.update_attributes(home_atbats: home_at_bats_string)
-    self.update_attributes(home_runs_scored: home_runs_scored_string)
-    self.update_attributes(home_hits: home_hits_string)
-    self.update_attributes(home_doubles: home_doubles_string)
-    self.update_attributes(home_triples: home_triples_string)
-    self.update_attributes(home_home_runs: home_home_runs_string)
-    self.update_attributes(home_RBI: home_RBI_string)
-    self.update_attributes(home_walks: home_walks_string)
-    self.update_attributes(home_strikeouts: home_strikeouts_string)
-    self.update_attributes(home_stolen_bases: home_stolen_bases_string)
-    self.update_attributes(home_caught_stealing: home_caught_stealing_string)
-    self.update_attributes(home_errors: home_errors_string)
-    self.update_attributes(home_assists: home_assists_string)
-    self.update_attributes(home_putouts: home_putouts_string)
-    self.update_attributes(home_chances: home_chances_string)
+    home_atbats = home_at_bats_string
+    home_runs_scored = home_runs_scored_string
+    home_hits = home_hits_string
+    home_doubles = home_doubles_string
+    home_triples = home_triples_string
+    home_home_runs = home_home_runs_string
+    home_RBI = home_RBI_string
+    home_walks = home_walks_string
+    home_strikeouts = home_strikeouts_string
+    home_stolen_bases = home_stolen_bases_string
+    home_caught_stealing = home_caught_stealing_string
+    home_errors = home_errors_string
+    home_assists = home_assists_string
+    home_putouts = home_putouts_string
+    home_chances = home_chances_string
 
     # away batting stats
-    self.update_attributes(away_atbats: away_at_bats_string)
-    self.update_attributes(away_runs_scored: away_runs_scored_string)
-    self.update_attributes(away_hits: away_hits_string)
-    self.update_attributes(away_doubles: away_doubles_string)
-    self.update_attributes(away_triples: away_triples_string)
-    self.update_attributes(away_home_runs: away_home_runs_string)
-    self.update_attributes(away_RBI: away_RBI_string)
-    self.update_attributes(away_walks: away_walks_string)
-    self.update_attributes(away_strikeouts: away_strikeouts_string)
-    self.update_attributes(away_stolen_bases: away_stolen_bases_string)
-    self.update_attributes(away_caught_stealing: away_caught_stealing_string)
-    self.update_attributes(away_errors: away_errors_string)
-    self.update_attributes(away_assists: away_assists_string)
-    self.update_attributes(away_putouts: away_putouts_string)
-    self.update_attributes(away_chances: away_chances_string)
+    away_atbats = away_at_bats_string
+    away_runs_scored = away_runs_scored_string
+    away_hits = away_hits_string
+    away_doubles = away_doubles_string
+    away_triples = away_triples_string
+    away_home_runs = away_home_runs_string
+    away_RBI = away_RBI_string
+    away_walks = away_walks_string
+    away_strikeouts = away_strikeouts_string
+    away_stolen_bases = away_stolen_bases_string
+    away_caught_stealing = away_caught_stealing_string
+    away_errors = away_errors_string
+    away_assists = away_assists_string
+    away_putouts = away_putouts_string
+    away_chances = away_chances_string
 
     # away pitching stats
-    self.update_attributes(away_outs_recorded: away_outs_recorded_string.join("_"))
-    self.update_attributes(away_hits_allowed: away_hits_allowed_string.join("_"))
-    self.update_attributes(away_runs_allowed: away_runs_allowed_string.join("_"))
-    self.update_attributes(away_earned_runs_allowed: away_earned_runs_allowed_string.join("_"))
-    self.update_attributes(away_walks_allowed: away_walks_allowed_string.join("_"))
-    self.update_attributes(away_strikeouts_recorded: away_strikeouts_recorded_string.join("_"))
-    self.update_attributes(away_home_runs_allowed: away_home_runs_allowed_string.join("_"))
-    self.update_attributes(away_total_pitches: away_total_pitches_string.join("_"))
-    self.update_attributes(away_strikes_thrown: away_strikes_thrown_string.join("_"))
-    self.update_attributes(away_balls_thrown: away_balls_thrown_string.join("_"))
-    self.update_attributes(away_intentional_walks_allowed: away_intentional_walks_allowed_string.join("_"))
+    away_outs_recorded = away_outs_recorded_string.join("_")
+    away_hits_allowed = away_hits_allowed_string.join("_")
+    away_runs_allowed = away_runs_allowed_string.join("_")
+    away_earned_runs_allowed = away_earned_runs_allowed_string.join("_")
+    away_walks_allowed = away_walks_allowed_string.join("_")
+    away_strikeouts_recorded = away_strikeouts_recorded_string.join("_")
+    away_home_runs_allowed = away_home_runs_allowed_string.join("_")
+    away_total_pitches = away_total_pitches_string.join("_")
+    away_strikes_thrown = away_strikes_thrown_string.join("_")
+    away_balls_thrown = away_balls_thrown_string.join("_")
+    away_intentional_walks_allowed = away_intentional_walks_allowed_string.join("_")
 
     # home pitching stats
-    self.update_attributes(home_outs_recorded: home_outs_recorded_string.join("_"))
-    self.update_attributes(home_hits_allowed: home_hits_allowed_string.join("_"))
-    self.update_attributes(home_runs_allowed: home_runs_allowed_string.join("_"))
-    self.update_attributes(home_earned_runs_allowed: home_earned_runs_allowed_string.join("_"))
-    self.update_attributes(home_walks_allowed: home_walks_allowed_string.join("_"))
-    self.update_attributes(home_strikeouts_recorded: home_strikeouts_recorded_string.join("_"))
-    self.update_attributes(home_home_runs_allowed: home_home_runs_allowed_string.join("_"))
-    self.update_attributes(home_total_pitches: home_total_pitches_string.join("_"))
-    self.update_attributes(home_strikes_thrown: home_strikes_thrown_string.join("_"))
-    self.update_attributes(home_balls_thrown: home_balls_thrown_string.join("_"))
-    self.update_attributes(home_intentional_walks_allowed: home_intentional_walks_allowed_string.join("_"))
+    home_outs_recorded = home_outs_recorded_string.join("_")
+    home_hits_allowed = home_hits_allowed_string.join("_")
+    home_runs_allowed = home_runs_allowed_string.join("_")
+    home_earned_runs_allowed = home_earned_runs_allowed_string.join("_")
+    home_walks_allowed = home_walks_allowed_string.join("_")
+    home_strikeouts_recorded = home_strikeouts_recorded_string.join("_")
+    home_home_runs_allowed = home_home_runs_allowed_string.join("_")
+    home_total_pitches = home_total_pitches_string.join("_")
+    home_strikes_thrown = home_strikes_thrown_string.join("_")
+    home_balls_thrown = home_balls_thrown_string.join("_")
+    home_intentional_walks_allowed = home_intentional_walks_allowed_string.join("_")
 
     # play by play
-    self.update_attributes(pbp: @play_by_play)
+    pbp = @play_by_play
 
     # game number (needs to be changed from first to the current season when there are more than 1 seasons)
-    self.update_attributes(game_number: Season.first.next_game)
-    self.update_attributes(season_id: Season.first.id)
 
     # update pitcher list
-    self.update_attributes(home_pitchers: @home_pitcher_list.map { |pitcher| pitcher.id }.join("_"))
-    self.update_attributes(away_pitchers: @away_pitcher_list.map { |pitcher| pitcher.id }.join("_"))
+    home_pitchers = @home_team.game_pitcher_list.map { |pitcher| pitcher.id }.join("_")
+    away_pitchers = @away_team.game_pitcher_list.map { |pitcher| pitcher.id }.join("_")
 
-  end
+    # Game attributes
+    update_attribute(:attendance, @home_team.capacity)
+    update_attribute(:stadium_name, @home_team.stadium)
+    update_attribute(:home_lineup, @home_team.game_lineup)
+    update_attribute(:away_lineup, @away_team.game_lineup)
 
-  # Creates instance variables to use in the game
-  def prepare
+    update_attribute(:home_atbats, home_atbats)
+    update_attribute(:home_runs_scored, home_runs_scored)
+    update_attribute(:home_hits, home_hits)
+    update_attribute(:home_doubles, home_doubles)
+    update_attribute(:home_triples, home_triples)
+    update_attribute(:home_home_runs, home_home_runs)
+    update_attribute(:home_RBI, home_RBI)
+    update_attribute(:home_walks, home_walks)
+    update_attribute(:home_strikeouts, home_strikeouts)
+    update_attribute(:home_stolen_bases, home_stolen_bases)
+    update_attribute(:home_caught_stealing, home_caught_stealing)
+    update_attribute(:home_errors, home_errors)
+    update_attribute(:home_assists, home_assists)
+    update_attribute(:home_putouts, home_putouts)
+    update_attribute(:home_chances, home_chances)
 
-    @over = false
-    @inning_number = 1
-    @inning_status = InningStatus::TOP
-    @home_team_lineup_position = 0
-    @away_team_lineup_position = 0
-    @home_team_score = 0
-    @away_team_score = 0
-    @home_team_inning_scores = ""
-    @away_team_inning_scores = ""
-    @play_by_play = ""
-    @good = "#267373"
-    @bad = "#854747"
-    @in_line_for_win = nil # id of pitcher in line to get the win
-    @in_line_for_loss = nil # id of pitcher in line to get the loss
+    update_attribute(:away_atbats, away_atbats)
+    update_attribute(:away_runs_scored, away_runs_scored)
+    update_attribute(:away_hits, away_hits)
+    update_attribute(:away_doubles, away_doubles)
+    update_attribute(:away_triples, away_triples)
+    update_attribute(:away_home_runs, away_home_runs)
+    update_attribute(:away_RBI, away_RBI)
+    update_attribute(:away_walks, away_walks)
+    update_attribute(:away_strikeouts, away_strikeouts)
+    update_attribute(:away_stolen_bases, away_stolen_bases)
+    update_attribute(:away_caught_stealing, away_caught_stealing)
+    update_attribute(:away_errors, away_errors)
+    update_attribute(:away_assists, away_assists)
+    update_attribute(:away_putouts, away_putouts)
+    update_attribute(:away_chances, away_chances)
 
-    # home and away teams
-    @home_team = Team.find(self.home_team_id)
-    @away_team = Team.find(self.away_team_id)
+    update_attribute(:home_pitchers, home_pitchers)
+    update_attribute(:away_pitchers, away_pitchers)
 
-    # put players on home team
-    @home_team.players.each do |player|
-      player.set_initial_stats
-    end
+    update_attribute(:home_outs_recorded, home_outs_recorded)
+    update_attribute(:home_hits_allowed, home_hits_allowed)
+    update_attribute(:home_runs_allowed, home_runs_allowed)
+    update_attribute(:home_earned_runs_allowed, home_earned_runs_allowed)
+    update_attribute(:home_walks_allowed, home_walks_allowed)
+    update_attribute(:home_strikeouts_recorded, home_strikeouts_recorded)
+    update_attribute(:home_home_runs_allowed, home_home_runs_allowed)
+    update_attribute(:home_total_pitches, home_total_pitches)
+    update_attribute(:home_strikes_thrown, home_strikes_thrown)
+    update_attribute(:home_balls_thrown, home_balls_thrown)
+    update_attribute(:home_intentional_walks_allowed, home_intentional_walks_allowed)
 
-    # put players on away team
-    @away_team.players.each do |player|
-      player.set_initial_stats
-    end
+    update_attribute(:away_outs_recorded, away_outs_recorded)
+    update_attribute(:away_hits_allowed, away_hits_allowed)
+    update_attribute(:away_runs_allowed, away_runs_allowed)
+    update_attribute(:away_earned_runs_allowed, away_earned_runs_allowed)
+    update_attribute(:away_walks_allowed, away_walks_allowed)
+    update_attribute(:away_strikeouts_recorded, away_strikeouts_recorded)
+    update_attribute(:away_home_runs_allowed, away_home_runs_allowed)
+    update_attribute(:away_total_pitches, away_total_pitches)
+    update_attribute(:away_strikes_thrown, away_strikes_thrown)
+    update_attribute(:away_balls_thrown, away_balls_thrown)
+    update_attribute(:away_intentional_walks_allowed, away_intentional_walks_allowed)
 
-    # stadium data
-    self.stadium_name = @home_team.stadium
-    self.attendance = rand(30000..60000)
+    update_attribute(:player_of_the_game, nil)
 
-    # lineups
-    home_lineup_string = ""
-    away_lineup_string = ""
-    for i in 0..8 do
-      home_lineup_string = home_lineup_string + "#{@home_team.find_player_by_lineup_index(i).id}"
-      away_lineup_string = away_lineup_string + "#{@away_team.find_player_by_lineup_index(i).id}"
-      if i < 8
-        home_lineup_string = home_lineup_string + "_"
-        away_lineup_string = away_lineup_string + "_"
-      end
-    end
-    self.update_attributes(home_lineup: home_lineup_string)
-    self.update_attributes(away_lineup: away_lineup_string)
+    update_attribute(:home_inning_scores, @home_team.game_inning_scores)
+    update_attribute(:away_inning_scores, @away_team.game_inning_scores)
 
-    # pitching list
-    @home_pitcher_list = []
-    @away_pitcher_list = []
-    @home_pitcher_list.push(@home_team.starting_pitcher)
-    @away_pitcher_list.push(@away_team.starting_pitcher)
-    @home_pitcher_list.each do |pitcher|
-      pitcher.set_initial_stats
-    end
+    update_attribute(:pbp, play_by_play)
+    update_attribute(:season_id, season_id)
+    update_attribute(:game_number, game_number)
+    update_attribute(:winning_pitcher, winning_pitcher)
+    update_attribute(:losing_pitcher, losing_pitcher)
 
-    @away_pitcher_list.each do |pitcher|
-      pitcher.set_initial_stats
-    end
 
   end
 

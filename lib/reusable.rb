@@ -13,6 +13,14 @@ module Reusable
     val
   end
 
+  def color_good
+    "#267373"
+  end
+
+  def color_bad
+    "#854747"
+  end
+
   # Generates a number based on a pseudo-random gaussian distribution
   def randomGaussian
     ((rand() +

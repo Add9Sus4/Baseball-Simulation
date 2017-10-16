@@ -5,16 +5,21 @@ class Bases
   include Reusable
 
   # Attributes to keep track of base runners and other variables.
-  attr_accessor :runs_scored, :status, :runner_on_first, :runner_on_second, :runner_on_third
+  attr_accessor :runs_scored, :status, :runner_on_first, :runner_on_second, :runner_on_third, :play_by_play, :over
 
   # Called at the beginning of the inning
-  def initialize(game)
-    @game = game
+  def initialize(inning_status, inning_number, home_team, away_team)
+    @play_by_play = ""
+    @home_team = home_team
+    @away_team = away_team
+    @inning_status = inning_status
+    @inning_number = inning_number
     @status = BaseStatus::EMPTY
     @runner_on_first = nil
     @runner_on_second = nil
     @runner_on_third = nil
     @runs_scored = 0
+    @over = false
   end
 
   # Returns the number of runs scored in this inning.
@@ -44,7 +49,7 @@ class Bases
 
   # The runner on first steals second base.
   def runner_on_first_steals_second
-    @game.play_by_play += "\n#{@runner_on_first.full_name} steals second.\n"
+    @play_by_play += "\n#{@runner_on_first.full_name} steals second.\n"
     @runner_on_first.steals_base
     runner_on_first_advances_to_second
     case @status
@@ -53,6 +58,14 @@ class Bases
     when BaseStatus::RUNNERS_ON_FIRST_AND_THIRD
       @status = BaseStatus::RUNNERS_ON_SECOND_AND_THIRD
     end
+  end
+
+  # clear the bases
+  def clear
+    @status = BaseStatus::EMPTY
+    @runner_on_first = nil
+    @runner_on_second = nil
+    @runner_on_third = nil
   end
 
   # The batter hits a single
@@ -374,45 +387,45 @@ class Bases
     end
   end
 
-  # Increases the score by a given number. End the game if the home team just walked off. 
+  # Increases the score by a given number. End the game if the home team just walked off.
   def increase_score(num_runs)
 
     @home_team_winning = false
     @away_team_winning = false
     @tied = false
 
-    if @game.home_team_score > @game.away_team_score # Home team is winning
+    if @home_team.game_score > @away_team.game_score # Home team is winning
       @home_team_winning = true
-    elsif @game.away_team_score > @game.home_team_score # Away team is winning
+    elsif @away_team.game_score > @home_team.game_score # Away team is winning
       @away_team_winning = true
     else # Game is tied
       @tied = true
     end
 
-    if @game.inning_status == InningStatus::TOP # Top of the inning
-      @game.away_team_score = @game.away_team_score + num_runs # Away team scores
+    if @inning_status == InningStatus::TOP # Top of the inning
+      @away_team.game_score = @away_team.game_score + num_runs # Away team scores
       # If the home team was winning or tied, but now is losing
-      if (@tied || @home_team_winning) && @game.home_team_score < @game.away_team_score
-        @game.in_line_for_loss = @game.home_pitcher_list.last # Current home pitcher is in line for the loss
-        @game.in_line_for_win = @game.away_pitcher_list.last # Current away pitcher is in line for the win
+      if (@tied || @home_team_winning) && @home_team.game_score < @away_team.game_score
+        @home_team.in_line_for_loss = @home_team.game_pitcher_list.last # Current home pitcher is in line for the loss
+        @away_team.in_line_for_win = @away_team.game_pitcher_list.last # Current away pitcher is in line for the win
       end
     else # Bottom of the inning
-      @game.home_team_score = @game.home_team_score + num_runs # Home team scores
+      @home_team.game_score = @home_team.game_score + num_runs # Home team scores
       # If the away team was winning or tied, but now is losing
-      if (@tied || @away_team_winning) && @game.away_team_score < @game.home_team_score
-        @game.in_line_for_loss = @game.away_pitcher_list.last # Current away pitcher is in line for the loss
-        @game.in_line_for_win = @game.home_pitcher_list.last # Current home pitcher is in line for the win
+      if (@tied || @away_team_winning) && @away_team.game_score < @home_team.game_score
+        @away_team.in_line_for_loss = @away_team.game_pitcher_list.last # Current away pitcher is in line for the loss
+        @home_team.in_line_for_win = @home_team.game_pitcher_list.last # Current home pitcher is in line for the win
       end
     end
     @pitcher.allows_earned_run(num_runs)
     # If it was a walk off
-    if @game.inning_number >= 9 && @game.home_team_score > @game.away_team_score
-      @game.over = true
+    if @inning_number >= 9 && @home_team.game_score > @away_team.game_score
+      @over = true
     end
   end
 
   def batter_scores
-    @game.play_by_play += "<span style=\"color:" + @game.good + "\"><strong><em>#{@batter.full_name} scores!</strong></em></span>\n"
+    @play_by_play += "<span style=\"color:" + color_good + "\"><strong><em>#{@batter.full_name} scores!</strong></em></span>\n"
     @batter.scores
     @runs_scored += 1
     @batter.records_rbi(1)
@@ -420,7 +433,7 @@ class Bases
   end
 
   def runner_on_first_scores
-    @game.play_by_play += "<span style=\"color:" + @game.good + "\"><strong><em>#{@runner_on_first.full_name} scores!</strong></em></span>\n"
+    @play_by_play += "<span style=\"color:" + color_good + "\"><strong><em>#{@runner_on_first.full_name} scores!</strong></em></span>\n"
     @runner_on_first.scores
     @runs_scored += 1
     @batter.records_rbi(1)
@@ -429,7 +442,7 @@ class Bases
   end
 
   def runner_on_second_scores
-    @game.play_by_play += "<span style=\"color:" + @game.good + "\"><strong><em>#{@runner_on_second.full_name} scores!</strong></em></span>\n"
+    @play_by_play += "<span style=\"color:" + color_good + "\"><strong><em>#{@runner_on_second.full_name} scores!</strong></em></span>\n"
     @runner_on_second.scores
     @runs_scored += 1
     @batter.records_rbi(1)
@@ -438,7 +451,7 @@ class Bases
   end
 
   def runner_on_third_scores
-    @game.play_by_play += "<span style=\"color:" + @game.good + "\"><strong><em>#{@runner_on_third.full_name} scores!</strong></em></span>\n"
+    @play_by_play += "<span style=\"color:" + color_good + "\"><strong><em>#{@runner_on_third.full_name} scores!</strong></em></span>\n"
     @runner_on_third.scores
     @runs_scored += 1
     @batter.records_rbi(1)
@@ -468,32 +481,32 @@ class Bases
   end
 
   def runner_on_first_advances_to_second
-    # @game.play_by_play += "#{@runner_on_first.full_name} advances to second.\n"
+    # @play_by_play += "#{@runner_on_first.full_name} advances to second.\n"
     @runner_on_second = @runner_on_first
   end
 
   def runner_on_first_advances_to_third
-    # @game.play_by_play += "#{@runner_on_first.full_name} advances to third.\n"
+    # @play_by_play += "#{@runner_on_first.full_name} advances to third.\n"
     @runner_on_third = @runner_on_first
   end
 
   def runner_on_second_advances_to_third
-    # @game.play_by_play += "#{@runner_on_second.full_name} advances to third.\n"
+    # @play_by_play += "#{@runner_on_second.full_name} advances to third.\n"
     @runner_on_third = @runner_on_second
   end
 
   def batter_advances_to_first
-    # @game.play_by_play += "#{@batter.full_name} advances to first.\n"
+    # @play_by_play += "#{@batter.full_name} advances to first.\n"
     @runner_on_first = @batter
   end
 
   def batter_advances_to_second
-    # @game.play_by_play += "#{@batter.full_name} advances to second.\n"
+    # @play_by_play += "#{@batter.full_name} advances to second.\n"
     @runner_on_second = @batter
   end
 
   def batter_advances_to_third
-    # @game.play_by_play += "#{@batter.full_name} advances to third.\n"
+    # @play_by_play += "#{@batter.full_name} advances to third.\n"
     @runner_on_third = @batter
   end
 

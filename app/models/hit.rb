@@ -1,8 +1,8 @@
 class Hit
   include Reusable
-  attr_accessor :result, :type, :location, :power
-  def initialize(atbat, game)
-    @game = game
+  attr_accessor :result, :type, :location, :power, :play_by_play
+  def initialize(atbat)
+    @play_by_play = ""
     @atbat = atbat
     hitPower
     hitType
@@ -11,9 +11,15 @@ class Hit
   end
 
   def hitPower
+    # Batter power affects hit power
     average_power = map_attribute_to_range(@atbat.batter.power, AttributeAdjustments::BATTER_POWER_AFFECTS_HIT_POWER_MIN, AttributeAdjustments::BATTER_POWER_AFFECTS_HIT_POWER_MAX, false)
+
+    # Batter contact slightly affects hit power (contact of 0 -> no change, contact of 100 -> 5% reduction in power)
+    contact_adjustment = map_attribute_to_range(@atbat.batter.contact, AttributeAdjustments::BATTER_CONTACT_AFFECTS_HIT_POWER_MIN, AttributeAdjustments::BATTER_CONTACT_AFFECTS_HIT_POWER_MAX, true)
+
     random_data = generateDistribution(0, 100, average_power, 20)
-    @power = random_data[0]
+
+    @power = random_data[0]*contact_adjustment
   end
 
   # What kind of hit was it?
@@ -28,7 +34,7 @@ class Hit
     percent_line_drives = percent_not_in_the_air * map_attribute_to_range(@atbat.batter.batting_average, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_LINE_DRIVE_PROBABILITY_MIN, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_LINE_DRIVE_PROBABILITY_MAX, false)
 
     # Percent of balls in the air that are pop ups (Batting average adjustment)
-    percent_pop_ups = map_attribute_to_range(@atbat.batter.batting_average, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_POP_UP_PROBABILITY_MIN, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_POP_UP_PROBABILITY_MAX, false)
+    percent_pop_ups = map_attribute_to_range(@atbat.batter.batting_average, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_POP_UP_PROBABILITY_MIN, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_POP_UP_PROBABILITY_MAX, true)
 
     percent_fly_balls = percent_in_the_air - percent_pop_ups
 
@@ -411,9 +417,9 @@ class Hit
     end
 
     if HitResult.fielded(@result)
-      @game.play_by_play += "\n<span style=\"color:" + @game.bad + "\">#{@atbat.batter.full_name} hits a #{@result}</span>\n"
+      @play_by_play += "\n<span style=\"color:" + color_bad + "\">#{@atbat.batter.full_name} hits a #{@result}</span>\n"
     else
-      @game.play_by_play += "\n<span style=\"color:" + @game.good + "\">#{@atbat.batter.full_name} hits a #{@result}</span>\n"
+      @play_by_play += "\n<span style=\"color:" + color_good + "\">#{@atbat.batter.full_name} hits a #{@result}</span>\n"
     end
   end
 

@@ -18,6 +18,12 @@ FactoryGirl.define do
     lineup7 {6}
     lineup8 {7}
     lineup9 {8}
+    wins {0}
+    losses {0}
+    runs_scored {0}
+    runs_allowed {0}
+    schedule {"N/A"}
+    streak {0}
 
     factory :team_with_players do
       after(:create) do |team|

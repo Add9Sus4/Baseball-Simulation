@@ -1,21 +1,182 @@
-class Pitch
+  class Pitch
   include Reusable
-  attr_accessor :location, :swing_percentage, :contact_percentage, :called_strike_percentage, :location_type
+  attr_accessor :location, :swing_percentage, :contact_percentage, :called_strike_percentage, :location_type, :result, :speed
   def initialize(pitcher, batter, balls, strikes)
+    @result = PitchResult::IN_PROGRESS
+    @play_by_play = ""
     @pitcher = pitcher
     @batter = batter
     @balls = balls
     @strikes = strikes
+
+    # Determine what pitch the pitcher is going to throw
+    @pitch_type = determine_pitch_type(@pitcher)
+
+    # Determine how fast the pitch is thrown
+    @speed = determine_pitch_speed(@pitcher, @pitch_type)
+
+    # Determine the adjustment for contact percentage, based on pitcher attributes and pitch type
+    pitch_type_contact_adjustment = calculate_pitch_type_contact_adjustment(@pitcher, @pitch_type)
+
+    #TODO: Determine pitcher approach and objective
+
     # Calculate pitch location (which zone it will be in)
     @location = determine_location(@pitcher.throwing_hand, @batter.hitting_side, @balls, @strikes)
+
+    # Calculate pitch location type based on zone (outside corner, down the middle, low, etc...)
     @location_type = determine_location_type(@batter.hitting_side, @location)
+
     # Will batter swing?
     @swing_percentage = determine_swing_percentage(@location, @pitcher.throwing_hand, @batter.hitting_side, @balls, @strikes, "FA")
+
     # Will batter make contact?
     @contact_percentage = determine_contact_percentage(@location, @pitcher.throwing_hand, @batter.hitting_side, @balls, @strikes, "FA")
+
+    # Apply pitcher arm strength and movement attribute adjustments
+    @contact_percentage *= pitch_type_contact_adjustment
+
     # Will the pitch be called a strike?
     @called_strike_percentage = determine_called_strike_percentage(@location, @pitcher.throwing_hand, @batter.hitting_side, @balls, @strikes, "FA")
+
+    # Record pitch thrown for pitcher
     @pitcher.throws_pitch(@location)
+
+    # Find out what happens!
+    if batterSwings
+      if batterMakesContact
+        if ballIsHitFair
+          @result = PitchResult::HIT_IN_PLAY
+        else
+          @result = PitchResult::FOUL_BALL
+        end
+      else
+        @result = PitchResult::SWINGING_STRIKE
+      end
+    else
+      batterDoesntSwing
+    end
+
+  end
+
+  def determine_pitch_speed(pitcher, pitch_type)
+    armStrengthFactor = pitcher.armStrength.to_f/100.0
+    case pitch_type
+    when "FA" # 4-seam Fastball: min 80 mph, max 103 mph
+      getRandomValue(0, 1, 80, 103, (103 - 80)*armStrengthFactor, 10)
+    when "FT" # 2-seam Fastball: min 80 mph, max 95 mph
+      getRandomValue(0, 1, 80, 95, (95 - 80)*armStrengthFactor, 10)
+    when "FC" # Cutter: min 80 mph, max 95 mph
+      getRandomValue(0, 1, 80, 95, (95 - 80)*armStrengthFactor, 10)
+    when "FS" # Splitter: min 75 mph, max 92 mph
+      getRandomValue(0, 1, 75, 92, (92 - 75)*armStrengthFactor, 10)
+    when "FO" # Forkball: min 70 mph, max 85 mph
+      getRandomValue(0, 1, 70, 85, (85 - 70)*armStrengthFactor, 10)
+    when "SI" # Sinker: min 75 mph, max 94 mph
+      getRandomValue(0, 1, 75, 94, (94 - 75)*armStrengthFactor, 10)
+    when "SL" # Slider: min 80 mph, max 90 mph
+      getRandomValue(0, 1, 80, 90, (90 - 80)*armStrengthFactor, 10)
+    when "CU" # Curveball: min 65 mph, max 85 mph
+      getRandomValue(0, 1, 65, 85, (85 - 65)*armStrengthFactor, 10)
+    when "KC" # Knuckle-curve: min 60 mph, max 80 mph
+      getRandomValue(0, 1, 60, 80, (80 - 60)*armStrengthFactor, 10)
+    when "EP" # Eephus: min 50 mph, max 70 mph
+      getRandomValue(0, 1, 50, 70, (70 - 50)*armStrengthFactor, 10)
+    when "CH" # Changeup: min 65 mph, max 85 mph
+      getRandomValue(0, 1, 65, 85, (85 - 65)*armStrengthFactor, 10)
+    when "SC" # Screwball: min 70 mph, max 85 mph
+      getRandomValue(0, 1, 70, 85, (85 - 70)*armStrengthFactor, 10)
+    when "KN" # Knuckleball: min 60 mph, max 80 mph
+      getRandomValue(0, 1, 60, 80, (80 - 60)*armStrengthFactor, 10)
+    when "UN" # Mystery pitch: min 70 mph, max 90 mph
+      getRandomValue(0, 1, 70, 90, (90 - 70)*armStrengthFactor, 10)
+    end
+  end
+
+  def calculate_pitch_type_contact_adjustment(pitcher, pitch_type)
+    # Weight factors for the attributes (these will change depending on pitch type)
+    movement_factor     = 0.5
+    arm_strength_factor = 0.5
+
+    case pitch_type
+    when "FA" # 4-seam Fastball: 90% arm strength, 10% movement
+      arm_strength_factor = 0.9
+      movement_factor     = 0.1
+    when "FT" # 2-seam Fastball: 70% arm strength, 30% movement
+      arm_strength_factor = 0.7
+      movement_factor     = 0.3
+    when "FC" # Cutter: 65% arm strength, 35% movement
+      arm_strength_factor = 0.65
+      movement_factor     = 0.35
+    when "FS" # Splitter: 50% arm strength, 50% movement
+      arm_strength_factor = 0.5
+      movement_factor     = 0.5
+    when "FO" # Forkball: 35% arm strength, 65% movement
+      arm_strength_factor = 0.35
+      movement_factor     = 0.65
+    when "SI" # Sinker: 45% arm strength, 55% movement
+      arm_strength_factor = 0.45
+      movement_factor     = 0.55
+    when "SL" # Slider: 55% arm strength, 45% movement
+      arm_strength_factor = 0.55
+      movement_factor     = 0.45
+    when "CU" # Curveball: 10% arm strength, 90% movement
+      arm_strength_factor = 0.1
+      movement_factor     = 0.9
+    when "KC" # Knuckle-curve: 5% arm strength, 95% movement
+      arm_strength_factor = 0.05
+      movement_factor     = 0.95
+    when "EP" # Eephus: 0% arm strength, 100% movement
+      arm_strength_factor = 0.0
+      movement_factor     = 1.0
+    when "CH" # Changeup: 0% arm strength, 100% movement
+      arm_strength_factor = 0.0
+      movement_factor     = 1.0
+    when "SC" # Screwball: 60% arm strength, 40% movement
+      arm_strength_factor = 0.6
+      movement_factor     = 0.4
+    when "KN" # Knuckleball: 5% arm strength, 95% movement
+      arm_strength_factor = 0.05
+      movement_factor     = 0.95
+    when "UN" # Mystery pitch: generated randomly every time
+      arm_strength_factor = rand()
+      movement_factor     = 1.0 - rand()
+    end
+    movement_adjustment = map_attribute_to_range(pitcher.movement, AttributeAdjustments::PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MAX, true)
+    arm_strength_adjustment = map_attribute_to_range(pitcher.armStrength, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MAX, true)
+
+    # return weighted average of adjustments
+    arm_strength_adjustment*arm_strength_factor + movement_adjustment*movement_factor
+  end
+
+  # What type of pitch will the pitcher throw?
+  def determine_pitch_type(pitcher)
+    pitcher.pitch_array.sample
+  end
+
+  # Is the pitch a strike?
+  def isStrike
+    rand(100) < called_strike_percentage # This value is generated in Pitch and takes into account all the necessary variables there.
+  end
+
+  # Batter doesn't swing
+  def batterDoesntSwing
+    @result = isStrike ? PitchResult::TAKEN_FOR_STRIKE : PitchResult::TAKEN_FOR_BALL
+  end
+
+  # Returns true if the ball is hit in fair territory
+  def ballIsHitFair
+    percent_foul = 0.42 # Hard coded value for foul balls. TODO: Eventually this will vary based on player attributes.
+    rand() > percent_foul
+  end
+
+  # Returns true if the batter swings at a pitch
+  def batterSwings
+    rand(100) < @swing_percentage
+  end
+
+  # Returns true if the batter makes contact with a pitch
+  def batterMakesContact
+    rand(100) < @contact_percentage
   end
 
   # Retrieve called strike percentage
@@ -542,6 +703,8 @@ class Pitch
       batter_hand == "LEFT" ? PitchLocationType::WAY_INSIDE : PitchLocationType::WAY_OUTSIDE
     when 70
       batter_hand == "LEFT" ? PitchLocationType::WAY_LOW_AND_OUTSIDE : PitchLocationType::WAY_LOW_AND_INSIDE
+    when 71
+      PitchLocationType::WAY_LOW
     when 54, 62, 63
       batter_hand == "LEFT" ? PitchLocationType::JUST_LOW_AND_OUTSIDE : PitchLocationType::JUST_LOW_AND_INSIDE
     when 64..67
@@ -629,9 +792,13 @@ class Pitch
       end
     end
 
-    # Patient batters more likely to take pitches
-    if strikes < 2
-      swing_percentage *= map_attribute_to_range(@batter.patience, AttributeAdjustments::BATTER_PATIENCE_AFFECTS_SWING_PERCENTAGE_MIN, AttributeAdjustments::BATTER_PATIENCE_AFFECTS_SWING_PERCENTAGE_MAX, true)
+    count_status = get_count_status(balls, strikes)
+
+    # Patient batters more likely to take pitches (but only when ahead or even in the count)
+    if (count_status == CountStatus::BATTER_IS_AHEAD_IN_COUNT)
+      swing_percentage *= map_attribute_to_range(@batter.patience, AttributeAdjustments::BATTER_PATIENCE_AFFECTS_SWING_PERCENTAGE_WHEN_AHEAD_IN_COUNT_MIN, AttributeAdjustments::BATTER_PATIENCE_AFFECTS_SWING_PERCENTAGE_WHEN_AHEAD_IN_COUNT_MAX, true)
+    elsif (count_status == CountStatus::COUNT_IS_EVEN)
+      swing_percentage *= map_attribute_to_range(@batter.patience, AttributeAdjustments::BATTER_PATIENCE_AFFECTS_SWING_PERCENTAGE_WHEN_COUNT_IS_EVEN_MIN, AttributeAdjustments::BATTER_PATIENCE_AFFECTS_SWING_PERCENTAGE_WHEN_COUNT_IS_EVEN_MAX, true)
     end
 
     # Batters with good plate vision less likely to swing at balls
@@ -651,4 +818,50 @@ class Pitch
     # end
     # # @heat_maps[:swing_percentages].where(zone_id: zone_id, pitcher_hand: pitcher_hand, batter_hand: batter_hand, balls: balls, strikes: strikes, pitch_type: pitch_type).first.value
   end
+
+  # returns the count status (ahead, even, or behind) from the batter's perspective
+  def get_count_status(balls, strikes)
+    if (balls > strikes && strikes != 2) # 1-0, 2-0, 3-0, 2-1, 3-1
+      CountStatus::BATTER_IS_AHEAD_IN_COUNT
+    elsif (strikes > balls || strikes == 2) # 0-1, 0-2, 1-2, 2-2, 3-2
+      CountStatus::BATTER_IS_BEHIND_IN_COUNT
+    else
+      CountStatus::COUNT_IS_EVEN # 0-0, 1-1
+    end
+  end
+
+  # The name of a pitch type
+  def type_name
+    case @pitch_type
+    when "FA" # 4-seam Fastball: 90% arm strength, 10% movement
+      "Four-seam fastball"
+    when "FT" # 2-seam Fastball: 70% arm strength, 30% movement
+      "Two-seam fastball"
+    when "FC" # Cutter: 65% arm strength, 35% movement
+      "Cutter"
+    when "FS" # Splitter: 50% arm strength, 50% movement
+      "Splitter"
+    when "FO" # Forkball: 35% arm strength, 65% movement
+      "Forkball"
+    when "SI" # Sinker: 45% arm strength, 55% movement
+      "Sinker"
+    when "SL" # Slider: 55% arm strength, 45% movement
+      "Slider"
+    when "CU" # Curveball: 10% arm strength, 90% movement
+      "Curveball"
+    when "KC" # Knuckle-curve: 5% arm strength, 95% movement
+      "Knuckle-curve"
+    when "EP" # Eephus: 0% arm strength, 100% movement
+      "Eephus"
+    when "CH" # Changeup: 0% arm strength, 100% movement
+      "Changeup"
+    when "SC" # Screwball: 60% arm strength, 40% movement
+      "Screwball"
+    when "KN" # Knuckleball: 5% arm strength, 95% movement
+      "Knuckleball"
+    when "UN" # Mystery pitch: generated randomly every time
+      "Mystery pitch"
+    end
+  end
+
 end

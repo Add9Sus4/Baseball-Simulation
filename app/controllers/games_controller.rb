@@ -25,30 +25,34 @@ class GamesController < ApplicationController
   # POST /games.json
   def create
 
-    20.times do
+    @game = Game.new(game_params)
+    @game.prepare(Team.find(game_params[:home_team_id]), Team.find(game_params[:away_team_id]), 0, 0)
+    @game.play
 
-      # hash to determine if a team has already played a game (to avoid duplicate games)
-      @already_played_hash = Hash.new 0
-      @game_number = Season.first.next_game
-      @done = false
-      Team.find_each do |team|
-        unless @already_played_hash[team.id] == 1 || @done then
-          @game = Game.new(game_params)
-          schedule = team.schedule.split(", ").map {|s| s.to_i} # array of opponent ids
-          @game.away_team_id = schedule[@game_number] # Assume opponent is away team (this will be changed later)
-          @game.home_team_id = team.id
-          # Add both teams to list of already played teams
-          @already_played_hash[schedule[@game_number]] = 1
-          @already_played_hash[team.id] = 1
-          @game.play
-          @done = true
-        end
-      end
-
-      # increment game number in season
-      Season.first.update_attributes(next_game: Season.first.next_game + 1)
-
-    end
+    # 20.times do
+    #
+    #   # hash to determine if a team has already played a game (to avoid duplicate games)
+    #   @already_played_hash = Hash.new 0
+    #   @game_number = Season.first.next_game
+    #   @done = false
+    #   Team.find_each do |team|
+    #     unless @already_played_hash[team.id] == 1 || @done then
+    #       @game = Game.new(game_params)
+    #       schedule = team.schedule.split(", ").map {|s| s.to_i} # array of opponent ids
+    #       @game.away_team_id = schedule[@game_number] # Assume opponent is away team (this will be changed later)
+    #       @game.home_team_id = team.id
+    #       # Add both teams to list of already played teams
+    #       @already_played_hash[schedule[@game_number]] = 1
+    #       @already_played_hash[team.id] = 1
+    #       @game.play
+    #       @done = true
+    #     end
+    #   end
+    #
+    #   # increment game number in season
+    #   Season.first.update_attributes(next_game: Season.first.next_game + 1)
+    #
+    # end
 
     # 30.times do
     #
@@ -59,19 +63,19 @@ class GamesController < ApplicationController
     # end
 
 
-    # respond_to do |format|
-    #   if @game.save
-    #     format.html { redirect_to @game, notice: 'Game was successfully created.' }
-    #     format.json { render :show, status: :created, location: @game }
-    #   else
-    #     format.html { render :new }
-    #     format.json { render json: @game.errors, status: :unprocessable_entity }
-    #   end
-    # end
     respond_to do |format|
-      format.html { redirect_to @game, notice: 'Game was successfully created.' }
-      format.json { render :show, status: :created, location: @game }
+      if @game.save
+        format.html { redirect_to @game, notice: 'Game was successfully created.' }
+        format.json { render :show, status: :created, location: @game }
+      else
+        format.html { render :new }
+        format.json { render json: @game.errors, status: :unprocessable_entity }
+      end
     end
+    # respond_to do |format|
+    #   format.html { redirect_to @game, notice: 'Game was successfully created.' }
+    #   format.json { render :show, status: :created, location: @game }
+    # end
   end
 
   # PATCH/PUT /games/1

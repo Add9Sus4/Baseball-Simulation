@@ -11,14 +11,14 @@
 </div>
 <% end %>
 
-<!-- <div class="field">
+<div class="field">
   <%= f.label :home_team_id %><br>
   <%= collection_select(:game, :home_team_id, Team.all, :id, :full_name, {:selected => Team.first.id}) %>
 </div>
 <div class="field">
   <%= f.label :away_team_id %><br>
   <%= collection_select(:game, :away_team_id, Team.all, :id, :full_name, {:selected => Team.last.id}) %>
-</div> -->
+</div>
 <div class="field">
   <%= f.hidden_field :attendance %>
   <%= f.hidden_field :stadium_name %>
