@@ -18,8 +18,8 @@ class Game < ActiveRecord::Base
   def prepare home_team, away_team, game_num, season_num
     @home_team = home_team
     @away_team = away_team
-    game_number = game_num
-    season_id = season_num
+    @game_number = game_num
+    @season_id = season_num
 
     @over = false
     @inning_number = 1
@@ -711,8 +711,8 @@ class Game < ActiveRecord::Base
     update_attribute(:away_inning_scores, @away_team.game_inning_scores)
 
     update_attribute(:pbp, play_by_play)
-    update_attribute(:season_id, season_id)
-    update_attribute(:game_number, game_number)
+    update_attribute(:season_id, @season_id)
+    update_attribute(:game_number, @game_number)
     update_attribute(:winning_pitcher, winning_pitcher)
     update_attribute(:losing_pitcher, losing_pitcher)
 
