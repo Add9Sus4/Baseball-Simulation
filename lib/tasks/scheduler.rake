@@ -126,6 +126,8 @@ end
 
 task :simulate_games => :environment do
 
+  puts "Starting simulate_games task"
+
   if Season.first.simulating <= 10 # Simulate games
     puts "Simulating games..."
 
