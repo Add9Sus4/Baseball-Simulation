@@ -173,7 +173,7 @@ task :simulate_games => :environment do
           # Add both teams to list of already played teams
           @already_played_hash[schedule[@game_number]] = 1
           @already_played_hash[team.id] = 1
-          @game.prepare(Team.find(home_team_id), Team.find(away_team_id), @game_number, 0)
+          @game.prepare(Team.find(@game.home_team_id), Team.find(@game.away_team_id), @game_number, 0)
           @game.play
         end
       end # end simulating games
