@@ -285,6 +285,32 @@ class Team < ActiveRecord::Base
     end
   end
 
+  # Given a player id, find that player's current position on the team, abbreviated
+  def find_position_abbreviation_of_player(player_id)
+    case player_id
+    when catcher
+      "C"
+    when designated_hitter
+      "DH"
+    when first_base
+      "1B"
+    when second_base
+      "2B"
+    when third_base
+      "3B"
+    when shortstop
+      "SS"
+    when left_field
+      "LF"
+    when center_field
+      "CF"
+    when right_field
+      "RF"
+    else
+      "BN"
+    end
+  end
+
   # Given a player id, find that player's current position on the team
   def find_position_of_player(player_id)
     case player_id

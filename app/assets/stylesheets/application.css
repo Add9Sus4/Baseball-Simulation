@@ -16,6 +16,25 @@
  *= require_self
  */
 
+.default-table {
+  border-collapse: separate;
+  border: 8px solid #54708C;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.default-table>thead>tr>th {
+  text-align: center;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.default-table>tbody>tr>td {
+  text-align: center;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 #app_body {
   background-color: #132639;
 }

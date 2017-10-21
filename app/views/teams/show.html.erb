@@ -77,7 +77,584 @@
   width: 0px;
 }
 
+.ui-tabs {
+  background-color: white;
+}
+
+.ui-tabs-nav {
+  background-color: #9fbfdf;
+}
+
 </style>
+
+<h1 class="app_text_main">Roster</h1>
+
+<script>
+$( function() {
+  $( "#tabs" ).tabs();
+  $('.position_select').selectmenu({
+    width: 50
+  });
+} );
+</script>
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Batting Info</a></li>
+    <li><a href="#tabs-2">Batting Stats</a></li>
+    <li><a href="#tabs-3">Pitching Info</a></li>
+    <li><a href="#tabs-4">Pitching Stats</a></li>
+    <li><a href="#tabs-5">Edit Positions</a></li>
+  </ul>
+  <div id="tabs-1">
+    <table class="default-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Height</th>
+          <th>Weight</th>
+          <th>Bats</th>
+          <th>Throws</th>
+          <th>Natural Position</th>
+          <th>Salary</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @team.players.where("position != ?", 'P').each do |player| %>
+        <tr class="player_row">
+          <td>
+            <% if @team.is_in_starting_lineup(player.id) %>
+            <strong><%= link_to player.full_name + @team.find_position_of_player(player.id), player, method: :get %></strong>
+            <% else %>
+            <%= link_to player.full_name + @team.find_position_of_player(player.id), player, method: :get %>
+            <% end %>
+            <span "hidden_id" hidden><%= player.id %></span>
+          </td>
+          <td><%= player.age %></td>
+          <td class="height"><%= player.height %></td>
+          <td><%= player.weight %> lb.</td>
+          <td><%= player.hitting_side.capitalize %></td>
+          <td><%= player.throwing_hand.capitalize %></td>
+          <td><%= player.position.upcase %></td>
+          <td><%= number_to_currency(player.salary) %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div id="tabs-2">
+    <table class="default-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th class="tooltip_enable" title="At-bats">AB</th>
+          <th class="tooltip_enable" title="Runs scored">R</th>
+          <th class="tooltip_enable" title="Hits">H</th>
+          <th class="tooltip_enable" title="Doubles">2B</th>
+          <th class="tooltip_enable" title="Triples">3B</th>
+          <th class="tooltip_enable" title="Home runs">HR</th>
+          <th class="tooltip_enable" title="Runs batted in">RBI</th>
+          <th class="tooltip_enable" title="Walks">BB</th>
+          <th class="tooltip_enable" title="Strikeouts">K</th>
+          <th class="tooltip_enable" title="Stolen bases">SB</th>
+          <th class="tooltip_enable" title="Caught stealing">CS</th>
+          <th class="tooltip_enable" title="Batting average">AVG</th>
+          <th class="tooltip_enable" title="On-base percentage">OBP</th>
+          <th class="tooltip_enable" title="Slugging percentage">SLG</th>
+          <th class="tooltip_enable" title="On-base plus slugging percentage">OPS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @team.players.where("position != ?", 'P').each do |player| %>
+        <tr>
+          <td><%= link_to player.full_name, player, method: :get %></td>
+          <td><%= player.atbats %></td>
+          <td><%= player.runs %></td>
+          <td><%= player.hits %></td>
+          <td><%= player.doubles %></td>
+          <td><%= player.triples %></td>
+          <td><%= player.home_runs %></td>
+          <td><%= player.rbi %></td>
+          <td><%= player.walks %></td>
+          <td><%= player.strikeouts %></td>
+          <td><%= player.stolen_bases %></td>
+          <td><%= player.caught_stealing %></td>
+          <% @avg = player.hits.to_f/player.atbats.to_f %>
+          <% @obp = (player.hits + player.walks).to_f/(player.atbats + player.walks).to_f %>
+          <% @slg = (player.hits - player.doubles - player.triples - player.home_runs + 2 * player.doubles + 3 * player.triples + 4 * player.home_runs).to_f/player.atbats.to_f %>
+          <% @ops = @obp + @slg %>
+          <td><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></td>
+          <td><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
+          <td><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
+          <td><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
+        </tr>
+        <% end %>
+        <tr>
+          <% @total_atbats = 0 %>
+          <% @total_runs = 0 %>
+          <% @total_hits = 0 %>
+          <% @total_doubles = 0 %>
+          <% @total_triples = 0 %>
+          <% @total_home_runs = 0 %>
+          <% @total_rbi = 0 %>
+          <% @total_walks = 0 %>
+          <% @total_strikeouts = 0 %>
+          <% @total_stolen_bases = 0 %>
+          <% @total_caught_stealing = 0 %>
+          <% @team.players.each do |player| %>
+          <% @total_atbats += player.atbats %>
+          <% @total_runs += player.runs %>
+          <% @total_hits += player.hits %>
+          <% @total_doubles += player.doubles %>
+          <% @total_triples += player.triples %>
+          <% @total_home_runs += player.home_runs %>
+          <% @total_rbi += player.rbi %>
+          <% @total_walks += player.walks %>
+          <% @total_strikeouts += player.strikeouts %>
+          <% @total_stolen_bases += player.stolen_bases %>
+          <% @total_caught_stealing += player.caught_stealing %>
+          <% end %>
+          <td><strong>Total</strong></td>
+          <td><strong><%= @total_atbats %></strong></td>
+          <td><strong><%= @total_runs %></strong></td>
+          <td><strong><%= @total_hits %></strong></td>
+          <td><strong><%= @total_doubles %></strong></td>
+          <td><strong><%= @total_triples %></strong></td>
+          <td><strong><%= @total_home_runs %></strong></td>
+          <td><strong><%= @total_rbi %></strong></td>
+          <td><strong><%= @total_walks %></strong></td>
+          <td><strong><%= @total_strikeouts %></strong></td>
+          <td><strong><%= @total_stolen_bases %></strong></td>
+          <td><strong><%= @total_caught_stealing %></strong></td>
+          <% @avg = @total_hits.to_f/@total_atbats.to_f %>
+          <% @obp = (@total_hits + @total_walks).to_f/(@total_atbats + @total_walks).to_f %>
+          <% @slg = (@total_hits - @total_doubles - @total_triples - @total_home_runs + 2 * @total_doubles + 3 * @total_triples + 4 * @total_home_runs).to_f/@total_atbats.to_f %>
+          <% @ops = @obp + @slg %>
+          <td><strong><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></strong></td>
+          <td><strong><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></strong></td>
+          <td><strong><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></strong></td>
+          <td><strong><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div id="tabs-3">
+    <table class="default-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Height</th>
+          <th>Weight</th>
+          <th>Bats</th>
+          <th>Throws</th>
+          <th>Natural Position</th>
+          <th>Salary</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @team.players.where("position = ?", 'P').each do |player| %>
+        <tr class="player_row">
+          <td>
+            <% if @team.is_in_starting_lineup(player.id) %>
+            <strong><%= link_to player.full_name + @team.find_position_of_player(player.id), player, method: :get %></strong>
+            <% else %>
+            <%= link_to player.full_name + @team.find_position_of_player(player.id), player, method: :get %>
+            <% end %>
+            <span "hidden_id" hidden><%= player.id %></span>
+          </td>
+          <td><%= player.age %></td>
+          <td class="height"><%= player.height %></td>
+          <td><%= player.weight %> lb.</td>
+          <td><%= player.hitting_side.capitalize %></td>
+          <td><%= player.throwing_hand.capitalize %></td>
+          <td><%= player.position.upcase %></td>
+          <td><%= number_to_currency(player.salary) %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div id="tabs-4">
+    <table class="default-table">
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th class="tooltip_enable" title="Wins">W</th>
+          <th class="tooltip_enable" title="Losses">L</th>
+          <th class="tooltip_enable" title="Innings pitched">IP</th>
+          <th class="tooltip_enable" title="Hits allowed">H</th>
+          <th class="tooltip_enable" title="Runs allowed">R</th>
+          <th class="tooltip_enable" title="Earned runs allowed">ER</th>
+          <th class="tooltip_enable" title="Home runs allowed">HR</th>
+          <th class="tooltip_enable" title="Walks">BB</th>
+          <th class="tooltip_enable" title="Strikeouts recorded">K</th>
+          <th class="tooltip_enable" title="Earned run average">ERA</th>
+          <th class="tooltip_enable" title="Walks plus hits per inning pitched">WHIP</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @team.players.where("position = ?", 'P').each do |player| %>
+        <tr>
+          <td title="" class="player_link tooltip_enable">
+            <span hidden="true" class="player_id_span"><%= player.id %></span>
+            <%= link_to @team.find_pitching_role_of_player(player.id) + " - " + player.full_name, player, method: :get %>
+          </td>
+          <td><%= player.wins %></td>
+          <td><%= player.losses %></td>
+          <td><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td>
+          <td><%= player.hits_allowed %></td>
+          <td><%= player.runs_allowed %></td>
+          <td><%= player.earned_runs_allowed %></td>
+          <td><%= player.home_runs_allowed %></td>
+          <td><%= player.walks_allowed %></td>
+          <td><%= player.strikeouts_recorded %></td>
+          <td><%= number_with_precision(zero_if_nan(player.earned_runs_allowed.to_f*27/player.outs_recorded.to_f), precision: 2) %></td>
+          <td><%= number_with_precision(zero_if_nan((player.walks_allowed + player.hits_allowed).to_f*3/player.outs_recorded.to_f), precision: 2) %></td>
+        </tr>
+        <% end %>
+        <tr>
+          <% @total_wins = 0 %>
+          <% @total_losses = 0 %>
+          <% @total_outs_recorded = 0 %>
+          <% @total_hits_allowed = 0 %>
+          <% @total_runs_allowed = 0 %>
+          <% @total_earned_runs_allowed = 0 %>
+          <% @total_home_runs_allowed = 0 %>
+          <% @total_walks_allowed = 0 %>
+          <% @total_strikeouts_recorded = 0 %>
+          <% @team.players.each do |player| %>
+          <% @total_outs_recorded += player.outs_recorded %>
+          <% @total_hits_allowed += player.hits_allowed %>
+          <% @total_runs_allowed += player.runs_allowed %>
+          <% @total_earned_runs_allowed += player.earned_runs_allowed %>
+          <% @total_home_runs_allowed += player.home_runs_allowed %>
+          <% @total_walks_allowed += player.walks_allowed %>
+          <% @total_strikeouts_recorded += player.strikeouts_recorded %>
+          <% @total_wins += player.wins %>
+          <% @total_losses += player.losses %>
+          <% end %>
+          <td><strong>Total</strong></td>
+          <td><strong><%= @total_wins %></strong></td>
+          <td><strong><%= @total_losses %></strong></td>
+          <td><strong><%= number_with_precision(@total_outs_recorded.to_f/3, precision: 1) %></strong></td>
+          <td><strong><%= @total_hits_allowed %></strong></td>
+          <td><strong><%= @total_runs_allowed %></strong></td>
+          <td><strong><%= @total_earned_runs_allowed %></strong></td>
+          <td><strong><%= @total_home_runs_allowed %></strong></td>
+          <td><strong><%= @total_walks_allowed %></strong></td>
+          <td><strong><%= @total_strikeouts_recorded %></strong></td>
+          <td><strong><%= number_with_precision(zero_if_nan(@total_earned_runs_allowed.to_f*27/@total_outs_recorded.to_f), precision: 2) %></strong></td>
+          <td><strong><%= number_with_precision(zero_if_nan((@total_walks_allowed + @total_hits_allowed).to_f*3/@total_outs_recorded.to_f), precision: 2) %></strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div id="tabs-5">
+    <button id="update_positions_button" class="ui-button ui-widget ui-corner-all">Update Positions</button>
+    <fieldset>
+      <label for="radio-info">Info</label>
+      <input type="radio" name="radio-1" id="radio-info" checked>
+      <label for="radio-stats">Stats</label>
+      <input type="radio" name="radio-1" id="radio-stats">
+      <label for="radio-attributes">Attributes</label>
+      <input type="radio" name="radio-1" id="radio-attributes">
+    </fieldset>
+    <table class="default-table">
+      <thead>
+        <tr>
+          <th>Position</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th class="info_cell">Height</th>
+          <th class="info_cell">Weight</th>
+          <th class="info_cell">Bats</th>
+          <th class="info_cell">Throws</th>
+          <th>Nat. Pos.</th>
+          <th class="info_cell">Salary</th>
+          <th class="attribute_cell tooltip_enable" title="Batting Average">Bat</th>
+          <th class="attribute_cell tooltip_enable" title="Power">Pow</th>
+          <th class="attribute_cell tooltip_enable" title="Contact">Con</th>
+          <th class="attribute_cell tooltip_enable" title="Plate Vision">Plv</th>
+          <th class="attribute_cell tooltip_enable" title="Patience">Pat</th>
+          <th class="attribute_cell tooltip_enable" title="Pull Amount">Pul</th>
+          <th class="attribute_cell tooltip_enable" title="Uppercut Amount">Upp</th>
+          <th class="attribute_cell tooltip_enable" title="Speed">Spe</th>
+          <th class="attribute_cell tooltip_enable" title="Agility">Agi</th>
+          <th class="attribute_cell tooltip_enable" title="Reaction Time">Rtm</th>
+          <th class="attribute_cell tooltip_enable" title="Arm Strength">Arm</th>
+          <th class="attribute_cell tooltip_enable" title="Fielding">Fld</th>
+          <th class="attribute_cell tooltip_enable" title="Throwing">Thr</th>
+          <th class="attribute_cell tooltip_enable" title="Intelligence">Int</th>
+          <th class="attribute_cell tooltip_enable" title="Endurance">End</th>
+          <th class="stats_cell tooltip_enable" title="At-bats">AB</th>
+          <th class="stats_cell tooltip_enable" title="Runs scored">R</th>
+          <th class="stats_cell tooltip_enable" title="Hits">H</th>
+          <th class="stats_cell tooltip_enable" title="Doubles">2B</th>
+          <th class="stats_cell tooltip_enable" title="Triples">3B</th>
+          <th class="stats_cell tooltip_enable" title="Home runs">HR</th>
+          <th class="stats_cell tooltip_enable" title="Runs batted in">RBI</th>
+          <th class="stats_cell tooltip_enable" title="Walks">BB</th>
+          <th class="stats_cell tooltip_enable" title="Strikeouts">K</th>
+          <th class="stats_cell tooltip_enable" title="Stolen bases">SB</th>
+          <th class="stats_cell tooltip_enable" title="Caught stealing">CS</th>
+          <th class="stats_cell tooltip_enable" title="Batting average">AVG</th>
+          <th class="stats_cell tooltip_enable" title="On-base percentage">OBP</th>
+          <th class="stats_cell tooltip_enable" title="Slugging percentage">SLG</th>
+          <th class="stats_cell tooltip_enable" title="On-base plus slugging percentage">OPS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @team.players.where("position != ?", 'P').each do |player| %>
+        <tr class="player_row">
+          <td class="position_select_cell">
+            <span class="hidden_position_abbrev" hidden="true"><%= @team.find_position_abbreviation_of_player(player.id)%></span>
+            <span class="hidden_player_id" hidden="true"><%= player.id %></span>
+            <select class="position_select">
+              <option value="DH">DH</option>
+              <option value="C">C</option>
+              <option value="1B">1B</option>
+              <option value="2B">2B</option>
+              <option value="3B">3B</option>
+              <option value="SS">SS</option>
+              <option value="LF">LF</option>
+              <option value="CF">CF</option>
+              <option value="RF">RF</option>
+              <option value="BN">BN</option>
+            </select>
+          </td>
+          <td>
+            <% if @team.is_in_starting_lineup(player.id) %>
+            <strong><%= link_to player.full_name + @team.find_position_of_player(player.id), player, method: :get %></strong>
+            <% else %>
+            <%= link_to player.full_name + @team.find_position_of_player(player.id), player, method: :get %>
+            <% end %>
+            <span "hidden_id" hidden><%= player.id %></span>
+          </td>
+          <td><%= player.age %></td>
+          <td class="height info_cell"><%= player.height %></td>
+          <td class="info_cell"><%= player.weight %> lb.</td>
+          <td class="info_cell"><%= player.hitting_side.capitalize %></td>
+          <td class="info_cell"><%= player.throwing_hand.capitalize %></td>
+          <td><%= player.position.upcase %></td>
+          <td class="info_cell"><%= number_to_currency(player.salary) %></td>
+          <td class="attribute_cell hotcold"><%= player.batting_average %></td>
+          <td class="attribute_cell hotcold"><%= player.power %></td>
+          <td class="attribute_cell hotcold"><%= player.contact %></td>
+          <td class="attribute_cell hotcold"><%= player.plate_vision %></td>
+          <td class="attribute_cell hotcold"><%= player.patience %></td>
+          <td class="attribute_cell hotcold"><%= player.pull_amount %></td>
+          <td class="attribute_cell hotcold"><%= player.uppercut_amount %></td>
+          <td class="attribute_cell hotcold"><%= player.speed %></td>
+          <td class="attribute_cell hotcold"><%= player.agility %></td>
+          <td class="attribute_cell hotcold"><%= player.reactionTime %></td>
+          <td class="attribute_cell hotcold"><%= player.armStrength %></td>
+          <td class="attribute_cell hotcold"><%= player.average_fielding %></td>
+          <td class="attribute_cell hotcold"><%= player.average_throwing %></td>
+          <td class="attribute_cell hotcold"><%= player.intelligence %></td>
+          <td class="attribute_cell hotcold"><%= player.endurance %></td>
+          <td class="stats_cell"><%= player.atbats %></td>
+          <td class="stats_cell"><%= player.runs %></td>
+          <td class="stats_cell"><%= player.hits %></td>
+          <td class="stats_cell"><%= player.doubles %></td>
+          <td class="stats_cell"><%= player.triples %></td>
+          <td class="stats_cell"><%= player.home_runs %></td>
+          <td class="stats_cell"><%= player.rbi %></td>
+          <td class="stats_cell"><%= player.walks %></td>
+          <td class="stats_cell"><%= player.strikeouts %></td>
+          <td class="stats_cell"><%= player.stolen_bases %></td>
+          <td class="stats_cell"><%= player.caught_stealing %></td>
+          <% @avg = player.hits.to_f/player.atbats.to_f %>
+          <% @obp = (player.hits + player.walks).to_f/(player.atbats + player.walks).to_f %>
+          <% @slg = (player.hits - player.doubles - player.triples - player.home_runs + 2 * player.doubles + 3 * player.triples + 4 * player.home_runs).to_f/player.atbats.to_f %>
+          <% @ops = @obp + @slg %>
+          <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></td>
+          <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
+          <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
+          <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+
+$('.hotcold').each(function() {
+  var val = $(this).text();
+  var red;
+  var blue;
+  var green;
+  if (val > 50) {
+    green = 0;
+    blue = 0;
+    red = (val - 50)*255/50;
+  } else {
+    green = 0;
+    red = 0;
+    blue = (50 - val)*255/50
+  }
+  var rgb = "rgb(" + Math.floor(red) + "," + Math.floor(green) + "," + Math.floor(blue) + ")";
+  $(this).css({"color":rgb});
+});
+
+$(".attribute_cell").hide();
+$(".stats_cell").hide();
+
+// Radio button functionality for edit position view options
+$(function() {
+  $("input").checkboxradio({
+  icon: false
+  });
+});
+
+// Edit position: Info view option clicked
+$("#radio-info").click(function() {
+  $(".attribute_cell").hide();
+  $(".info_cell").show();
+  $(".stats_cell").hide();
+});
+
+// Edit position: Info view option clicked
+$("#radio-stats").click(function() {
+  $(".attribute_cell").hide();
+  $(".info_cell").hide();
+  $(".stats_cell").show();
+});
+
+// Edit position: Info view option clicked
+$("#radio-attributes").click(function() {
+  $(".attribute_cell").show();
+  $(".info_cell").hide();
+  $(".stats_cell").hide();
+});
+
+// This function checks if the position configuration is valid (when user edits positions)
+function positionsValid() {
+  var positions = {};
+  positions["DH"] = 0;
+  positions["C"] = 0;
+  positions["1B"] = 0;
+  positions["2B"] = 0;
+  positions["3B"] = 0;
+  positions["SS"] = 0;
+  positions["LF"] = 0;
+  positions["CF"] = 0;
+  positions["RF"] = 0;
+  positions["BN"] = 0;
+
+  $('.position_select_cell').each(function() {
+    var selected_position = $(this).find('select').val();
+    positions[selected_position] += 1;
+  });
+
+  var valid = true;
+  if (positions["DH"] != 1) valid = false;
+  if (positions["C"] != 1) valid = false;
+  if (positions["1B"] != 1) valid = false;
+  if (positions["2B"] != 1) valid = false;
+  if (positions["3B"] != 1) valid = false;
+  if (positions["SS"] != 1) valid = false;
+  if (positions["LF"] != 1) valid = false;
+  if (positions["CF"] != 1) valid = false;
+  if (positions["RF"] != 1) valid = false;
+  if (positions["BN"] != 4) valid = false;
+
+  return valid;
+}
+
+
+
+$("#update_positions_button").button();
+function savePositionChanges() {
+  var position_ids = {};
+
+  $('.position_select_cell').each(function() {
+    var selected_position = $(this).find('select').val();
+    position_ids[selected_position] = $(this).find(".hidden_player_id").text();
+  });
+
+  $.ajax({
+    url: window.location.href,
+    type: 'PATCH',
+    dataType: 'json',
+    data: { "team": {
+    "designated_hitter": position_ids["DH"],
+    "catcher": position_ids["C"],
+    "first_base": position_ids["1B"],
+    "second_base": position_ids["2B"],
+    "third_base": position_ids["3B"],
+    "shortstop": position_ids["SS"],
+    "left_field": position_ids["LF"],
+    "center_field": position_ids["CF"],
+    "right_field": position_ids["RF"]
+    }
+    },
+    success: function (data, textStatus, jqXHR) {
+      position_ids = {};
+      // Reload edit positions table
+      $("#tabs-5").load("/teams/" + data.id + " #tabs-5", function(responseText, textStatus, XMLHttpRequest) {
+        $("#update_positions_button").button();
+        $('.position_select_cell').each(function() {
+          var selected_position = $(this).find('span').first().text();
+          $(this).find('select').val(selected_position);
+        });
+        formatData();
+        $('#update_positions_button').click(function() {
+          savePositionChanges();
+        });
+        $( function() {
+          $( "#tabs" ).tabs();
+          $('.position_select').selectmenu({
+            width: 50
+          });
+        });
+      });
+
+      // Reload batting info table
+      $("#tabs-1").load("/teams/" + data.id + " #tabs-1", function(responseText, textStatus, XMLHttpRequest) {
+
+      });
+
+      // Reload batting stats table
+      $("#tabs-2").load("/teams/" + data.id + " #tabs-2", function(responseText, textStatus, XMLHttpRequest) {
+
+      });
+
+      // Reload pitching info table
+      $("#tabs-3").load("/teams/" + data.id + " #tabs-3", function(responseText, textStatus, XMLHttpRequest) {
+
+      });
+
+      // Reload pitching stats table
+      $("#tabs-4").load("/teams/" + data.id + " #tabs-4", function(responseText, textStatus, XMLHttpRequest) {
+
+      });
+    }
+  });
+}
+
+$('.position_select_cell').each(function() {
+  var selected_position = $(this).find('span').first().text();
+  $(this).find('select').val(selected_position);
+});
+
+$('#update_positions_button').click(function() {
+  savePositionChanges();
+});
+
+// Disable button if multiple players at the same position
+$('.position_select').on("selectmenuchange", function(event, ui) {
+  if (positionsValid()) {
+    $("#update_positions_button").button("option", "disabled", false);
+  } else {
+    $("#update_positions_button").button("option", "disabled", true);
+  }
+});
+
+</script>
 
 <h2 class="app_text_main">
   <%= @team.city %>
@@ -102,12 +679,6 @@ Owner: <%= link_to @team.user.name, @team.user, method: :get %>
 <% end %>
 </span>
 
-<p>
-  <!-- <%= link_to 'Edit Team Info', edit_team_path(@team), method: :get %> |
-  <%= link_to 'Delete Team', @team, method: :delete, data: { confirm: 'Are you sure you want to delete the ' + @team.name + '?' } %> |
-  <%= link_to 'All Teams', teams_path, method: :get %> |
-  <%= link_to 'Back', 'javascript:history.go(-1);', method: :get %> -->
-</p>
 
 
 <div id="lineup_div">
