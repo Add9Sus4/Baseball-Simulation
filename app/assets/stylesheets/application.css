@@ -16,6 +16,10 @@
  *= require_self
  */
 
+ .custom-border-left {
+   border-left: 1px solid #bfccd9;
+ }
+
 .default-table {
   border-collapse: separate;
   border: 8px solid #54708C;
@@ -27,12 +31,24 @@
   text-align: center;
   padding-left: 5px;
   padding-right: 5px;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 .default-table>tbody>tr>td {
   text-align: center;
   padding-left: 5px;
   padding-right: 5px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.default-table>thead>tr>th {
+  border-bottom: 1px solid #bfccd9;
+}
+
+.default-table>tbody>tr:last-child>td {
+  border-top: 1px solid #bfccd9;
 }
 
 #app_body {

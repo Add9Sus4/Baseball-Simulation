@@ -333,7 +333,7 @@ class Team < ActiveRecord::Base
     when right_field
       ", RF"
     else
-      ""
+      ", " + find_pitching_role_of_player(player_id)
     end
   end
 
