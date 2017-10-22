@@ -289,12 +289,12 @@
           <th class="info_cell">Weight</th>
           <th class="info_cell">Throws</th>
           <th class="info_cell">Salary</th>
+          <th class="attribute_cell tooltip_enable" title="How hard this player can throw the ball">Arm</th>
           <th class="attribute_cell tooltip_enable" title="How well this player can make a pitch deviate from its expected path">Mov</th>
           <th class="attribute_cell tooltip_enable" title="How well this player can throw strikes instead of balls">Ctr</th>
           <th class="attribute_cell tooltip_enable" title="How well this player can hit a specific location with a pitch">Loc</th>
           <th class="attribute_cell tooltip_enable" title="How well this player can make quick, sudden movements">Agi</th>
           <th class="attribute_cell tooltip_enable" title="How quickly this player reacts to a play">Rtm</th>
-          <th class="attribute_cell tooltip_enable" title="How far this player can throw">Arm</th>
           <th class="attribute_cell tooltip_enable" title="How well this player can field the ball">Fld</th>
           <th class="attribute_cell tooltip_enable" title="How accurately this player can throw the ball">Thr</th>
           <th class="attribute_cell tooltip_enable" title="How often this player makes the right decision for a given play">Int</th>
@@ -346,12 +346,12 @@
           <td class="info_cell"><%= player.weight %> lb.</td>
           <td class="info_cell"><%= player.throwing_hand.capitalize %></td>
           <td class="info_cell"><%= number_to_currency(player.salary) %></td>
-          <td class="attribute_cell hotcold custom-border-left"><%= player.movement %></td>
+          <td class="attribute_cell hotcold custom-border-left"><%= player.armStrength %></td>
+          <td class="attribute_cell hotcold"><%= player.movement %></td>
           <td class="attribute_cell hotcold"><%= player.control %></td>
           <td class="attribute_cell hotcold"><%= player.location %></td>
           <td class="attribute_cell hotcold custom-border-left"><%= player.agility %></td>
           <td class="attribute_cell hotcold"><%= player.reactionTime %></td>
-          <td class="attribute_cell hotcold"><%= player.armStrength %></td>
           <td class="attribute_cell hotcold"><%= player.average_fielding %></td>
           <td class="attribute_cell hotcold"><%= player.average_throwing %></td>
           <td class="attribute_cell hotcold"><%= player.intelligence %></td>
