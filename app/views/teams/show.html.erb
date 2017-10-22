@@ -169,9 +169,9 @@
           </td>
           <td class="custom-border-left">
             <% if @team.is_in_starting_lineup(player.id) %>
-            <strong><%= link_to player.full_name + @team.find_position_of_player(player.id), player, method: :get %></strong>
+            <strong><%= link_to player.full_name, player, method: :get %>, <%=@team.find_position_abbreviation_of_player(player.id) %></strong>
             <% else %>
-            <%= link_to player.full_name + @team.find_position_of_player(player.id), player, method: :get %>
+            <%= link_to player.full_name, player, method: :get %>, <%= @team.find_position_abbreviation_of_player(player.id) %>
             <% end %>
             <span "hidden_id" hidden><%= player.id %></span>
           </td>
@@ -335,9 +335,9 @@
           </td>
           <td class="custom-border-left">
             <% if @team.is_in_starting_lineup(player.id) %>
-            <strong><%= link_to player.full_name + @team.find_position_of_player(player.id), player, method: :get %></strong>
+            <strong><%= link_to player.full_name, player, method: :get %><%= @team.find_position_of_player(player.id)%></strong>
             <% else %>
-            <%= link_to player.full_name + @team.find_position_of_player(player.id), player, method: :get %>
+            <%= link_to player.full_name, player, method: :get %><%= @team.find_position_of_player(player.id)%>
             <% end %>
             <span "hidden_id" hidden><%= player.id %></span>
           </td>
