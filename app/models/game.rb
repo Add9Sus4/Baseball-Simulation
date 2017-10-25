@@ -55,13 +55,25 @@ class Game < ActiveRecord::Base
     # lineups
     @home_team.game_lineup = ""
     @away_team.game_lineup = ""
+    @home_team.game_lineup_players = []
+    @away_team.game_lineup_players = []
     for i in 1..9 do
       @home_team.game_lineup += "#{@home_team.find_player_by_lineup_index(i).id}"
       @away_team.game_lineup += "#{@away_team.find_player_by_lineup_index(i).id}"
+      @home_team.game_lineup_players.push(@home_team.find_player_by_lineup_index(i))
+      @away_team.game_lineup_players.push(@away_team.find_player_by_lineup_index(i))
       if i < 9
         @home_team.game_lineup += "_"
         @away_team.game_lineup += "_"
       end
+    end
+
+    # initialize stats for players in lineup
+    @home_team.game_lineup_players.each do |player|
+      player.set_initial_stats
+    end
+    @away_team.game_lineup_players.each do |player|
+      player.set_initial_stats
     end
 
     # pitching list
@@ -109,6 +121,13 @@ class Game < ActiveRecord::Base
 
   def collect_stats
 
+    home_wins = 0
+    away_wins = 0
+    home_losses = 0
+    away_losses = 0
+    home_streak = @home_team.streak
+    away_streak = @away_team.streak
+
     # team win/loss stats
     # If the home team wins
     if @home_team.game_score > @away_team.game_score
@@ -118,18 +137,16 @@ class Game < ActiveRecord::Base
       losing_pitcher = @away_team.in_line_for_loss.id
 
       # team w/l
-      @home_team.update_attribute(:wins, @home_team.wins + 1)
-      @away_team.update_attribute(:losses, @away_team.losses + 1)
+      home_wins = 1
+      away_losses = 1
 
       # pitcher w/l
       @home_team.in_line_for_win.update_attribute(:wins, @home_team.in_line_for_win.wins + 1)
       @away_team.in_line_for_loss.update_attribute(:losses, @away_team.in_line_for_loss.losses + 1)
 
       # Home team streak
-      @home_team.streak >= 0 ? @home_team.update_attribute(:streak, @home_team.streak + 1) : @home_team.update_attribute(:streak, 1)
-
-      # Away team streak
-      @away_team.streak <= 0 ? @away_team.update_attribute(:streak, @away_team.streak - 1) : @away_team.update_attribute(:streak, -1)
+      home_streak >= 0 ? @home_team.streak + 1 : 1
+      away_streak <= 0 ? @away_team.streak - 1 : -1
 
     # If the away team wins
     else
@@ -139,33 +156,36 @@ class Game < ActiveRecord::Base
       losing_pitcher = @home_team.in_line_for_loss.id
 
       # team w/l
-      @home_team.update_attribute(:losses, @home_team.losses + 1)
-      @away_team.update_attribute(:wins, @away_team.wins + 1)
+      home_losses = 1
+      away_wins = 1
 
       # pitcher w/l
       @away_team.in_line_for_win.update_attribute(:wins, @away_team.in_line_for_win.wins + 1)
       @home_team.in_line_for_loss.update_attribute(:losses, @home_team.in_line_for_loss.losses + 1)
 
       # Home team streak
-      @home_team.streak <= 0 ? @home_team.update_attribute(:streak, @home_team.streak - 1) : @home_team.update_attribute(:streak, -1)
-
-      # Away team streak
-      @away_team.streak >= 0 ? @away_team.update_attribute(:streak, @away_team.streak + 1) : @away_team.update_attribute(:streak, 1)
+      home_streak <= 0 ? @home_team.streak - 1 : -1
+      away_streak >= 0 ? @away_team.streak + 1 : 1
 
     end
 
     # team runs scored and allowed
-    @home_team.update_attribute(:runs_scored, @home_team.runs_scored + @home_team.game_score)
-    @away_team.update_attribute(:runs_scored, @away_team.runs_scored + @away_team.game_score)
-    @home_team.update_attribute(:runs_allowed, @home_team.runs_allowed + @away_team.game_score)
-    @away_team.update_attribute(:runs_allowed, @away_team.runs_allowed + @home_team.game_score)
+    @home_team.update_attributes(:runs_scored => @home_team.runs_scored + @home_team.game_score,
+    :runs_allowed => @home_team.runs_allowed + @away_team.game_score,
+    :rotation_position => @home_team.increment_rotation,
+    :losses => @home_team.losses + home_losses,
+    :wins => @home_team.wins + home_wins,
+    :streak => home_streak)
 
-    # increment rotation position
-    @home_team.update_attribute(:rotation_position, @home_team.increment_rotation)
-    @away_team.update_attribute(:rotation_position, @away_team.increment_rotation)
+    @away_team.update_attributes(:runs_scored => @away_team.runs_scored + @away_team.game_score,
+    :runs_allowed => @away_team.runs_allowed + @away_team.game_score,
+    :rotation_position => @away_team.increment_rotation,
+    :losses => @away_team.losses + away_losses,
+    :wins => @away_team.wins + away_wins,
+    :streak => away_streak)
 
     # player stats
-    @home_team.players.each do |player|
+    @home_team.game_lineup_players.each do |player|
       player.atbats ||= 0
       player.runs ||= 0
       player.hits ||= 0
@@ -181,50 +201,25 @@ class Game < ActiveRecord::Base
       player.assists ||= 0
       player.putouts ||= 0
       player.chances ||= 0
-      player.outs_recorded ||= 0
-      player.hits_allowed ||= 0
-      player.runs_allowed ||= 0
-      player.earned_runs_allowed ||= 0
-      player.walks_allowed ||= 0
-      player.strikeouts_recorded ||= 0
-      player.home_runs_allowed ||= 0
-      player.total_pitches ||= 0
-      player.strikes_thrown ||= 0
-      player.balls_thrown ||= 0
-      player.intentional_walks_allowed ||= 0
 
-      player.update_attribute(:atbats, player.atbats + player.game_atbats)
-      player.update_attribute(:runs, player.runs + player.game_runs_scored)
-      player.update_attribute(:hits, player.hits + player.game_hits)
-      player.update_attribute(:doubles, player.doubles + player.game_doubles)
-      player.update_attribute(:triples, player.triples + player.game_triples)
-      player.update_attribute(:home_runs, player.home_runs + player.game_home_runs)
-      player.update_attribute(:rbi, player.rbi + player.game_rbi)
-      player.update_attribute(:walks, player.walks + player.game_walks)
-      player.update_attribute(:strikeouts, player.strikeouts + player.game_strikeouts)
-      player.update_attribute(:stolen_bases, player.stolen_bases + player.game_stolen_bases)
-      player.update_attribute(:caught_stealing, player.caught_stealing + player.game_caught_stealing)
-      player.update_attribute(:errors_committed, player.errors_committed + player.game_errors_committed)
-      player.update_attribute(:assists, player.assists + player.game_assists)
-      player.update_attribute(:putouts, player.putouts + player.game_putouts)
-      player.update_attribute(:chances, player.chances + player.game_chances)
-      player.update_attribute(:outs_recorded, player.outs_recorded + player.game_outs_recorded)
-      player.update_attribute(:hits_allowed, player.hits_allowed + player.game_hits_allowed)
-      player.update_attribute(:runs_allowed, player.runs_allowed + player.game_runs_allowed)
-      player.update_attribute(:earned_runs_allowed, player.earned_runs_allowed + player.game_earned_runs_allowed)
-      player.update_attribute(:walks_allowed, player.walks_allowed + player.game_walks_allowed)
-      player.update_attribute(:strikeouts_recorded, player.strikeouts_recorded + player.game_strikeouts_recorded)
-      player.update_attribute(:home_runs_allowed, player.home_runs_allowed + player.game_home_runs_allowed)
-      player.update_attribute(:total_pitches, player.total_pitches + player.game_total_pitches)
-      player.update_attribute(:strikes_thrown, player.strikes_thrown + player.game_strikes_thrown)
-      player.update_attribute(:balls_thrown, player.balls_thrown + player.game_balls_thrown)
-      player.update_attribute(:intentional_walks_allowed, player.intentional_walks_allowed + player.game_intentional_walks_allowed)
-      for i in 1..72 do
-        player.update_attribute("zone_#{i}_pitches".to_sym, player["zone_#{i}_pitches".to_sym] + player.zone_pitches_thrown[i-1])
-      end
+      player.update_attributes(:atbats => player.atbats + player.game_atbats,
+      :runs => player.runs + player.game_runs_scored,
+      :hits => player.hits + player.game_hits,
+      :doubles => player.doubles + player.game_doubles,
+      :triples => player.triples + player.game_triples,
+      :home_runs => player.home_runs + player.game_home_runs,
+      :rbi => player.rbi + player.game_rbi,
+      :walks => player.walks + player.game_walks,
+      :strikeouts => player.strikeouts + player.game_strikeouts,
+      :stolen_bases => player.stolen_bases + player.game_stolen_bases,
+      :caught_stealing => player.caught_stealing + player.game_caught_stealing,
+      :errors_committed => player.errors_committed + player.game_errors_committed,
+      :assists => player.assists + player.game_assists,
+      :putouts => player.putouts + player.game_putouts,
+      :chances => player.chances + player.game_chances)
     end
 
-    @away_team.players.each do |player|
+    @away_team.game_lineup_players.each do |player|
 
       player.atbats ||= 0
       player.runs ||= 0
@@ -253,50 +248,26 @@ class Game < ActiveRecord::Base
       player.balls_thrown ||= 0
       player.intentional_walks_allowed ||= 0
 
-      player.update_attribute(:atbats, player.atbats + player.game_atbats)
-      player.update_attribute(:runs, player.runs + player.game_runs_scored)
-      player.update_attribute(:hits, player.hits + player.game_hits)
-      player.update_attribute(:doubles, player.doubles + player.game_doubles)
-      player.update_attribute(:triples, player.triples + player.game_triples)
-      player.update_attribute(:home_runs, player.home_runs + player.game_home_runs)
-      player.update_attribute(:rbi, player.rbi + player.game_rbi)
-      player.update_attribute(:walks, player.walks + player.game_walks)
-      player.update_attribute(:strikeouts, player.strikeouts + player.game_strikeouts)
-      player.update_attribute(:stolen_bases, player.stolen_bases + player.game_stolen_bases)
-      player.update_attribute(:caught_stealing, player.caught_stealing + player.game_caught_stealing)
-      player.update_attribute(:errors_committed, player.errors_committed + player.game_errors_committed)
-      player.update_attribute(:assists, player.assists + player.game_assists)
-      player.update_attribute(:putouts, player.putouts + player.game_putouts)
-      player.update_attribute(:chances, player.chances + player.game_chances)
-      player.update_attribute(:outs_recorded, player.outs_recorded + player.game_outs_recorded)
-      player.update_attribute(:hits_allowed, player.hits_allowed + player.game_hits_allowed)
-      player.update_attribute(:runs_allowed, player.runs_allowed + player.game_runs_allowed)
-      player.update_attribute(:earned_runs_allowed, player.earned_runs_allowed + player.game_earned_runs_allowed)
-      player.update_attribute(:walks_allowed, player.walks_allowed + player.game_walks_allowed)
-      player.update_attribute(:strikeouts_recorded, player.strikeouts_recorded + player.game_strikeouts_recorded)
-      player.update_attribute(:home_runs_allowed, player.home_runs_allowed + player.game_home_runs_allowed)
-      player.update_attribute(:total_pitches, player.total_pitches + player.game_total_pitches)
-      player.update_attribute(:strikes_thrown, player.strikes_thrown + player.game_strikes_thrown)
-      player.update_attribute(:balls_thrown, player.balls_thrown + player.game_balls_thrown)
-      player.update_attribute(:intentional_walks_allowed, player.intentional_walks_allowed + player.game_intentional_walks_allowed)
-      for i in 1..72 do
-        player.update_attribute("zone_#{i}_pitches".to_sym, player["zone_#{i}_pitches".to_sym] + player.zone_pitches_thrown[i-1])
-      end
+      player.update_attributes(:atbats => player.atbats + player.game_atbats,
+      :runs => player.runs + player.game_runs_scored,
+      :hits => player.hits + player.game_hits,
+      :doubles => player.doubles + player.game_doubles,
+      :triples => player.triples + player.game_triples,
+      :home_runs => player.home_runs + player.game_home_runs,
+      :rbi => player.rbi + player.game_rbi,
+      :walks => player.walks + player.game_walks,
+      :strikeouts => player.strikeouts + player.game_strikeouts,
+      :stolen_bases => player.stolen_bases + player.game_stolen_bases,
+      :caught_stealing => player.caught_stealing + player.game_caught_stealing,
+      :errors_committed => player.errors_committed + player.game_errors_committed,
+      :assists => player.assists + player.game_assists,
+      :putouts => player.putouts + player.game_putouts,
+      :chances => player.chances + player.game_chances)
     end
 
     # pitcher stats
     @home_team.game_pitcher_list.each do |player|
-      player.atbats ||= 0
-      player.runs ||= 0
-      player.hits ||= 0
-      player.doubles ||= 0
-      player.triples ||= 0
-      player.home_runs ||= 0
-      player.rbi ||= 0
-      player.walks ||= 0
-      player.strikeouts ||= 0
-      player.stolen_bases ||= 0
-      player.caught_stealing ||= 0
+
       player.errors_committed ||= 0
       player.assists ||= 0
       player.putouts ||= 0
@@ -313,50 +284,98 @@ class Game < ActiveRecord::Base
       player.balls_thrown ||= 0
       player.intentional_walks_allowed ||= 0
 
-      player.update_attribute(:atbats, player.atbats + player.game_atbats)
-      player.update_attribute(:runs, player.runs + player.game_runs_scored)
-      player.update_attribute(:hits, player.hits + player.game_hits)
-      player.update_attribute(:doubles, player.doubles + player.game_doubles)
-      player.update_attribute(:triples, player.triples + player.game_triples)
-      player.update_attribute(:home_runs, player.home_runs + player.game_home_runs)
-      player.update_attribute(:rbi, player.rbi + player.game_rbi)
-      player.update_attribute(:walks, player.walks + player.game_walks)
-      player.update_attribute(:strikeouts, player.strikeouts + player.game_strikeouts)
-      player.update_attribute(:stolen_bases, player.stolen_bases + player.game_stolen_bases)
-      player.update_attribute(:caught_stealing, player.caught_stealing + player.game_caught_stealing)
-      player.update_attribute(:errors_committed, player.errors_committed + player.game_errors_committed)
-      player.update_attribute(:assists, player.assists + player.game_assists)
-      player.update_attribute(:putouts, player.putouts + player.game_putouts)
-      player.update_attribute(:chances, player.chances + player.game_chances)
-      player.update_attribute(:outs_recorded, player.outs_recorded + player.game_outs_recorded)
-      player.update_attribute(:hits_allowed, player.hits_allowed + player.game_hits_allowed)
-      player.update_attribute(:runs_allowed, player.runs_allowed + player.game_runs_allowed)
-      player.update_attribute(:earned_runs_allowed, player.earned_runs_allowed + player.game_earned_runs_allowed)
-      player.update_attribute(:walks_allowed, player.walks_allowed + player.game_walks_allowed)
-      player.update_attribute(:strikeouts_recorded, player.strikeouts_recorded + player.game_strikeouts_recorded)
-      player.update_attribute(:home_runs_allowed, player.home_runs_allowed + player.game_home_runs_allowed)
-      player.update_attribute(:total_pitches, player.total_pitches + player.game_total_pitches)
-      player.update_attribute(:strikes_thrown, player.strikes_thrown + player.game_strikes_thrown)
-      player.update_attribute(:balls_thrown, player.balls_thrown + player.game_balls_thrown)
-      player.update_attribute(:intentional_walks_allowed, player.intentional_walks_allowed + player.game_intentional_walks_allowed)
-      for i in 1..72 do
-        player.update_attribute("zone_#{i}_pitches".to_sym, player["zone_#{i}_pitches".to_sym] + player.zone_pitches_thrown[i-1])
-      end
+      player.update_attributes(:errors_committed => player.errors_committed + player.game_errors_committed,
+      :assists => player.assists + player.game_assists,
+      :putouts => player.putouts + player.game_putouts,
+      :chances => player.chances + player.game_chances,
+      :outs_recorded => player.outs_recorded + player.game_outs_recorded,
+      :hits_allowed => player.hits_allowed + player.game_hits_allowed,
+      :runs_allowed => player.runs_allowed + player.game_runs_allowed,
+      :earned_runs_allowed => player.earned_runs_allowed + player.game_earned_runs_allowed,
+      :walks_allowed => player.walks_allowed + player.game_walks_allowed,
+      :strikeouts_recorded => player.strikeouts_recorded + player.game_strikeouts_recorded,
+      :home_runs_allowed => player.home_runs_allowed + player.game_home_runs_allowed,
+      :total_pitches => player.total_pitches + player.game_total_pitches,
+      :strikes_thrown => player.strikes_thrown + player.game_strikes_thrown,
+      :balls_thrown => player.balls_thrown + player.game_balls_thrown,
+      :intentional_walks_allowed => player.intentional_walks_allowed + player.game_intentional_walks_allowed,
+      :zone_1_pitches => player.zone_1_pitches + player.zone_pitches_thrown[0],
+      :zone_2_pitches => player.zone_1_pitches + player.zone_pitches_thrown[1],
+      :zone_3_pitches => player.zone_1_pitches + player.zone_pitches_thrown[2],
+      :zone_4_pitches => player.zone_1_pitches + player.zone_pitches_thrown[3],
+      :zone_5_pitches => player.zone_1_pitches + player.zone_pitches_thrown[4],
+      :zone_6_pitches => player.zone_1_pitches + player.zone_pitches_thrown[5],
+      :zone_7_pitches => player.zone_1_pitches + player.zone_pitches_thrown[6],
+      :zone_8_pitches => player.zone_1_pitches + player.zone_pitches_thrown[7],
+      :zone_9_pitches => player.zone_1_pitches + player.zone_pitches_thrown[8],
+      :zone_10_pitches => player.zone_1_pitches + player.zone_pitches_thrown[9],
+      :zone_11_pitches => player.zone_1_pitches + player.zone_pitches_thrown[10],
+      :zone_12_pitches => player.zone_1_pitches + player.zone_pitches_thrown[11],
+      :zone_13_pitches => player.zone_1_pitches + player.zone_pitches_thrown[12],
+      :zone_14_pitches => player.zone_1_pitches + player.zone_pitches_thrown[13],
+      :zone_15_pitches => player.zone_1_pitches + player.zone_pitches_thrown[14],
+      :zone_16_pitches => player.zone_1_pitches + player.zone_pitches_thrown[15],
+      :zone_17_pitches => player.zone_1_pitches + player.zone_pitches_thrown[16],
+      :zone_18_pitches => player.zone_1_pitches + player.zone_pitches_thrown[17],
+      :zone_19_pitches => player.zone_1_pitches + player.zone_pitches_thrown[18],
+      :zone_20_pitches => player.zone_1_pitches + player.zone_pitches_thrown[19],
+      :zone_21_pitches => player.zone_1_pitches + player.zone_pitches_thrown[20],
+      :zone_22_pitches => player.zone_1_pitches + player.zone_pitches_thrown[21],
+      :zone_23_pitches => player.zone_1_pitches + player.zone_pitches_thrown[22],
+      :zone_24_pitches => player.zone_1_pitches + player.zone_pitches_thrown[23],
+      :zone_25_pitches => player.zone_1_pitches + player.zone_pitches_thrown[24],
+      :zone_26_pitches => player.zone_1_pitches + player.zone_pitches_thrown[25],
+      :zone_27_pitches => player.zone_1_pitches + player.zone_pitches_thrown[26],
+      :zone_28_pitches => player.zone_1_pitches + player.zone_pitches_thrown[27],
+      :zone_29_pitches => player.zone_1_pitches + player.zone_pitches_thrown[28],
+      :zone_30_pitches => player.zone_1_pitches + player.zone_pitches_thrown[29],
+      :zone_31_pitches => player.zone_1_pitches + player.zone_pitches_thrown[30],
+      :zone_32_pitches => player.zone_1_pitches + player.zone_pitches_thrown[31],
+      :zone_33_pitches => player.zone_1_pitches + player.zone_pitches_thrown[32],
+      :zone_34_pitches => player.zone_1_pitches + player.zone_pitches_thrown[33],
+      :zone_35_pitches => player.zone_1_pitches + player.zone_pitches_thrown[34],
+      :zone_36_pitches => player.zone_1_pitches + player.zone_pitches_thrown[35],
+      :zone_37_pitches => player.zone_1_pitches + player.zone_pitches_thrown[36],
+      :zone_38_pitches => player.zone_1_pitches + player.zone_pitches_thrown[37],
+      :zone_39_pitches => player.zone_1_pitches + player.zone_pitches_thrown[38],
+      :zone_40_pitches => player.zone_1_pitches + player.zone_pitches_thrown[39],
+      :zone_41_pitches => player.zone_1_pitches + player.zone_pitches_thrown[40],
+      :zone_42_pitches => player.zone_1_pitches + player.zone_pitches_thrown[41],
+      :zone_43_pitches => player.zone_1_pitches + player.zone_pitches_thrown[42],
+      :zone_44_pitches => player.zone_1_pitches + player.zone_pitches_thrown[43],
+      :zone_45_pitches => player.zone_1_pitches + player.zone_pitches_thrown[44],
+      :zone_46_pitches => player.zone_1_pitches + player.zone_pitches_thrown[45],
+      :zone_47_pitches => player.zone_1_pitches + player.zone_pitches_thrown[46],
+      :zone_48_pitches => player.zone_1_pitches + player.zone_pitches_thrown[47],
+      :zone_49_pitches => player.zone_1_pitches + player.zone_pitches_thrown[48],
+      :zone_50_pitches => player.zone_1_pitches + player.zone_pitches_thrown[49],
+      :zone_51_pitches => player.zone_1_pitches + player.zone_pitches_thrown[50],
+      :zone_52_pitches => player.zone_1_pitches + player.zone_pitches_thrown[51],
+      :zone_53_pitches => player.zone_1_pitches + player.zone_pitches_thrown[52],
+      :zone_54_pitches => player.zone_1_pitches + player.zone_pitches_thrown[53],
+      :zone_55_pitches => player.zone_1_pitches + player.zone_pitches_thrown[54],
+      :zone_56_pitches => player.zone_1_pitches + player.zone_pitches_thrown[55],
+      :zone_57_pitches => player.zone_1_pitches + player.zone_pitches_thrown[56],
+      :zone_58_pitches => player.zone_1_pitches + player.zone_pitches_thrown[57],
+      :zone_59_pitches => player.zone_1_pitches + player.zone_pitches_thrown[58],
+      :zone_60_pitches => player.zone_1_pitches + player.zone_pitches_thrown[59],
+      :zone_61_pitches => player.zone_1_pitches + player.zone_pitches_thrown[60],
+      :zone_62_pitches => player.zone_1_pitches + player.zone_pitches_thrown[61],
+      :zone_63_pitches => player.zone_1_pitches + player.zone_pitches_thrown[62],
+      :zone_64_pitches => player.zone_1_pitches + player.zone_pitches_thrown[63],
+      :zone_65_pitches => player.zone_1_pitches + player.zone_pitches_thrown[64],
+      :zone_66_pitches => player.zone_1_pitches + player.zone_pitches_thrown[65],
+      :zone_67_pitches => player.zone_1_pitches + player.zone_pitches_thrown[66],
+      :zone_68_pitches => player.zone_1_pitches + player.zone_pitches_thrown[67],
+      :zone_69_pitches => player.zone_1_pitches + player.zone_pitches_thrown[68],
+      :zone_70_pitches => player.zone_1_pitches + player.zone_pitches_thrown[69],
+      :zone_71_pitches => player.zone_1_pitches + player.zone_pitches_thrown[70],
+      :zone_72_pitches => player.zone_1_pitches + player.zone_pitches_thrown[71])
+
     end
 
     @away_team.game_pitcher_list.each do |player|
 
-      player.atbats ||= 0
-      player.runs ||= 0
-      player.hits ||= 0
-      player.doubles ||= 0
-      player.triples ||= 0
-      player.home_runs ||= 0
-      player.rbi ||= 0
-      player.walks ||= 0
-      player.strikeouts ||= 0
-      player.stolen_bases ||= 0
-      player.caught_stealing ||= 0
       player.errors_committed ||= 0
       player.assists ||= 0
       player.putouts ||= 0
@@ -373,35 +392,94 @@ class Game < ActiveRecord::Base
       player.balls_thrown ||= 0
       player.intentional_walks_allowed ||= 0
 
-      player.update_attribute(:atbats, player.atbats + player.game_atbats)
-      player.update_attribute(:runs, player.runs + player.game_runs_scored)
-      player.update_attribute(:hits, player.hits + player.game_hits)
-      player.update_attribute(:doubles, player.doubles + player.game_doubles)
-      player.update_attribute(:triples, player.triples + player.game_triples)
-      player.update_attribute(:home_runs, player.home_runs + player.game_home_runs)
-      player.update_attribute(:rbi, player.rbi + player.game_rbi)
-      player.update_attribute(:walks, player.walks + player.game_walks)
-      player.update_attribute(:strikeouts, player.strikeouts + player.game_strikeouts)
-      player.update_attribute(:stolen_bases, player.stolen_bases + player.game_stolen_bases)
-      player.update_attribute(:caught_stealing, player.caught_stealing + player.game_caught_stealing)
-      player.update_attribute(:errors_committed, player.errors_committed + player.game_errors_committed)
-      player.update_attribute(:assists, player.assists + player.game_assists)
-      player.update_attribute(:putouts, player.putouts + player.game_putouts)
-      player.update_attribute(:chances, player.chances + player.game_chances)
-      player.update_attribute(:outs_recorded, player.outs_recorded + player.game_outs_recorded)
-      player.update_attribute(:hits_allowed, player.hits_allowed + player.game_hits_allowed)
-      player.update_attribute(:runs_allowed, player.runs_allowed + player.game_runs_allowed)
-      player.update_attribute(:earned_runs_allowed, player.earned_runs_allowed + player.game_earned_runs_allowed)
-      player.update_attribute(:walks_allowed, player.walks_allowed + player.game_walks_allowed)
-      player.update_attribute(:strikeouts_recorded, player.strikeouts_recorded + player.game_strikeouts_recorded)
-      player.update_attribute(:home_runs_allowed, player.home_runs_allowed + player.game_home_runs_allowed)
-      player.update_attribute(:total_pitches, player.total_pitches + player.game_total_pitches)
-      player.update_attribute(:strikes_thrown, player.strikes_thrown + player.game_strikes_thrown)
-      player.update_attribute(:balls_thrown, player.balls_thrown + player.game_balls_thrown)
-      player.update_attribute(:intentional_walks_allowed, player.intentional_walks_allowed + player.game_intentional_walks_allowed)
-      for i in 1..72 do
-        player.update_attribute("zone_#{i}_pitches".to_sym, player["zone_#{i}_pitches".to_sym] + player.zone_pitches_thrown[i-1])
-      end
+      player.update_attributes(:errors_committed => player.errors_committed + player.game_errors_committed,
+      :assists => player.assists + player.game_assists,
+      :putouts => player.putouts + player.game_putouts,
+      :chances => player.chances + player.game_chances,
+      :outs_recorded => player.outs_recorded + player.game_outs_recorded,
+      :hits_allowed => player.hits_allowed + player.game_hits_allowed,
+      :runs_allowed => player.runs_allowed + player.game_runs_allowed,
+      :earned_runs_allowed => player.earned_runs_allowed + player.game_earned_runs_allowed,
+      :walks_allowed => player.walks_allowed + player.game_walks_allowed,
+      :strikeouts_recorded => player.strikeouts_recorded + player.game_strikeouts_recorded,
+      :home_runs_allowed => player.home_runs_allowed + player.game_home_runs_allowed,
+      :total_pitches => player.total_pitches + player.game_total_pitches,
+      :strikes_thrown => player.strikes_thrown + player.game_strikes_thrown,
+      :balls_thrown => player.balls_thrown + player.game_balls_thrown,
+      :intentional_walks_allowed => player.intentional_walks_allowed + player.game_intentional_walks_allowed,
+      :zone_1_pitches => player.zone_1_pitches + player.zone_pitches_thrown[0],
+      :zone_2_pitches => player.zone_1_pitches + player.zone_pitches_thrown[1],
+      :zone_3_pitches => player.zone_1_pitches + player.zone_pitches_thrown[2],
+      :zone_4_pitches => player.zone_1_pitches + player.zone_pitches_thrown[3],
+      :zone_5_pitches => player.zone_1_pitches + player.zone_pitches_thrown[4],
+      :zone_6_pitches => player.zone_1_pitches + player.zone_pitches_thrown[5],
+      :zone_7_pitches => player.zone_1_pitches + player.zone_pitches_thrown[6],
+      :zone_8_pitches => player.zone_1_pitches + player.zone_pitches_thrown[7],
+      :zone_9_pitches => player.zone_1_pitches + player.zone_pitches_thrown[8],
+      :zone_10_pitches => player.zone_1_pitches + player.zone_pitches_thrown[9],
+      :zone_11_pitches => player.zone_1_pitches + player.zone_pitches_thrown[10],
+      :zone_12_pitches => player.zone_1_pitches + player.zone_pitches_thrown[11],
+      :zone_13_pitches => player.zone_1_pitches + player.zone_pitches_thrown[12],
+      :zone_14_pitches => player.zone_1_pitches + player.zone_pitches_thrown[13],
+      :zone_15_pitches => player.zone_1_pitches + player.zone_pitches_thrown[14],
+      :zone_16_pitches => player.zone_1_pitches + player.zone_pitches_thrown[15],
+      :zone_17_pitches => player.zone_1_pitches + player.zone_pitches_thrown[16],
+      :zone_18_pitches => player.zone_1_pitches + player.zone_pitches_thrown[17],
+      :zone_19_pitches => player.zone_1_pitches + player.zone_pitches_thrown[18],
+      :zone_20_pitches => player.zone_1_pitches + player.zone_pitches_thrown[19],
+      :zone_21_pitches => player.zone_1_pitches + player.zone_pitches_thrown[20],
+      :zone_22_pitches => player.zone_1_pitches + player.zone_pitches_thrown[21],
+      :zone_23_pitches => player.zone_1_pitches + player.zone_pitches_thrown[22],
+      :zone_24_pitches => player.zone_1_pitches + player.zone_pitches_thrown[23],
+      :zone_25_pitches => player.zone_1_pitches + player.zone_pitches_thrown[24],
+      :zone_26_pitches => player.zone_1_pitches + player.zone_pitches_thrown[25],
+      :zone_27_pitches => player.zone_1_pitches + player.zone_pitches_thrown[26],
+      :zone_28_pitches => player.zone_1_pitches + player.zone_pitches_thrown[27],
+      :zone_29_pitches => player.zone_1_pitches + player.zone_pitches_thrown[28],
+      :zone_30_pitches => player.zone_1_pitches + player.zone_pitches_thrown[29],
+      :zone_31_pitches => player.zone_1_pitches + player.zone_pitches_thrown[30],
+      :zone_32_pitches => player.zone_1_pitches + player.zone_pitches_thrown[31],
+      :zone_33_pitches => player.zone_1_pitches + player.zone_pitches_thrown[32],
+      :zone_34_pitches => player.zone_1_pitches + player.zone_pitches_thrown[33],
+      :zone_35_pitches => player.zone_1_pitches + player.zone_pitches_thrown[34],
+      :zone_36_pitches => player.zone_1_pitches + player.zone_pitches_thrown[35],
+      :zone_37_pitches => player.zone_1_pitches + player.zone_pitches_thrown[36],
+      :zone_38_pitches => player.zone_1_pitches + player.zone_pitches_thrown[37],
+      :zone_39_pitches => player.zone_1_pitches + player.zone_pitches_thrown[38],
+      :zone_40_pitches => player.zone_1_pitches + player.zone_pitches_thrown[39],
+      :zone_41_pitches => player.zone_1_pitches + player.zone_pitches_thrown[40],
+      :zone_42_pitches => player.zone_1_pitches + player.zone_pitches_thrown[41],
+      :zone_43_pitches => player.zone_1_pitches + player.zone_pitches_thrown[42],
+      :zone_44_pitches => player.zone_1_pitches + player.zone_pitches_thrown[43],
+      :zone_45_pitches => player.zone_1_pitches + player.zone_pitches_thrown[44],
+      :zone_46_pitches => player.zone_1_pitches + player.zone_pitches_thrown[45],
+      :zone_47_pitches => player.zone_1_pitches + player.zone_pitches_thrown[46],
+      :zone_48_pitches => player.zone_1_pitches + player.zone_pitches_thrown[47],
+      :zone_49_pitches => player.zone_1_pitches + player.zone_pitches_thrown[48],
+      :zone_50_pitches => player.zone_1_pitches + player.zone_pitches_thrown[49],
+      :zone_51_pitches => player.zone_1_pitches + player.zone_pitches_thrown[50],
+      :zone_52_pitches => player.zone_1_pitches + player.zone_pitches_thrown[51],
+      :zone_53_pitches => player.zone_1_pitches + player.zone_pitches_thrown[52],
+      :zone_54_pitches => player.zone_1_pitches + player.zone_pitches_thrown[53],
+      :zone_55_pitches => player.zone_1_pitches + player.zone_pitches_thrown[54],
+      :zone_56_pitches => player.zone_1_pitches + player.zone_pitches_thrown[55],
+      :zone_57_pitches => player.zone_1_pitches + player.zone_pitches_thrown[56],
+      :zone_58_pitches => player.zone_1_pitches + player.zone_pitches_thrown[57],
+      :zone_59_pitches => player.zone_1_pitches + player.zone_pitches_thrown[58],
+      :zone_60_pitches => player.zone_1_pitches + player.zone_pitches_thrown[59],
+      :zone_61_pitches => player.zone_1_pitches + player.zone_pitches_thrown[60],
+      :zone_62_pitches => player.zone_1_pitches + player.zone_pitches_thrown[61],
+      :zone_63_pitches => player.zone_1_pitches + player.zone_pitches_thrown[62],
+      :zone_64_pitches => player.zone_1_pitches + player.zone_pitches_thrown[63],
+      :zone_65_pitches => player.zone_1_pitches + player.zone_pitches_thrown[64],
+      :zone_66_pitches => player.zone_1_pitches + player.zone_pitches_thrown[65],
+      :zone_67_pitches => player.zone_1_pitches + player.zone_pitches_thrown[66],
+      :zone_68_pitches => player.zone_1_pitches + player.zone_pitches_thrown[67],
+      :zone_69_pitches => player.zone_1_pitches + player.zone_pitches_thrown[68],
+      :zone_70_pitches => player.zone_1_pitches + player.zone_pitches_thrown[69],
+      :zone_71_pitches => player.zone_1_pitches + player.zone_pitches_thrown[70],
+      :zone_72_pitches => player.zone_1_pitches + player.zone_pitches_thrown[71])
+
     end
 
     # home batting stats
@@ -497,38 +575,38 @@ class Game < ActiveRecord::Base
     for i in 0..8 do
 
       # home batting stats
-      home_at_bats_string = home_at_bats_string + "#{@home_team.find_player_by_lineup_index(i).game_atbats}"
-      home_runs_scored_string = home_runs_scored_string + "#{@home_team.find_player_by_lineup_index(i).game_runs_scored}"
-      home_hits_string = home_hits_string + "#{@home_team.find_player_by_lineup_index(i).game_hits}"
-      home_doubles_string = home_doubles_string + "#{@home_team.find_player_by_lineup_index(i).game_doubles}"
-      home_triples_string = home_triples_string + "#{@home_team.find_player_by_lineup_index(i).game_triples}"
-      home_home_runs_string = home_home_runs_string + "#{@home_team.find_player_by_lineup_index(i).game_home_runs}"
-      home_RBI_string = home_RBI_string + "#{@home_team.find_player_by_lineup_index(i).game_rbi}"
-      home_walks_string = home_walks_string + "#{@home_team.find_player_by_lineup_index(i).game_walks}"
-      home_strikeouts_string = home_strikeouts_string + "#{@home_team.find_player_by_lineup_index(i).game_strikeouts}"
-      home_stolen_bases_string = home_stolen_bases_string + "#{@home_team.find_player_by_lineup_index(i).game_stolen_bases}"
-      home_caught_stealing_string = home_caught_stealing_string + "#{@home_team.find_player_by_lineup_index(i).game_caught_stealing}"
-      home_errors_string = home_errors_string + "#{@home_team.find_player_by_lineup_index(i).game_errors_committed}"
-      home_assists_string = home_assists_string + "#{@home_team.find_player_by_lineup_index(i).game_assists}"
-      home_putouts_string = home_putouts_string + "#{@home_team.find_player_by_lineup_index(i).game_putouts}"
-      home_chances_string = home_chances_string + "#{@home_team.find_player_by_lineup_index(i).game_chances}"
+      home_at_bats_string = home_at_bats_string + "#{@home_team.game_lineup_players[i].game_atbats}"
+      home_runs_scored_string = home_runs_scored_string + "#{@home_team.game_lineup_players[i].game_runs_scored}"
+      home_hits_string = home_hits_string + "#{@home_team.game_lineup_players[i].game_hits}"
+      home_doubles_string = home_doubles_string + "#{@home_team.game_lineup_players[i].game_doubles}"
+      home_triples_string = home_triples_string + "#{@home_team.game_lineup_players[i].game_triples}"
+      home_home_runs_string = home_home_runs_string + "#{@home_team.game_lineup_players[i].game_home_runs}"
+      home_RBI_string = home_RBI_string + "#{@home_team.game_lineup_players[i].game_rbi}"
+      home_walks_string = home_walks_string + "#{@home_team.game_lineup_players[i].game_walks}"
+      home_strikeouts_string = home_strikeouts_string + "#{@home_team.game_lineup_players[i].game_strikeouts}"
+      home_stolen_bases_string = home_stolen_bases_string + "#{@home_team.game_lineup_players[i].game_stolen_bases}"
+      home_caught_stealing_string = home_caught_stealing_string + "#{@home_team.game_lineup_players[i].game_caught_stealing}"
+      home_errors_string = home_errors_string + "#{@home_team.game_lineup_players[i].game_errors_committed}"
+      home_assists_string = home_assists_string + "#{@home_team.game_lineup_players[i].game_assists}"
+      home_putouts_string = home_putouts_string + "#{@home_team.game_lineup_players[i].game_putouts}"
+      home_chances_string = home_chances_string + "#{@home_team.game_lineup_players[i].game_chances}"
 
       # away batting stats
-      away_at_bats_string = away_at_bats_string + "#{@away_team.find_player_by_lineup_index(i).game_atbats}"
-      away_runs_scored_string = away_runs_scored_string + "#{@away_team.find_player_by_lineup_index(i).game_runs_scored}"
-      away_hits_string = away_hits_string + "#{@away_team.find_player_by_lineup_index(i).game_hits}"
-      away_doubles_string = away_doubles_string + "#{@away_team.find_player_by_lineup_index(i).game_doubles}"
-      away_triples_string = away_triples_string + "#{@away_team.find_player_by_lineup_index(i).game_triples}"
-      away_home_runs_string = away_home_runs_string + "#{@away_team.find_player_by_lineup_index(i).game_home_runs}"
-      away_RBI_string = away_RBI_string + "#{@away_team.find_player_by_lineup_index(i).game_rbi}"
-      away_walks_string = away_walks_string + "#{@away_team.find_player_by_lineup_index(i).game_walks}"
-      away_strikeouts_string = away_strikeouts_string + "#{@away_team.find_player_by_lineup_index(i).game_strikeouts}"
-      away_stolen_bases_string = away_stolen_bases_string + "#{@away_team.find_player_by_lineup_index(i).game_stolen_bases}"
-      away_caught_stealing_string = away_caught_stealing_string + "#{@away_team.find_player_by_lineup_index(i).game_caught_stealing}"
-      away_errors_string = away_errors_string + "#{@away_team.find_player_by_lineup_index(i).game_errors_committed}"
-      away_assists_string = away_assists_string + "#{@away_team.find_player_by_lineup_index(i).game_assists}"
-      away_putouts_string = away_putouts_string + "#{@away_team.find_player_by_lineup_index(i).game_putouts}"
-      away_chances_string = away_chances_string + "#{@away_team.find_player_by_lineup_index(i).game_chances}"
+      away_at_bats_string = away_at_bats_string + "#{@away_team.game_lineup_players[i].game_atbats}"
+      away_runs_scored_string = away_runs_scored_string + "#{@away_team.game_lineup_players[i].game_runs_scored}"
+      away_hits_string = away_hits_string + "#{@away_team.game_lineup_players[i].game_hits}"
+      away_doubles_string = away_doubles_string + "#{@away_team.game_lineup_players[i].game_doubles}"
+      away_triples_string = away_triples_string + "#{@away_team.game_lineup_players[i].game_triples}"
+      away_home_runs_string = away_home_runs_string + "#{@away_team.game_lineup_players[i].game_home_runs}"
+      away_RBI_string = away_RBI_string + "#{@away_team.game_lineup_players[i].game_rbi}"
+      away_walks_string = away_walks_string + "#{@away_team.game_lineup_players[i].game_walks}"
+      away_strikeouts_string = away_strikeouts_string + "#{@away_team.game_lineup_players[i].game_strikeouts}"
+      away_stolen_bases_string = away_stolen_bases_string + "#{@away_team.game_lineup_players[i].game_stolen_bases}"
+      away_caught_stealing_string = away_caught_stealing_string + "#{@away_team.game_lineup_players[i].game_caught_stealing}"
+      away_errors_string = away_errors_string + "#{@away_team.game_lineup_players[i].game_errors_committed}"
+      away_assists_string = away_assists_string + "#{@away_team.game_lineup_players[i].game_assists}"
+      away_putouts_string = away_putouts_string + "#{@away_team.game_lineup_players[i].game_putouts}"
+      away_chances_string = away_chances_string + "#{@away_team.game_lineup_players[i].game_chances}"
 
       if i < 8
         # home batting stats
@@ -641,81 +719,72 @@ class Game < ActiveRecord::Base
     away_pitchers = @away_team.game_pitcher_list.map { |pitcher| pitcher.id }.join("_")
 
     # Game attributes
-    update_attribute(:attendance, @home_team.capacity)
-    update_attribute(:stadium_name, @home_team.stadium)
-    update_attribute(:home_lineup, @home_team.game_lineup)
-    update_attribute(:away_lineup, @away_team.game_lineup)
-
-    update_attribute(:home_atbats, home_atbats)
-    update_attribute(:home_runs_scored, home_runs_scored)
-    update_attribute(:home_hits, home_hits)
-    update_attribute(:home_doubles, home_doubles)
-    update_attribute(:home_triples, home_triples)
-    update_attribute(:home_home_runs, home_home_runs)
-    update_attribute(:home_RBI, home_RBI)
-    update_attribute(:home_walks, home_walks)
-    update_attribute(:home_strikeouts, home_strikeouts)
-    update_attribute(:home_stolen_bases, home_stolen_bases)
-    update_attribute(:home_caught_stealing, home_caught_stealing)
-    update_attribute(:home_errors, home_errors)
-    update_attribute(:home_assists, home_assists)
-    update_attribute(:home_putouts, home_putouts)
-    update_attribute(:home_chances, home_chances)
-
-    update_attribute(:away_atbats, away_atbats)
-    update_attribute(:away_runs_scored, away_runs_scored)
-    update_attribute(:away_hits, away_hits)
-    update_attribute(:away_doubles, away_doubles)
-    update_attribute(:away_triples, away_triples)
-    update_attribute(:away_home_runs, away_home_runs)
-    update_attribute(:away_RBI, away_RBI)
-    update_attribute(:away_walks, away_walks)
-    update_attribute(:away_strikeouts, away_strikeouts)
-    update_attribute(:away_stolen_bases, away_stolen_bases)
-    update_attribute(:away_caught_stealing, away_caught_stealing)
-    update_attribute(:away_errors, away_errors)
-    update_attribute(:away_assists, away_assists)
-    update_attribute(:away_putouts, away_putouts)
-    update_attribute(:away_chances, away_chances)
-
-    update_attribute(:home_pitchers, home_pitchers)
-    update_attribute(:away_pitchers, away_pitchers)
-
-    update_attribute(:home_outs_recorded, home_outs_recorded)
-    update_attribute(:home_hits_allowed, home_hits_allowed)
-    update_attribute(:home_runs_allowed, home_runs_allowed)
-    update_attribute(:home_earned_runs_allowed, home_earned_runs_allowed)
-    update_attribute(:home_walks_allowed, home_walks_allowed)
-    update_attribute(:home_strikeouts_recorded, home_strikeouts_recorded)
-    update_attribute(:home_home_runs_allowed, home_home_runs_allowed)
-    update_attribute(:home_total_pitches, home_total_pitches)
-    update_attribute(:home_strikes_thrown, home_strikes_thrown)
-    update_attribute(:home_balls_thrown, home_balls_thrown)
-    update_attribute(:home_intentional_walks_allowed, home_intentional_walks_allowed)
-
-    update_attribute(:away_outs_recorded, away_outs_recorded)
-    update_attribute(:away_hits_allowed, away_hits_allowed)
-    update_attribute(:away_runs_allowed, away_runs_allowed)
-    update_attribute(:away_earned_runs_allowed, away_earned_runs_allowed)
-    update_attribute(:away_walks_allowed, away_walks_allowed)
-    update_attribute(:away_strikeouts_recorded, away_strikeouts_recorded)
-    update_attribute(:away_home_runs_allowed, away_home_runs_allowed)
-    update_attribute(:away_total_pitches, away_total_pitches)
-    update_attribute(:away_strikes_thrown, away_strikes_thrown)
-    update_attribute(:away_balls_thrown, away_balls_thrown)
-    update_attribute(:away_intentional_walks_allowed, away_intentional_walks_allowed)
-
-    update_attribute(:player_of_the_game, nil)
-
-    update_attribute(:home_inning_scores, @home_team.game_inning_scores)
-    update_attribute(:away_inning_scores, @away_team.game_inning_scores)
-
-    update_attribute(:pbp, play_by_play)
-    update_attribute(:season_id, @season_id)
-    update_attribute(:game_number, @game_number)
-    update_attribute(:winning_pitcher, winning_pitcher)
-    update_attribute(:losing_pitcher, losing_pitcher)
-
+    update_attributes(:attendance => @home_team.capacity,
+    :stadium_name => @home_team.stadium,
+    :home_lineup => @home_team.game_lineup,
+    :away_lineup => @away_team.game_lineup,
+    :home_atbats => home_atbats,
+    :home_runs_scored => home_runs_scored,
+    :home_hits => home_hits,
+    :home_doubles => home_doubles,
+    :home_triples => home_triples,
+    :home_home_runs => home_home_runs,
+    :home_RBI => home_RBI,
+    :home_walks => home_walks,
+    :home_strikeouts => home_strikeouts,
+    :home_stolen_bases => home_stolen_bases,
+    :home_caught_stealing => home_caught_stealing,
+    :home_errors => home_errors,
+    :home_assists => home_assists,
+    :home_putouts => home_putouts,
+    :home_chances => home_chances,
+    :away_atbats => away_atbats,
+    :away_runs_scored => away_runs_scored,
+    :away_hits => away_hits,
+    :away_doubles => away_doubles,
+    :away_triples => away_triples,
+    :away_home_runs => away_home_runs,
+    :away_RBI => away_RBI,
+    :away_walks => away_walks,
+    :away_strikeouts => away_strikeouts,
+    :away_stolen_bases => away_stolen_bases,
+    :away_caught_stealing => away_caught_stealing,
+    :away_errors => away_errors,
+    :away_assists => away_assists,
+    :away_putouts => away_putouts,
+    :away_chances => away_chances,
+    :home_pitchers => home_pitchers,
+    :away_pitchers => away_pitchers,
+    :home_outs_recorded => home_outs_recorded,
+    :home_hits_allowed => home_hits_allowed,
+    :home_runs_allowed => home_runs_allowed,
+    :home_earned_runs_allowed => home_earned_runs_allowed,
+    :home_walks_allowed => home_walks_allowed,
+    :home_strikeouts_recorded => home_strikeouts_recorded,
+    :home_home_runs_allowed => home_home_runs_allowed,
+    :home_total_pitches => home_total_pitches,
+    :home_strikes_thrown => home_strikes_thrown,
+    :home_balls_thrown => home_balls_thrown,
+    :home_intentional_walks_allowed => home_intentional_walks_allowed,
+    :away_outs_recorded => away_outs_recorded,
+    :away_hits_allowed => away_hits_allowed,
+    :away_runs_allowed => away_runs_allowed,
+    :away_earned_runs_allowed => away_earned_runs_allowed,
+    :away_walks_allowed => away_walks_allowed,
+    :away_strikeouts_recorded => away_strikeouts_recorded,
+    :away_home_runs_allowed => away_home_runs_allowed,
+    :away_total_pitches => away_total_pitches,
+    :away_strikes_thrown => away_strikes_thrown,
+    :away_balls_thrown => away_balls_thrown,
+    :away_intentional_walks_allowed => away_intentional_walks_allowed,
+    :player_of_the_game => nil,
+    :home_inning_scores => @home_team.game_inning_scores,
+    :away_inning_scores => @away_team.game_inning_scores,
+    :pbp => play_by_play,
+    :season_id => @season_id,
+    :game_number => @game_number,
+    :winning_pitcher => winning_pitcher,
+    :losing_pitcher => losing_pitcher)
 
   end
 

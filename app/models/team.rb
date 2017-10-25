@@ -7,7 +7,8 @@ class Team < ActiveRecord::Base
   :game_inning_scores, # string representing runs scored each inning, separated by '_'
   :in_line_for_loss, # if this team is losing, which pitcher would get the loss if the game ended now?
   :in_line_for_win, # if this team is winning, which pitcher woudl get the win if the game ended now?
-  :game_lineup # string of ids representing the players in the lineup, in order, separated by '_'
+  :game_lineup, # string of ids representing the players in the lineup, in order, separated by '_'
+  :game_lineup_players # array of players in the lineup, in order.
 
   # A team must have all the following attributes when it is created:
   validates :city, :name, :league, :division, :stadium, :capacity, presence: true
@@ -64,7 +65,6 @@ class Team < ActiveRecord::Base
 
   # Returns the Player that is the team's current starting pitcher
   def starting_pitcher
-      puts "sp1: #{sp1}"
     case rotation_position
     when 1
       Player.find(sp1)
@@ -122,7 +122,6 @@ class Team < ActiveRecord::Base
 
   # returns the Player who is currently at the specified lineup position.
   def find_player_by_lineup_index(lineup_index)
-    puts "finding player with lineup index #{lineup_index}"
     case lineup_index
     when 1
       find_player_by_position_abbrev(lineup1)

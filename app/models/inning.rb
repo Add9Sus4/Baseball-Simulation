@@ -33,8 +33,7 @@ class Inning
         break
       end
 
-      # TODO: lineups should be loaded beforehand to avoid redundant database calls
-      @batter = Player.find(@hitting_team.find_player_id_by_lineup_index(@lineup_position))
+      @batter = @hitting_team.game_lineup_players[@lineup_position]
 
       # Check if a pitching change is needed
       check_for_pitching_change
