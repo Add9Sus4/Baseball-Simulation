@@ -122,6 +122,7 @@ class Team < ActiveRecord::Base
 
   # returns the Player who is currently at the specified lineup position.
   def find_player_by_lineup_index(lineup_index)
+    puts "finding player with lineup index #{lineup_index}"
     case lineup_index
     when 1
       find_player_id_by_position_abbrev(lineup1)
