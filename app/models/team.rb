@@ -95,44 +95,29 @@ class Team < ActiveRecord::Base
   end
 
   # returns the Player who is currently at the specified lineup position.
-  def find_player_by_lineup_index(lineup_index)
-
-    lineup_ids = [lineup1, lineup2, lineup3, lineup4,
-                  lineup5, lineup6, lineup7, lineup8,
-                  lineup9]
-
-    current_player = nil
-    for i in 0..MAX_PLAYERS-1 do
-      if players[i].id == catcher && lineup_ids[lineup_index] == 0
-        current_player = players[i]
-        break
-      elsif players[i].id == designated_hitter && lineup_ids[lineup_index] == 1
-        current_player = players[i]
-        break
-      elsif players[i].id == first_base && lineup_ids[lineup_index] == 2
-        current_player = players[i]
-        break
-      elsif players[i].id == second_base && lineup_ids[lineup_index] == 3
-        current_player = players[i]
-        break
-      elsif players[i].id == third_base && lineup_ids[lineup_index] == 4
-        current_player = players[i]
-        break
-      elsif players[i].id == shortstop && lineup_ids[lineup_index] == 5
-        current_player = players[i]
-        break
-      elsif players[i].id == left_field && lineup_ids[lineup_index] == 6
-        current_player = players[i]
-        break
-      elsif players[i].id == center_field && lineup_ids[lineup_index] == 7
-        current_player = players[i]
-        break
-      elsif players[i].id == right_field && lineup_ids[lineup_index] == 8
-        current_player = players[i]
-        break
-      end
+  def find_player_id_by_lineup_index(lineup_index)
+    case lineup_index
+    when 1
+      lineup1
+    when 2
+      lineup2
+    when 3
+      lineup3
+    when 4
+      lineup4
+    when 5
+      lineup5
+    when 6
+      lineup6
+    when 7
+      lineup7
+    when 8
+      lineup8
+    when 9
+      lineup9
+    else
+      lineup1
     end
-    current_player
   end
 
   # Returns the Player currently playing at the specified position

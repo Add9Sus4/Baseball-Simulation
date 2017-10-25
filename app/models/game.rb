@@ -55,10 +55,10 @@ class Game < ActiveRecord::Base
     # lineups
     @home_team.game_lineup = ""
     @away_team.game_lineup = ""
-    for i in 0..8 do
+    for i in 1..9 do
       @home_team.game_lineup += "#{@home_team.find_player_by_lineup_index(i).id}"
       @away_team.game_lineup += "#{@away_team.find_player_by_lineup_index(i).id}"
-      if i < 8
+      if i < 9
         @home_team.game_lineup += "_"
         @away_team.game_lineup += "_"
       end

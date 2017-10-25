@@ -304,6 +304,39 @@ class Player < ActiveRecord::Base
     end
   end
 
+  # Returns a player's height, formatted in feet and inches
+  def formatted_height
+    feet = (height/12).floor
+    inches = height - feet*12
+    "#{feet}\' #{inches}\'\'"
+  end
+
+  # Returns the name, as a formatted string, of this player's natural position (for display purposes)
+  def natural_position_name
+    case position
+    when "C"
+      "Catcher"
+    when "DH"
+      "Designated Hitter"
+    when "1B"
+      "First Base"
+    when "2B"
+      "Second Base"
+    when "3B"
+      "Third Base"
+    when "SS"
+      "Shortstop"
+    when "LF"
+      "Left Field"
+    when "CF"
+      "Center Field"
+    when "RF"
+      "Right Field"
+    else
+      "Bench"
+    end
+  end
+
   # returns the pitching role of this player
   def pitching_role
     case id
