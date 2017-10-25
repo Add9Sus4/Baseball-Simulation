@@ -514,7 +514,7 @@
           <tbody>
               <% for i in 1..9 do %>
               <tr>
-                <% @player = Player.find(@team.find_player_by_lineup_index(i)) %>
+                <% @player = @team.find_player_by_lineup_index(i) %>
                 <td><%= i %></td>
                 <td class=><%= link_to @player, @player, method: :get %></td>
                 <td class="current_position_cell"><%= @team.find_position_abbreviation_of_player(@player.id) %></td>

@@ -95,26 +95,26 @@ class Team < ActiveRecord::Base
   end
 
   # returns the player currently playing the given position (in abbreviated form)
-  def find_player_id_by_position_abbrev(abbrev)
+  def find_player_by_position_abbrev(abbrev)
     case abbrev
     when "C"
-      catcher
+      Player.find(catcher)
     when "DH"
-      designated_hitter
+      Player.find(designated_hitter)
     when "1B"
-      first_base
+      Player.find(first_base)
     when "2B"
-      second_base
+      Player.find(second_base)
     when "3B"
-      third_base
+      Player.find(third_base)
     when "SS"
-      shortstop
+      Player.find(shortstop)
     when "LF"
-      left_field
+      Player.find(left_field)
     when "CF"
-      center_field
+      Player.find(center_field)
     when "RF"
-      right_field
+      Player.find(right_field)
     else
       nil
     end
@@ -125,23 +125,23 @@ class Team < ActiveRecord::Base
     puts "finding player with lineup index #{lineup_index}"
     case lineup_index
     when 1
-      find_player_id_by_position_abbrev(lineup1)
+      find_player_by_position_abbrev(lineup1)
     when 2
-      find_player_id_by_position_abbrev(lineup2)
+      find_player_by_position_abbrev(lineup2)
     when 3
-      find_player_id_by_position_abbrev(lineup3)
+      find_player_by_position_abbrev(lineup3)
     when 4
-      find_player_id_by_position_abbrev(lineup4)
+      find_player_by_position_abbrev(lineup4)
     when 5
-      find_player_id_by_position_abbrev(lineup5)
+      find_player_by_position_abbrev(lineup5)
     when 6
-      find_player_id_by_position_abbrev(lineup6)
+      find_player_by_position_abbrev(lineup6)
     when 7
-      find_player_id_by_position_abbrev(lineup7)
+      find_player_by_position_abbrev(lineup7)
     when 8
-      find_player_id_by_position_abbrev(lineup8)
+      find_player_by_position_abbrev(lineup8)
     when 9
-      find_player_id_by_position_abbrev(lineup9)
+      find_player_by_position_abbrev(lineup9)
     else
       nil
     end
