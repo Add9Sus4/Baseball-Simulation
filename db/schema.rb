@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170901041730) do
+ActiveRecord::Schema.define(version: 20171025165301) do
 
   create_table "called_strike_percentages", force: :cascade do |t|
     t.integer "zone_id",                  limit: 4
@@ -148,8 +148,8 @@ ActiveRecord::Schema.define(version: 20170901041730) do
     t.integer  "throwLong",                 limit: 4
     t.integer  "intelligence",              limit: 4
     t.integer  "endurance",                 limit: 4
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
     t.integer  "atbats",                    limit: 4
     t.integer  "runs",                      limit: 4
     t.integer  "hits",                      limit: 4
@@ -257,6 +257,8 @@ ActiveRecord::Schema.define(version: 20170901041730) do
     t.string   "pitch_5",                   limit: 255
     t.integer  "wins",                      limit: 4
     t.integer  "losses",                    limit: 4
+    t.text     "current_position",          limit: 65535
+    t.integer  "lineup_position",           limit: 4
   end
 
   create_table "seasons", force: :cascade do |t|
@@ -294,15 +296,15 @@ ActiveRecord::Schema.define(version: 20170901041730) do
     t.integer  "left_field",        limit: 4
     t.integer  "center_field",      limit: 4
     t.integer  "right_field",       limit: 4
-    t.integer  "lineup1",           limit: 4
-    t.integer  "lineup2",           limit: 4
-    t.integer  "lineup3",           limit: 4
-    t.integer  "lineup4",           limit: 4
-    t.integer  "lineup5",           limit: 4
-    t.integer  "lineup6",           limit: 4
-    t.integer  "lineup7",           limit: 4
-    t.integer  "lineup8",           limit: 4
-    t.integer  "lineup9",           limit: 4
+    t.text     "lineup1",           limit: 65535
+    t.text     "lineup2",           limit: 65535
+    t.text     "lineup3",           limit: 65535
+    t.text     "lineup4",           limit: 65535
+    t.text     "lineup5",           limit: 65535
+    t.text     "lineup6",           limit: 65535
+    t.text     "lineup7",           limit: 65535
+    t.text     "lineup8",           limit: 65535
+    t.text     "lineup9",           limit: 65535
     t.integer  "wins",              limit: 4
     t.integer  "losses",            limit: 4
     t.integer  "runs_scored",       limit: 4

@@ -940,6 +940,41 @@ season = Season.create!(next_game: 0, simulating: 1)
         newPlayer = completely_random_player(team.id)
         players.unshift(newPlayer)
       end
+
+      # players[12].update_attribute(:current_position, "C")
+      # players[11].update_attribute(:current_position, "DH")
+      # players[10].update_attribute(:current_position, "1B")
+      # players[9].update_attribute(:current_position, "2B")
+      # players[8].update_attribute(:current_position, "3B")
+      # players[7].update_attribute(:current_position, "SS")
+      # players[6].update_attribute(:current_position, "LF")
+      # players[5].update_attribute(:current_position, "CF")
+      # players[4].update_attribute(:current_position, "RF")
+      # players[3].update_attribute(:current_position, "BN")
+      # players[2].update_attribute(:current_position, "BN")
+      # players[1].update_attribute(:current_position, "BN")
+      # players[0].update_attribute(:current_position, "BN")
+      #
+      # players[12].update_attribute(:lineup_position, 1)
+      # players[11].update_attribute(:lineup_position, 2)
+      # players[10].update_attribute(:lineup_position, 3)
+      # players[9].update_attribute(:lineup_position, 4)
+      # players[8].update_attribute(:lineup_position, 5)
+      # players[7].update_attribute(:lineup_position, 6)
+      # players[6].update_attribute(:lineup_position, 7)
+      # players[5].update_attribute(:lineup_position, 8)
+      # players[4].update_attribute(:lineup_position, 9)
+      # players[3].update_attribute(:lineup_position, -1)
+      # players[2].update_attribute(:lineup_position, -1)
+      # players[1].update_attribute(:lineup_position, -1)
+      # players[0].update_attribute(:lineup_position, -1)
+
+      players.each do |player|
+        player.save
+      end
+
+
+
       team.update(
       catcher: players[12].id,
       designated_hitter: players[11].id,
@@ -950,15 +985,15 @@ season = Season.create!(next_game: 0, simulating: 1)
       left_field: players[6].id,
       center_field: players[5].id,
       right_field: players[4].id,
-      lineup1: players[12].id,
-      lineup2: players[11].id,
-      lineup3: players[10].id,
-      lineup4: players[9].id,
-      lineup5: players[8].id,
-      lineup6: players[7].id,
-      lineup7: players[6].id,
-      lineup8: players[5].id,
-      lineup9: players[4].id,
+      lineup1: "C",
+      lineup2: "DH",
+      lineup3: "1B",
+      lineup4: "2B",
+      lineup5: "3B",
+      lineup6: "SS",
+      lineup7: "LF",
+      lineup8: "CF",
+      lineup9: "RF",
       wins: 0,
       losses: 0,
       runs_scored: 0,

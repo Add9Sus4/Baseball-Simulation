@@ -94,29 +94,55 @@ class Team < ActiveRecord::Base
     position_names[index]
   end
 
+  # returns the player currently playing the given position (in abbreviated form)
+  def find_player_id_by_position_abbrev(abbrev)
+    case abbrev
+    when "C"
+      catcher
+    when "DH"
+      designated_hitter
+    when "1B"
+      first_base
+    when "2B"
+      second_base
+    when "3B"
+      third_base
+    when "SS"
+      shortstop
+    when "LF"
+      left_field
+    when "CF"
+      center_field
+    when "RF"
+      right_field
+    else
+      nil
+    end
+  end
+
   # returns the Player who is currently at the specified lineup position.
-  def find_player_id_by_lineup_index(lineup_index)
+  def find_player_by_lineup_index(lineup_index)
     case lineup_index
     when 1
-      lineup1
+      find_player_id_by_position_abbrev(lineup1)
     when 2
-      lineup2
+      find_player_id_by_position_abbrev(lineup2)
     when 3
-      lineup3
+      find_player_id_by_position_abbrev(lineup3)
     when 4
-      lineup4
+      find_player_id_by_position_abbrev(lineup4)
     when 5
-      lineup5
+      find_player_id_by_position_abbrev(lineup5)
     when 6
-      lineup6
+      find_player_id_by_position_abbrev(lineup6)
     when 7
-      lineup7
+      find_player_id_by_position_abbrev(lineup7)
     when 8
-      lineup8
+      find_player_id_by_position_abbrev(lineup8)
     when 9
-      lineup9
+      find_player_id_by_position_abbrev(lineup9)
     else
-      lineup1
+      nil
     end
   end
 

@@ -225,7 +225,7 @@
                 <% end %>
                 <span "hidden_id" hidden><%= player.id %></span>
               </td>
-              <td><%= @team.find_position_abbreviation_of_player(player.id)%></td>
+              <td><%= @team.find_position_abbreviation_of_player(player.id) %></td>
               <td><%= player.natural_position_name %></td>
               <td><%= player.age %></td>
               <td class="height info_cell"><%= player.formatted_height %></td>
@@ -514,10 +514,10 @@
           <tbody>
               <% for i in 1..9 do %>
               <tr>
-                <% @player = Player.find(@team.find_player_id_by_lineup_index(i)) %>
+                <% @player = Player.find(@team.find_player_by_lineup_index(i)) %>
                 <td><%= i %></td>
-                <td class=><%= link_to @player, @player, method: :get %><span class="lineup_hidden_player_id" hidden><%= @team.find_player_id_by_lineup_index(i) %></span></td>
-                <td><%= @team.find_position_abbreviation_of_player(@player.id)%></td>
+                <td class=><%= link_to @player, @player, method: :get %></td>
+                <td class="current_position_cell"><%= @team.find_position_abbreviation_of_player(@player.id) %></td>
                 <td><%= @player.natural_position_name %></td>
                 <td><%= @player.age %></td>
                 <td class="height info_cell"><%= @player.formatted_height %></td>
@@ -631,52 +631,7 @@
 
 <script>
 
-$(".lineup tbody").sortable({
-  helper: 'clone',
-  delay: 150,
-  tolerance: "pointer",
 
-  start: function(event, ui) {
-    console.log("dragging started");
-    $(this).toggleClass('dragging');
-
-  },
-  stop: function(event, ui) {
-    console.log("dragging stopped");
-    saveLineupChanges();
-    $(this).toggleClass('dragging');
-  },
-  // containment: "#view_lineup"
-}).disableSelection();
-
-function saveLineupChanges() {
-  lineup = $.map($('.lineup_hidden_player_id'), function(element) {
-    return $(element).text();
-  });
-  console.log(lineup);
-
-  $.ajax({
-    url: window.location.href,
-    type: 'PATCH',
-    dataType: 'json',
-    data: { "team": { "lineup1": lineup[0],
-    "lineup2": lineup[1],
-    "lineup3": lineup[2],
-    "lineup4": lineup[3],
-    "lineup5": lineup[4],
-    "lineup6": lineup[5],
-    "lineup7": lineup[6],
-    "lineup8": lineup[7],
-    "lineup9": lineup[8]
-  }
-},
-});
-
-$('.lineup tbody tr').each(function(index, element) {
-  $(this).find('td:first').text(index + 1);
-});
-
-}
 
 // Everything that needs to be reloaded on an ajax call goes here (LOL)
 function stuffToBeReloadedOnAjaxCall() {
@@ -717,6 +672,53 @@ $(".stats_cell").hide();
 
 // Radio button functionality for edit position view options
 function setJqueryUiFunctionality() {
+  $(".lineup tbody").sortable({
+    helper: 'clone',
+    delay: 150,
+    tolerance: "pointer",
+
+    start: function(event, ui) {
+      console.log("dragging started");
+      $(this).toggleClass('dragging');
+
+    },
+    stop: function(event, ui) {
+      console.log("dragging stopped");
+      saveLineupChanges();
+      $(this).toggleClass('dragging');
+    },
+    // containment: "#view_lineup"
+  }).disableSelection();
+
+  function saveLineupChanges() {
+    lineup = $.map($('.current_position_cell'), function(element) {
+      return $(element).text();
+    });
+    console.log(lineup);
+
+    $.ajax({
+      url: window.location.href,
+      type: 'PATCH',
+      dataType: 'json',
+      data: { "team": { "lineup1": lineup[0],
+      "lineup2": lineup[1],
+      "lineup3": lineup[2],
+      "lineup4": lineup[3],
+      "lineup5": lineup[4],
+      "lineup6": lineup[5],
+      "lineup7": lineup[6],
+      "lineup8": lineup[7],
+      "lineup9": lineup[8]
+    }
+  },
+  });
+
+  $('.lineup tbody tr').each(function(index, element) {
+    $(this).find('td:first').text(index + 1);
+  });
+
+  }
+
   $('.position_select_cell').each(function() {
     var selected_position = $(this).find('span').first().text();
     $(this).find('select').val(selected_position);
@@ -962,11 +964,12 @@ function pitchingRolesValid() {
 }
 
 function savePositionChanges() {
-  var position_ids = {};
+
+  var new_position_ids = {};
 
   $('.position_select_cell').each(function() {
     var selected_position = $(this).find('select').val();
-    position_ids[selected_position] = $(this).find(".hidden_player_id").text();
+    new_position_ids[selected_position] = $(this).find(".hidden_player_id").text();
   });
 
   $.ajax({
@@ -974,26 +977,31 @@ function savePositionChanges() {
     type: 'PATCH',
     dataType: 'json',
     data: { "team": {
-    "designated_hitter": position_ids["DH"],
-    "catcher": position_ids["C"],
-    "first_base": position_ids["1B"],
-    "second_base": position_ids["2B"],
-    "third_base": position_ids["3B"],
-    "shortstop": position_ids["SS"],
-    "left_field": position_ids["LF"],
-    "center_field": position_ids["CF"],
-    "right_field": position_ids["RF"]
+    "designated_hitter": new_position_ids["DH"],
+    "catcher": new_position_ids["C"],
+    "first_base": new_position_ids["1B"],
+    "second_base": new_position_ids["2B"],
+    "third_base": new_position_ids["3B"],
+    "shortstop": new_position_ids["SS"],
+    "left_field": new_position_ids["LF"],
+    "center_field": new_position_ids["CF"],
+    "right_field": new_position_ids["RF"]
     }
     },
     success: function (data, textStatus, jqXHR) {
 
       // Reload batting table
-      $("#tabs-5").load("/teams/" + data.id + " #tabs-5", function(responseText, textStatus, XMLHttpRequest) {
+      $("#tabs-batting").load("/teams/" + data.id + " #tabs-batting", function(responseText, textStatus, XMLHttpRequest) {
         stuffToBeReloadedOnAjaxCall();
       });
 
       // Reload pitching table
-      $("#tabs-6").load("/teams/" + data.id + " #tabs-6", function(responseText, textStatus, XMLHttpRequest) {
+      $("#tabs-pitching").load("/teams/" + data.id + " #tabs-pitching", function(responseText, textStatus, XMLHttpRequest) {
+        stuffToBeReloadedOnAjaxCall();
+      });
+
+      // Reload lineup
+      $("#tabs-lineup").load("/teams/" + data.id + " #tabs-lineup", function(responseText, textStatus, XMLHttpRequest) {
         stuffToBeReloadedOnAjaxCall();
       });
 
@@ -1030,12 +1038,17 @@ function savePitchingRoleChanges() {
     success: function (data, textStatus, jqXHR) {
 
       // Reload batting table
-      $("#tabs-5").load("/teams/" + data.id + " #tabs-5", function(responseText, textStatus, XMLHttpRequest) {
+      $("#tabs-batting").load("/teams/" + data.id + " #tabs-batting", function(responseText, textStatus, XMLHttpRequest) {
         stuffToBeReloadedOnAjaxCall();
       });
 
       // Reload pitching table
-      $("#tabs-6").load("/teams/" + data.id + " #tabs-6", function(responseText, textStatus, XMLHttpRequest) {
+      $("#tabs-pitching").load("/teams/" + data.id + " #tabs-pitching", function(responseText, textStatus, XMLHttpRequest) {
+        stuffToBeReloadedOnAjaxCall();
+      });
+
+      // Reload lineup
+      $("#tabs-lineup").load("/teams/" + data.id + " #tabs-lineup", function(responseText, textStatus, XMLHttpRequest) {
         stuffToBeReloadedOnAjaxCall();
       });
 

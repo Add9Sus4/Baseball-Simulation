@@ -72,6 +72,14 @@ class PlayersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def player_params
-      params.require(:player).permit(:team_id, :first_name, :last_name, :age, :height, :weight, :position, :salary, :power, :contact, :speed, :patience, :plate_vision, :pull_amount, :uppercut_amount, :batting_average, :movement, :control, :location, :agility, :reactionTime, :armStrength, :fieldGrounder, :fieldLiner, :fieldFlyball, :fieldPopup, :throwShort, :throwMedium, :throwLong, :intelligence, :endurance, :atbats, :hits, :runs, :doubles, :triples, :home_runs, :rbi, :walks, :strikeouts, :stolen_bases, :caught_stealing, :errors_committed, :assists, :putouts, :chances, :outs_recorded, :hits_allowed, :runs_allowed, :earned_runs_allowed, :walks_allowed, :strikeouts_recorded, :home_runs_allowed, :total_pitches, :strikes_thrown, :balls_thrown, :intentional_walks_allowed)
+      params.require(:player).permit(:team_id, :first_name, :last_name, :age, :height, :weight,
+        :position, :salary, :power, :contact, :speed, :patience, :plate_vision, :pull_amount,
+        :uppercut_amount, :batting_average, :movement, :control, :location, :agility, :reactionTime,
+        :armStrength, :fieldGrounder, :fieldLiner, :fieldFlyball, :fieldPopup, :throwShort, :throwMedium,
+        :throwLong, :intelligence, :endurance, :atbats, :hits, :runs, :doubles, :triples, :home_runs,
+        :rbi, :walks, :strikeouts, :stolen_bases, :caught_stealing, :errors_committed, :assists, :putouts,
+        :chances, :outs_recorded, :hits_allowed, :runs_allowed, :earned_runs_allowed, :walks_allowed,
+        :strikeouts_recorded, :home_runs_allowed, :total_pitches, :strikes_thrown, :balls_thrown,
+        :intentional_walks_allowed, :current_position, :lineup_position)
     end
 end
