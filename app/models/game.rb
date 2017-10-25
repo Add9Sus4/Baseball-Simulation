@@ -116,6 +116,7 @@ class Game < ActiveRecord::Base
       end
       @inning_number = @inning_number + 1
     end # game is over here
+    puts 'game is over'
     collect_stats
   end
 
@@ -184,6 +185,8 @@ class Game < ActiveRecord::Base
     :wins => @away_team.wins + away_wins,
     :streak => away_streak)
 
+    puts 'updating home player stats'
+
     # player stats
     @home_team.game_lineup_players.each do |player|
       player.atbats ||= 0
@@ -202,7 +205,7 @@ class Game < ActiveRecord::Base
       player.putouts ||= 0
       player.chances ||= 0
 
-      player.update_attributes(:atbats => player.atbats + player.game_atbats,
+      player.update_columns(:atbats => player.atbats + player.game_atbats,
       :runs => player.runs + player.game_runs_scored,
       :hits => player.hits + player.game_hits,
       :doubles => player.doubles + player.game_doubles,
@@ -218,6 +221,8 @@ class Game < ActiveRecord::Base
       :putouts => player.putouts + player.game_putouts,
       :chances => player.chances + player.game_chances)
     end
+
+    puts 'updating away player stats'
 
     @away_team.game_lineup_players.each do |player|
 
@@ -248,7 +253,7 @@ class Game < ActiveRecord::Base
       player.balls_thrown ||= 0
       player.intentional_walks_allowed ||= 0
 
-      player.update_attributes(:atbats => player.atbats + player.game_atbats,
+      player.update_columns(:atbats => player.atbats + player.game_atbats,
       :runs => player.runs + player.game_runs_scored,
       :hits => player.hits + player.game_hits,
       :doubles => player.doubles + player.game_doubles,
@@ -264,6 +269,8 @@ class Game < ActiveRecord::Base
       :putouts => player.putouts + player.game_putouts,
       :chances => player.chances + player.game_chances)
     end
+
+    puts 'updating home pitcher stats'
 
     # pitcher stats
     @home_team.game_pitcher_list.each do |player|
@@ -284,7 +291,7 @@ class Game < ActiveRecord::Base
       player.balls_thrown ||= 0
       player.intentional_walks_allowed ||= 0
 
-      player.update_attributes(:errors_committed => player.errors_committed + player.game_errors_committed,
+      player.update_columns(:errors_committed => player.errors_committed + player.game_errors_committed,
       :assists => player.assists + player.game_assists,
       :putouts => player.putouts + player.game_putouts,
       :chances => player.chances + player.game_chances,
@@ -374,6 +381,8 @@ class Game < ActiveRecord::Base
 
     end
 
+    puts 'updating away pitcher stats'
+
     @away_team.game_pitcher_list.each do |player|
 
       player.errors_committed ||= 0
@@ -392,7 +401,7 @@ class Game < ActiveRecord::Base
       player.balls_thrown ||= 0
       player.intentional_walks_allowed ||= 0
 
-      player.update_attributes(:errors_committed => player.errors_committed + player.game_errors_committed,
+      player.update_columns(:errors_committed => player.errors_committed + player.game_errors_committed,
       :assists => player.assists + player.game_assists,
       :putouts => player.putouts + player.game_putouts,
       :chances => player.chances + player.game_chances,
@@ -717,6 +726,8 @@ class Game < ActiveRecord::Base
     # update pitcher list
     home_pitchers = @home_team.game_pitcher_list.map { |pitcher| pitcher.id }.join("_")
     away_pitchers = @away_team.game_pitcher_list.map { |pitcher| pitcher.id }.join("_")
+
+    puts 'updating game stats'
 
     # Game attributes
     update_attributes(:attendance => @home_team.capacity,
