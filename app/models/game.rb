@@ -172,14 +172,14 @@ class Game < ActiveRecord::Base
 
     # team runs scored and allowed
     @home_team.update_attributes(:runs_scored => @home_team.runs_scored + @home_team.game_score,
-    :runs_allowed => @home_team.runs_allowed + @home_team.game_score,
+    :runs_allowed => @home_team.runs_allowed + @away_team.game_score,
     :rotation_position => @home_team.increment_rotation,
     :losses => @home_team.losses + home_losses,
     :wins => @home_team.wins + home_wins,
     :streak => home_streak)
 
     @away_team.update_attributes(:runs_scored => @away_team.runs_scored + @away_team.game_score,
-    :runs_allowed => @away_team.runs_allowed + @away_team.game_score,
+    :runs_allowed => @away_team.runs_allowed + @home_team.game_score,
     :rotation_position => @away_team.increment_rotation,
     :losses => @away_team.losses + away_losses,
     :wins => @away_team.wins + away_wins,
