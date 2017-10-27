@@ -146,8 +146,8 @@ class Game < ActiveRecord::Base
       @away_team.in_line_for_loss.update_attribute(:losses, @away_team.in_line_for_loss.losses + 1)
 
       # Home team streak
-      home_streak >= 0 ? @home_team.streak + 1 : 1
-      away_streak <= 0 ? @away_team.streak - 1 : -1
+      home_streak = home_streak >= 0 ? @home_team.streak + 1 : 1
+      away_streak = away_streak <= 0 ? @away_team.streak - 1 : -1
 
     # If the away team wins
     else
@@ -165,8 +165,8 @@ class Game < ActiveRecord::Base
       @home_team.in_line_for_loss.update_attribute(:losses, @home_team.in_line_for_loss.losses + 1)
 
       # Home team streak
-      home_streak <= 0 ? @home_team.streak - 1 : -1
-      away_streak >= 0 ? @away_team.streak + 1 : 1
+      home_streak = home_streak <= 0 ? @home_team.streak - 1 : -1
+      away_streak = away_streak >= 0 ? @away_team.streak + 1 : 1
 
     end
 
