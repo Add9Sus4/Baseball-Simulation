@@ -126,10 +126,11 @@ end
 
 task :simulate_games => :environment do
 
-  puts "Starting simulate_games task"
+  10.times do |index|
+    puts "Starting simulate_games task"
 
-  if Season.first.simulating <= 10 # Simulate games
-    puts "Simulating games..."
+    # Simulate games
+    puts "Simulating game #{index + 1} of 10..."
 
     # hash to determine if a team has already played a game (to avoid duplicate games)
     @already_played_hash = Hash.new 0
@@ -180,15 +181,7 @@ task :simulate_games => :environment do
 
       # increment game number in season
       Season.first.update_attributes(next_game: Season.first.next_game + 1)
-
     end
-    Season.first.update_attribute(:simulating, 1)
-  elsif Season.first.simulating == 1
-    Season.first.update_attribute(:simulating, 2)
-  elsif Season.first.simulating == 2 # Do nothing
-    Season.first.update_attribute(:simulating, 0)
   end
-
-
 end
-puts "done."
+puts "done simulating games."
