@@ -908,15 +908,90 @@ def completely_average_pitcher(team_id)
                               losses: 0)
 end
 
+team_names = {
+  "NL East city 0" => "Philadelphia",
+  "NL East city 1" => "New York",
+  "NL East city 2" => "Miami",
+  "NL East city 3" => "Washington",
+  "NL East city 4" => "Atlanta",
+
+  "NL Central city 0" => "Cincinnati",
+  "NL Central city 1" => "St. Louis",
+  "NL Central city 2" => "Chicago",
+  "NL Central city 3" => "Milwaukee",
+  "NL Central city 4" => "Pittsburgh",
+
+  "NL West city 0" => "Los Angeles",
+  "NL West city 1" => "San Diego",
+  "NL West city 2" => "Arizona",
+  "NL West city 3" => "Colorado",
+  "NL West city 4" => "San Francisco",
+
+  "AL East city 0" => "New York",
+  "AL East city 1" => "Boston",
+  "AL East city 2" => "Tampa Bay",
+  "AL East city 3" => "Baltimore",
+  "AL East city 4" => "Toronto",
+
+  "AL Central city 0" => "Cleveland",
+  "AL Central city 1" => "Minnesota",
+  "AL Central city 2" => "Detroit",
+  "AL Central city 3" => "Chicago",
+  "AL Central city 4" => "Kansas City",
+
+  "AL West city 0" => "Anaheim",
+  "AL West city 1" => "Oakland",
+  "AL West city 2" => "Texas",
+  "AL West city 3" => "Houston",
+  "AL West city 4" => "Seattle",
+
+  "NL East name 0" => "Phillies",
+  "NL East name 1" => "Mets",
+  "NL East name 2" => "Marlins",
+  "NL East name 3" => "Nationals",
+  "NL East name 4" => "Braves",
+
+  "NL Central name 0" => "Reds",
+  "NL Central name 1" => "Cardinals",
+  "NL Central name 2" => "Cubs",
+  "NL Central name 3" => "Brewers",
+  "NL Central name 4" => "Pirates",
+
+  "NL West name 0" => "Dodgers",
+  "NL West name 1" => "Padres",
+  "NL West name 2" => "Diamondbacks",
+  "NL West name 3" => "Rockies",
+  "NL West name 4" => "Giants",
+
+  "AL East name 0" => "Yankees",
+  "AL East name 1" => "Red Sox",
+  "AL East name 2" => "Rays",
+  "AL East name 3" => "Orioles",
+  "AL East name 4" => "Blue Jays",
+
+  "AL Central name 0" => "Indians",
+  "AL Central name 1" => "Twins",
+  "AL Central name 2" => "Tigers",
+  "AL Central name 3" => "White Sox",
+  "AL Central name 4" => "Royals",
+
+  "AL West name 0" => "Angels",
+  "AL West name 1" => "Athletics",
+  "AL West name 2" => "Rangers",
+  "AL West name 3" => "Astros",
+  "AL West name 4" => "Mariners"
+}
+
+
 # Create season
 season = Season.create!(next_game: 0, simulating: 1)
 
 ["NL", "AL"].each do |current_league|
   ["East", "Central", "West"].each do |current_division|
     # Create teams
-    numTeams.times do
-      city = Faker::Address.city
-      name = Faker::Team.creature.capitalize
+    numTeams.times do |num|
+      city = team_names["#{current_league} #{current_division} city #{num}"]
+      name = team_names["#{current_league} #{current_division} name #{num}"]
       league = current_league
       division = current_division
       stadium = name + " " + ["Stadium","Field","Park","Coliseum","Center"].sample
