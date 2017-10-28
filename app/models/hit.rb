@@ -371,6 +371,8 @@ class Hit
         hits_fly_ball("LEFT")
       elsif rand(60..100) < @power
         hits_home_run("LEFT")
+      elsif rand() < 0.50 # Single instead of double or triple
+        hits_single("LEFT")
       else
         if rand() < Constants::PERCENT_DOUBLES_TO_TRIPLES
           if rand() < 0.50
@@ -387,6 +389,8 @@ class Hit
         hits_fly_ball("CENTER")
       elsif rand(0..100) < @power
         hits_home_run("CENTER")
+      elsif rand() < 0.50 # Single instead of double or triple
+        hits_single("CENTER")
       else
         if rand() < Constants::PERCENT_DOUBLES_TO_TRIPLES
           if rand() < 0.50
@@ -403,6 +407,8 @@ class Hit
         hits_fly_ball("RIGHT")
       elsif rand(0..100) < @power
         hits_home_run("RIGHT")
+      elsif rand() < 0.50 # Single instead of double or triple
+        hits_single("RIGHT")
       else
         if rand() < Constants::PERCENT_DOUBLES_TO_TRIPLES
           if rand() < 0.50

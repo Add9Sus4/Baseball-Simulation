@@ -12,12 +12,12 @@ class AttributeAdjustments
   BATTER_CONTACT_AFFECTS_CONTACT_PERCENTAGE_MAX = 1.25  # 100 contact -> 25% increase in contact %
 
   # Pitcher arm strength attribute (inverse)
-  PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MIN = 0.6   # 100 arm strength  -> 20% decrease in contact %
-  PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MAX = 1.4  # 0 arm strength    -> 25% increase in contact %
+  PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MIN = 0.7   # 100 arm strength  -> 30% decrease in contact %
+  PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MAX = 1.3  # 0 arm strength    -> 30% increase in contact %
 
   # Pitcher movement attribute (inverse)
-  PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MIN = 0.6   # 100 movement  -> 20% decrease in contact %
-  PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MAX = 1.4  # 0 movement    -> 25% increase in contact %
+  PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MIN = 0.7   # 100 movement  -> 70% decrease in contact %
+  PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MAX = 1.3  # 0 movement    -> 30% increase in contact %
 
   #################### SWING PERCENTAGE ####################
 
