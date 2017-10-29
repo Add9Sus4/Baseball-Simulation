@@ -1,6 +1,6 @@
 class Hit
   include Reusable
-  attr_accessor :result, :type, :location, :power, :play_by_play
+  attr_accessor :result, :type, :location, :power, :play_by_play, :fielder
   def initialize(atbat)
     @play_by_play = ""
     @atbat = atbat
@@ -8,6 +8,7 @@ class Hit
     hitType
     hitLocation
     hitResult
+    @fielder = nil
   end
 
   def hitPower
@@ -421,7 +422,7 @@ class Hit
     end
 
     if HitResult.fielded(@result)
-      @play_by_play += "\n<span style=\"color:" + color_bad + "\">#{@atbat.batter.full_name} hits a #{@result}</span>\n"
+      @play_by_play += "\n<span style=\"color:" + color_bad + "\">#{@atbat.batter.full_name} hits a #{@result}, fielded by #{@fielder}</span>\n"
     else
       @play_by_play += "\n<span style=\"color:" + color_good + "\">#{@atbat.batter.full_name} hits a #{@result}</span>\n"
     end
@@ -474,14 +475,24 @@ class Hit
     end
   end
 
+  def get_fielder(position_abbrev)
+    @atbat.fielding_team.game_position_players[position_abbrev]
+  end
+
   def hits_fly_ball(location)
     case location
     when "LEFT"
       @result = HitResult::FLY_BALL_TO_LEFT
+      @fielder = get_fielder("LF")
+      @fielder.records_putout
     when "CENTER"
       @result = HitResult::FLY_BALL_TO_CENTER
+      @fielder = get_fielder("CF")
+      @fielder.records_putout
     when "RIGHT"
       @result = HitResult::FLY_BALL_TO_RIGHT
+      @fielder = get_fielder("RF")
+      @fielder.records_putout
     end
   end
 
@@ -500,16 +511,28 @@ class Hit
     case location
     when "THIRD"
       @result = HitResult::GROUNDER_TO_THIRD
+      @fielder = get_fielder("3B")
+      @fielder.records_assist
     when "SHORT"
       @result = HitResult::GROUNDER_TO_SHORT
+      @fielder = get_fielder("SS")
+      @fielder.records_assist
     when "SECOND"
       @result = HitResult::GROUNDER_TO_SECOND
+      @fielder = get_fielder("2B")
+      @fielder.records_assist
     when "FIRST"
       @result = HitResult::GROUNDER_TO_FIRST
+      @fielder = get_fielder("1B")
+      @fielder.records_assist
     when "PITCHER"
       @result = HitResult::GROUNDER_TO_PITCHER
+      @fielder = @atbat.pitcher
+      @fielder.records_assist
     when "CATCHER"
       @result = HitResult::GROUNDER_TO_CATCHER
+      @fielder = get_fielder("C")
+      @fielder.records_assist
     end
   end
 
@@ -517,16 +540,28 @@ class Hit
     case location
     when "THIRD"
       @result = HitResult::LINER_TO_THIRD
+      @fielder = get_fielder("3B")
+      @fielder.records_putout
     when "SHORT"
       @result = HitResult::LINER_TO_SHORT
+      @fielder = get_fielder("SS")
+      @fielder.records_putout
     when "SECOND"
       @result = HitResult::LINER_TO_SECOND
+      @fielder = get_fielder("2B")
+      @fielder.records_putout
     when "FIRST"
       @result = HitResult::LINER_TO_FIRST
+      @fielder = get_fielder("1B")
+      @fielder.records_putout
     when "PITCHER"
       @result = HitResult::LINER_TO_PITCHER
+      @fielder = @atbat.pitcher
+      @fielder.records_putout
     when "CATCHER"
-      @result = HitResult::LINER_TO_CATCHER
+      @result = HitResult::LINER_TO_CATCHER #TODO: make sure this never happens
+      @fielder = get_fielder("C")
+      @fielder.records_putout
     end
   end
 
@@ -534,16 +569,28 @@ class Hit
     case location
     when "THIRD"
       @result = HitResult::POPUP_TO_THIRD
+      @fielder = get_fielder("3B")
+      @fielder.records_putout
     when "SHORT"
       @result = HitResult::POPUP_TO_SHORT
+      @fielder = get_fielder("SS")
+      @fielder.records_putout
     when "SECOND"
       @result = HitResult::POPUP_TO_SECOND
+      @fielder = get_fielder("2B")
+      @fielder.records_putout
     when "FIRST"
       @result = HitResult::POPUP_TO_FIRST
+      @fielder = get_fielder("1B")
+      @fielder.records_putout
     when "PITCHER"
       @result = HitResult::POPUP_TO_PITCHER
+      @fielder = @atbat.pitcher
+      @fielder.records_putout
     when "CATCHER"
       @result = HitResult::POPUP_TO_CATCHER
+      @fielder = get_fielder("C")
+      @fielder.records_putout
     end
   end
 

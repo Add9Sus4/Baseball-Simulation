@@ -203,15 +203,15 @@
   def determine_contact_percentage(zone_id, pitcher_hand, batter_hand, balls, strikes, pitch_type)
     contact_percentage = 1
     if is_down_the_middle(zone_id)
-      contact_percentage = 95
+      contact_percentage = 97
     elsif is_between_edge_and_middle(zone_id)
-      contact_percentage = 90
+      contact_percentage = 92
     elsif is_close_to_edge(zone_id)
-      contact_percentage = 85
+      contact_percentage = 88
     elsif is_just_off_the_edge(zone_id)
-      contact_percentage = 80
+      contact_percentage = 82
     elsif is_way_off_the_edge(zone_id)
-      contact_percentage = 60
+      contact_percentage = 65
     end
 
     contact_percentage *= map_attribute_to_range(@batter.contact, AttributeAdjustments::BATTER_CONTACT_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::BATTER_CONTACT_AFFECTS_CONTACT_PERCENTAGE_MAX, false)*

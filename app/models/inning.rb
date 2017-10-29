@@ -30,7 +30,7 @@ class Inning
       # Exit on walk-off
 
       #TODO: Make sure that if a walk-off home run is hit, all the runs are counted before the game ends
-      
+
       if @inning_status == InningStatus::BOTTOM && @inning_number >= 9 && @home_team.game_score > @away_team.game_score
         @over = true
         break
@@ -41,7 +41,7 @@ class Inning
       # Check if a pitching change is needed
       check_for_pitching_change
 
-      atBat = AtBat.new(@pitcher, @batter, @bases)
+      atBat = AtBat.new(@pitcher, @batter, @fielding_team, @bases)
       @play_by_play += atBat.play_by_play
       play = Play.new(atBat)
       @play_by_play += play.play_by_play

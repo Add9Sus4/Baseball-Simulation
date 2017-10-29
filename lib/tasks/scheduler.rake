@@ -126,11 +126,11 @@ end
 
 task :simulate_games => :environment do
 
-  10.times do |index|
+  20.times do |index|
     puts "Starting simulate_games task"
 
     # Simulate games
-    puts "Simulating game #{index + 1} of 10..."
+    puts "Simulating game #{index + 1} of 30..."
 
     # hash to determine if a team has already played a game (to avoid duplicate games)
     @already_played_hash = Hash.new 0

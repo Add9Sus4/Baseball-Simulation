@@ -5,12 +5,13 @@ class AtBat
   include Reusable
 
   # Various attributes that need to be accessed by other classes
-  attr_accessor :result, :balls, :strikes, :over, :batter, :play_by_play
+  attr_accessor :result, :balls, :strikes, :over, :batter, :play_by_play, :fielding_team, :pitcher
 
   # Start the at-bat
-  def initialize(pitcher, batter, bases)
+  def initialize(pitcher, batter, fielding_team, bases)
     @play_by_play = ""
     @bases = bases
+    @fielding_team = fielding_team
     @balls = 0
     @strikes = 0
     @over = false

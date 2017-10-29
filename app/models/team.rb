@@ -8,7 +8,8 @@ class Team < ActiveRecord::Base
   :in_line_for_loss, # if this team is losing, which pitcher would get the loss if the game ended now?
   :in_line_for_win, # if this team is winning, which pitcher woudl get the win if the game ended now?
   :game_lineup, # string of ids representing the players in the lineup, in order, separated by '_'
-  :game_lineup_players # array of players in the lineup, in order.
+  :game_lineup_players, # array of players in the lineup, in order.
+  :game_position_players # hash of players at each position (key = position abbreviation)
 
   # A team must have all the following attributes when it is created:
   validates :city, :name, :league, :division, :stadium, :capacity, presence: true

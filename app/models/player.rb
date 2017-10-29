@@ -190,16 +190,19 @@ class Player < ActiveRecord::Base
   # Called every time this player makes an error
   def commits_error
     @game_errors_committed = @game_errors_committed + 1
+    records_chance
   end
 
   # Called every time this player records an assist (throwing to a base to get a runner out)
   def records_assist
     @game_assists = @game_assists + 1
+    records_chance
   end
 
   # Called every time this player records a putout (catching a ball in order to get a runner out)
   def records_putout
     @game_putouts = @game_putouts + 1
+    records_chance
   end
 
   # Called every time this player has an opportunity to make a play in the field (every chance

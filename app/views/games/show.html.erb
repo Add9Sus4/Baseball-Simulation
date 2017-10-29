@@ -123,7 +123,7 @@
         <% for i in 0..8 do %>
         <% @player = Player.find(@away_lineup[i]) %>
         <tr>
-          <td><%= link_to @player.full_name, @player, method: :get %></td>
+          <td><%= link_to @player.full_name, @player, method: :get %>, <%= @away_team.find_position_abbreviation_of_player(@player.id) %></td>
           <td><%= @away_atbats[i] %></td>
           <td><%= @away_runs_scored[i] %></td>
           <td><%= @away_hits[i] %></td>
@@ -183,7 +183,7 @@
         <% for i in 0..8 do %>
         <% @player = Player.find(@home_lineup[i]) %>
         <tr>
-          <td><%= link_to @player.full_name, @player, method: :get %></td>
+          <td><%= link_to @player.full_name, @player, method: :get %>, <%= @home_team.find_position_abbreviation_of_player(@player.id) %></td>
           <td><%= @home_atbats[i] %></td>
           <td><%= @home_runs_scored[i] %></td>
           <td><%= @home_hits[i] %></td>

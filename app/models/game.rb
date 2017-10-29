@@ -76,6 +76,36 @@ class Game < ActiveRecord::Base
       player.set_initial_stats
     end
 
+    # positions
+    @home_team.game_position_players = {
+      "C" => Player.find(@home_team.catcher),
+      "1B" => Player.find(@home_team.first_base),
+      "2B" => Player.find(@home_team.second_base),
+      "3B" => Player.find(@home_team.third_base),
+      "SS" => Player.find(@home_team.shortstop),
+      "LF" => Player.find(@home_team.left_field),
+      "CF" => Player.find(@home_team.center_field),
+      "RF" => Player.find(@home_team.right_field)
+    }
+
+    @away_team.game_position_players = {
+      "C" => Player.find(@away_team.catcher),
+      "1B" => Player.find(@away_team.first_base),
+      "2B" => Player.find(@away_team.second_base),
+      "3B" => Player.find(@away_team.third_base),
+      "SS" => Player.find(@away_team.shortstop),
+      "LF" => Player.find(@away_team.left_field),
+      "CF" => Player.find(@away_team.center_field),
+      "RF" => Player.find(@away_team.right_field)
+    }
+
+    @home_team.game_position_players.each do |key, player|
+      player.set_initial_stats
+    end
+    @away_team.game_position_players.each do |key, player|
+      player.set_initial_stats
+    end
+
     # pitching list
     @home_team.game_pitcher_list = []
     @away_team.game_pitcher_list = []
@@ -268,6 +298,24 @@ class Game < ActiveRecord::Base
       :assists => player.assists + player.game_assists,
       :putouts => player.putouts + player.game_putouts,
       :chances => player.chances + player.game_chances)
+    end
+
+    puts 'updating home fielding stats'
+
+    @home_team.game_position_players.each do |key, player|
+      player.update_columns(:errors_committed => player.errors_committed + player.game_errors_committed,
+        :chances => player.chances + player.game_chances,
+        :putouts => player.putouts + player.game_putouts,
+        :assists => player.assists + player.game_assists)
+    end
+
+    puts 'updating away fielding stats'
+
+    @away_team.game_position_players.each do |key, player|
+      player.update_columns(:errors_committed => player.errors_committed + player.game_errors_committed,
+        :chances => player.chances + player.game_chances,
+        :putouts => player.putouts + player.game_putouts,
+        :assists => player.assists + player.game_assists)
     end
 
     puts 'updating home pitcher stats'
