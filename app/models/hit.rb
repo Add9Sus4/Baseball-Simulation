@@ -17,9 +17,7 @@ class Hit
     # Batter contact slightly affects hit power (contact of 0 -> no change, contact of 100 -> 5% reduction in power)
     contact_adjustment = map_attribute_to_range(@atbat.batter.contact, AttributeAdjustments::BATTER_CONTACT_AFFECTS_HIT_POWER_MIN, AttributeAdjustments::BATTER_CONTACT_AFFECTS_HIT_POWER_MAX, true)
 
-    random_data = generateDistribution(0, 100, average_power, 20)
-
-    @power = random_data[0]*contact_adjustment
+    @power = getRandomValue(0, 1, 0, 100, average_power, 20)*contact_adjustment
   end
 
   # What kind of hit was it?

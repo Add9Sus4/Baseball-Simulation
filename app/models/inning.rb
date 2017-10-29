@@ -28,6 +28,9 @@ class Inning
     # Simulate inning
     while !@over do
       # Exit on walk-off
+
+      #TODO: Make sure that if a walk-off home run is hit, all the runs are counted before the game ends
+      
       if @inning_status == InningStatus::BOTTOM && @inning_number >= 9 && @home_team.game_score > @away_team.game_score
         @over = true
         break
