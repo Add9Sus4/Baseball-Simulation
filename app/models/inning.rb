@@ -43,7 +43,7 @@ class Inning
 
       atBat = AtBat.new(@pitcher, @batter, @fielding_team, @bases)
       @play_by_play += atBat.play_by_play
-      play = Play.new(atBat)
+      play = Play.new(atBat, @bases)
       @play_by_play += play.play_by_play
       if play.result == PlayResult::OUT # Play resulted in an out
         @pitcher.records_out(1)

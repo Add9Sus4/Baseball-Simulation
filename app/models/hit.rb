@@ -1,9 +1,10 @@
 class Hit
   include Reusable
   attr_accessor :result, :type, :location, :power, :play_by_play, :fielder
-  def initialize(atbat)
+  def initialize(atbat, bases)
     @play_by_play = ""
     @atbat = atbat
+    @bases = bases
     hitPower
     hitType
     hitLocation
@@ -425,6 +426,33 @@ class Hit
       @play_by_play += "\n<span style=\"color:" + color_bad + "\">#{@atbat.batter.full_name} hits a #{@result}, fielded by #{@fielder}</span>\n"
     else
       @play_by_play += "\n<span style=\"color:" + color_good + "\">#{@atbat.batter.full_name} hits a #{@result}</span>\n"
+    end
+  end
+
+  # This calculates an adjustment to field probabilty based on position and fielder attributes.
+  # The three fielding attributes (agility, reactionTime, and speed) are weighed more or less depending on position.
+  # This function returns a value to be multiplied with the previous field probability.
+  def calculate_field_probability_adjustment_based_on_position(fielder, position_abbrev)
+    agility_factor = map_attribute_to_range(fielder.agility,
+      AttributeAdjustments::FIELDER_AGILITY_AFFECTS_FIELD_PROBABILITY_MIN,
+      AttributeAdjustments::FIELDER_AGILITY_AFFECTS_FIELD_PROBABILITY_MAX, false)
+    reaction_time_factor = map_attribute_to_range(fielder.reactionTime,
+      AttributeAdjustments::FIELDER_REACTION_TIME_AFFECTS_FIELD_PROBABILITY_MIN,
+      AttributeAdjustments::FIELDER_REACTION_TIME_AFFECTS_FIELD_PROBABILITY_MAX, false)
+    speed_factor = map_attribute_to_range(fielder.speed,
+      AttributeAdjustments::FIELDER_SPEED_AFFECTS_FIELD_PROBABILITY_MIN,
+      AttributeAdjustments::FIELDER_SPEED_AFFECTS_FIELD_PROBABILITY_MAX, false)
+    case position_abbrev
+    when "C"
+      0.7*agility_factor + 0.3*reaction_time_factor
+    when "P"
+      0.1*agility_factor + 0.9*reaction_time_factor
+    when "1B", "3B"
+      0.45*agility_factor + 0.45*reaction_time_factor + 0.1*speed_factor
+    when "2B", "SS"
+      0.5*agility_factor + 0.4*reaction_time_factor + 0.1*speed_factor
+    when "LF", "CF", "RF"
+      0.1*agility_factor + 0.2*reaction_time_factor + 0.7*speed_factor
     end
   end
 

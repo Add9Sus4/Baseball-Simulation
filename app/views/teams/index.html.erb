@@ -1,76 +1,97 @@
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
 <%= javascript_include_tag 'moment.min', 'data-turbolinks-track' => true %>
 <%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
 
-<style>
-  .table_with_custom_border > thead > tr > th {
-    padding-right: 18px;
+<style media="screen">
+  .col-lg-4:nth-child(2) {
+    border-left: 1px solid #e6e6e6;
+  }
+  .col-lg-4:nth-child(3) {
+    border-left: 1px solid #e6e6e6;
   }
 </style>
 
 <p id="notice"><%= notice %></p>
 
-
-  <h1 class="app_text_main">Teams</h1>
+<h2 class="">Standings</h2>
 
 <% leagues = ["NL", "AL"] %>
+<% leagues_full = ["National League", "American League"] %>
 <% divisions = ["East", "Central", "West"] %>
 
-<% leagues.each do |league| %>
-  <div class="league_div">
+<% leagues.each_with_index do |league, index| %>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title"><%= leagues_full[index.to_i] %></h4>
+    </div>
+    <div class="panel-body">
     <% divisions.each do |division| %>
-      <h3 class="app_text_main division_title"><%= league + " " + division %></h3>
-      <table class="table_with_custom_border table-condensed table-striped table-bordered table-responsive sortable">
-        <thead>
-          <tr>
-            <th id=team_name_column_header>Name</th>
-            <th data-defaultsort="desc">W</th>
-            <th>L</th>
-            <th>RS</th>
-            <th>RA</th>
-            <th>+/-</th>
-            <th>Streak</th>
-            <!-- <th>Last 10</th> -->
-          </tr>
-        </thead>
-
-        <tbody>
-          <% @teams.where(:league => league, :division => division).each do |team| %>
+    <div class="col-lg-4">
+        <h4><%= division %></h4>
+        <table class="table table-striped table-bordered table-sm table-responsive">
+          <thead class="thead-default">
             <tr>
-              <td><%= link_to team.full_name_with_user, team, method: :get %></td>
-              <td><%= team.wins %></td>
-              <td><%= team.losses %></td>
-              <td><%= team.runs_scored %></td>
-              <td><%= team.runs_allowed %></td>
-              <% @plus_minus = (team.runs_scored - team.runs_allowed).to_s %>
-              <% if @plus_minus.to_i > 0 %>
-                <% @plus_minus.prepend("+") %>
-              <% end %>
-              <td><%= @plus_minus %></td>
-              <td><%= team.streak_display %></td>
-              <!-- <td>TODO</td> -->
+              <th id=team_name_column_header>Name</th>
+              <th data-defaultsort="desc">W</th>
+              <th>L</th>
+              <th>RS</th>
+              <th>RA</th>
+              <th>+/-</th>
+              <th>Streak</th>
+              <!-- <th>Last 10</th> -->
             </tr>
-          <% end %>
-        </tbody>
-      </table></br>
-    <% end %>
+          </thead>
+
+          <tbody>
+            <% @teams.where(:league => league, :division => division).each do |team| %>
+              <tr>
+                <td><%= link_to team.full_name, team, method: :get %></td>
+                <td><%= team.wins %></td>
+                <td><%= team.losses %></td>
+                <td><%= team.runs_scored %></td>
+                <td><%= team.runs_allowed %></td>
+                <% @plus_minus = (team.runs_scored - team.runs_allowed).to_s %>
+                <% if @plus_minus.to_i > 0 %>
+                  <% @plus_minus.prepend("+") %>
+                <% end %>
+                <td class="plus-minus"><%= @plus_minus %></td>
+                <td><%= team.streak_display %></td>
+                <!-- <td>TODO</td> -->
+              </tr>
+            <% end %><!-- end teams loop -->
+          </tbody>
+        </table></br>
+      </div>
+    <% end %><!-- end divisions loop -->
   </div>
-<% end %>
+</div>
+<% end %><!-- end leagues loop -->
 
 <style>
 .teams {
   pointer-events: none;
   opacity: 0.5;
 }
-
-.league_div {
-  border: 2px solid #52677a;
-  border-radius: 20px;
-  display: inline-block;
-  padding-left: 15px;
-  padding-right: 15px;
-  padding-bottom: 15px;
-}
 </style>
+
+<script>
+function plusMinus() {
+  $('.plus-minus').each(function() {
+    var val = $(this).text();
+    if (val[0] == '+') {
+      $(this).css({"color":"green"});
+    } else if (val[0] == '-') {
+      $(this).css({"color":"red"});
+    } else {
+      $(this).css({"color":"black"});
+    }
+  });
+}
+plusMinus();
+</script>

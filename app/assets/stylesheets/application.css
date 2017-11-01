@@ -52,24 +52,24 @@
 }
 
 #app_body {
-  background-color: #132639;
+  background-color: #ffffff;
 }
 
 .app_text_main {
-  color: #9fbfdf;
+  color: #000000;
 }
 
 .app_text_2 {
   color: #7598bd;
 }
 
-.table-striped>tbody>tr:nth-child(even)>td {
+/*.table-striped>tbody>tr:nth-child(even)>td {
   background-color: #BDCCDB;
 }
 
 .table-striped>thead>tr>th  {
   background-color: #9AB2CB;
-}
+}*/
 
 .enMoney::before {
   content: "$";

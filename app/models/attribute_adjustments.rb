@@ -83,5 +83,16 @@ class AttributeAdjustments
   BATTER_BATTING_AVERAGE_AFFECTS_FIELD_PROBABILITY_MIN = 0.85 # 100 batting average -> 15% increase in hit probability
   BATTER_BATTING_AVERAGE_AFFECTS_FIELD_PROBABILITY_MAX = 1.08 # 0 batting average   -> 8% decrease in hit probability
 
+  # Reaction time
+  FIELDER_REACTION_TIME_AFFECTS_FIELD_PROBABILITY_MIN = 0.85 # 0 reaction time -> 15% increase in hit probability
+  FIELDER_REACTION_TIME_AFFECTS_FIELD_PROBABILITY_MAX = 1.15 # 100 reaction time -> 15% decrease in hit probability
+
+  # Agility
+  FIELDER_AGILITY_AFFECTS_FIELD_PROBABILITY_MIN = 0.85 # 0 agility -> 15% increase in hit probability
+  FIELDER_AGILITY_AFFECTS_FIELD_PROBABILITY_MAX = 1.15 # 100 agility -> 15% decrease in hit probability
+
+  # Speed
+  FIELDER_SPEED_AFFECTS_FIELD_PROBABILITY_MIN = 0.85 # 0 speed -> 15% increase in hit probability
+  FIELDER_SPEED_AFFECTS_FIELD_PROBABILITY_MAX = 1.15 # 100 speed -> 15% decrease in hit probability
 
 end

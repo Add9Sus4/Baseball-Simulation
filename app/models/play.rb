@@ -1,7 +1,8 @@
 class Play
   include Reusable
   attr_accessor :result, :hit_result, :hit, :play_by_play
-  def initialize(atBat)
+  def initialize(atBat, bases)
+    @bases = bases
     @play_by_play = ""
     case atBat.result
     when AtBatResult::WALK
@@ -19,7 +20,7 @@ class Play
   end
 
   def ballPutInPlay(atBat)
-    @hit = Hit.new(atBat)
+    @hit = Hit.new(atBat, @bases)
     @play_by_play += @hit.play_by_play
     if HitResult::fielded(hit.result)
       @result = PlayResult::OUT
