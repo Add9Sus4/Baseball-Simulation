@@ -1,18 +1,19 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<%= stylesheet_link_tag "jquery-ui.min", 'data-turbolinks-track' => true %>
+<%= javascript_include_tag "jquery-ui.min", 'data-turbolinks-track' =>true %>
+<%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
+<%= javascript_include_tag 'moment.min', 'data-turbolinks-track' => true %>
+<%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
 
-<p id="notice"><%= notice %></p>
 
 
+<!-- <p id="notice"><%= notice %></p> -->
+
+<div class="container-fluid">
 <p>
   <h2 class="app_text_main"><%= @player.full_name %></h2>
 </p>
-
-</br>
-
 <div class="player_info_data">
   <p class="app_text_main">
     <strong>Team:</strong>
@@ -259,7 +260,8 @@
   </tbody>
 </table>
 <% end %>
-</br>
+</div>
+
 <style media="screen">
 .ui-tooltip-content {
   font-size:8pt;

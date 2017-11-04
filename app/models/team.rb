@@ -147,6 +147,35 @@ class Team < ActiveRecord::Base
     end
   end
 
+  def find_pitcher_by_role_abbrev(abbrev)
+    case abbrev
+    when "sp1"
+      Player.find(sp1)
+    when "sp2"
+      Player.find(sp2)
+    when "sp3"
+      Player.find(sp3)
+    when "sp4"
+      Player.find(sp4)
+    when "sp5"
+      Player.find(sp5)
+    when "lr"
+      Player.find(lr)
+    when "mr1"
+      Player.find(mr1)
+    when "mr2"
+      Player.find(mr2)
+    when "mr3"
+      Player.find(mr3)
+    when "su1"
+      Player.find(su1)
+    when "su2"
+      Player.find(su2)
+    when "cl"
+      Player.find(cl)
+    end
+  end
+
   # Returns the Player currently playing at the specified position
   def player_at_position(index)
     positions = [designated_hitter, catcher, first_base,
@@ -295,6 +324,21 @@ class Team < ActiveRecord::Base
       "CL"
     else ""
     end
+  end
+
+  # Returns an array of players in the starting lineup
+  def get_lineup
+    lineup = [
+      find_player_by_lineup_index(1),
+      find_player_by_lineup_index(2),
+      find_player_by_lineup_index(3),
+      find_player_by_lineup_index(4),
+      find_player_by_lineup_index(5),
+      find_player_by_lineup_index(6),
+      find_player_by_lineup_index(7),
+      find_player_by_lineup_index(8),
+      find_player_by_lineup_index(9)
+    ]
   end
 
   # Given a player id, find that player's current position on the team, abbreviated

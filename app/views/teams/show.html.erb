@@ -48,8 +48,8 @@
 }
 
 .dragging {
-  background-color: #edf0f8;
-  opacity: 0.5;
+  /*background-color: #edf0f8;
+  opacity: 0.5;*/
 }
 
 .ui-sortable-helper {
@@ -85,563 +85,204 @@
   background-color: #9fbfdf;
 }
 
-</style>
-<div class="container-fluid">
-  <div class="col-sm-2">
-    <h2 class="app_text_main">
-      <%= @team.city %>
-      <%= @team.name %>
-    </h2>
+#team_name_div {
+  padding-left: 28px;
+}
 
+.player_table td {
+  font-size: 12px;
+}
+
+</style>
+
+<!-- <div class="col-lg-1">
+  <ul class="nav nav-pills nav-stacked">
+    <li class="active"><a>Batting</a></li>
+    <li><a>Pitching</a></li>
+    <li><a>Lineup</a></li>
+    <li><a>Schedule</a></li>
+  </ul>
+</div> -->
+
+  <div id="team_name_div">
     <span id="current_user_id" hidden><%= current_user.id if current_user %></span>
     <span id="team_id" hidden><%= @team.id %></span>
     <span id="owner">
     <% if @team.user_id == -1 %>
       <% if current_user && current_user.team_id == -1 %>
-      <button id="own_team">Own this team</button>
+      <h2><%= @team.full_name %> <button class="btn btn-primary" id="own_team">Own this team</button></h2>
       <% else %>
-      <h3 class="app_text_main">
-      Unowned
-      </h3>
+      <h2><%= @team.full_name %> <small>(Unowned)</small></h2>
       <% end %>
     <% else %>
-    <h3 class="app_text_main">
-    Owner: <%= link_to @team.user.name, @team.user, method: :get %>
-    </h3>
+    <h2><%= @team.full_name %> <small>Owner: <%= link_to @team.user.name, @team.user, method: :get %></small></h2>
     <% end %>
     </span>
-    <p class="app_text_2">
+  </div>
+  <div class="container-fluid">
+  <div class="col-sm-2">
+    <p>
       <strong>League:</strong>
       <%= @team.league %>
     </p>
 
-    <p class="app_text_2">
+    <p>
       <strong>Division:</strong>
       <%= @team.division %>
     </p>
+  </div>
+  <div class="col-sm-2">
 
-    <p class="app_text_2">
+    <p>
       <strong>Stadium:</strong>
       <%= @team.stadium %>
     </p>
 
-    <p class="app_text_2">
+    <p>
       <strong>Capacity:</strong>
       <%= @team.capacity %>
     </p>
-
-    <p class="app_text_2">
-      <strong>Record:</strong>
-      <%= @team.wins.to_s + "-" + @team.losses.to_s %>
-    </p>
   </div>
-  <div class="col-sm-10">
-    <div id="tabs">
-      <ul>
-        <li><a href="#tabs-batting">Batting</a></li>
-        <li><a href="#tabs-pitching">Pitching</a></li>
-        <li><a href="#tabs-lineup">Lineup</a></li>
-        <li><a href="#tabs-schedule">Schedule</a></li>
-      </ul>
-      <div id="tabs-batting">
-        <button id="update_positions_button" class="ui-button ui-widget ui-corner-all" style="float:left">Update Positions</button>
-        <fieldset style="padding-left: 10px; padding-top: 10px">
-          <label for="radio-info">Info</label>
-          <input type="radio" name="radio-1" id="radio-info" checked>
-          <label for="radio-stats">Stats</label>
-          <input type="radio" name="radio-1" id="radio-stats">
-          <label for="radio-attributes">Attributes</label>
-          <input type="radio" name="radio-1" id="radio-attributes">
-        </fieldset>
-        <table class="default-table" style="margin-top: 15px">
-          <thead>
-            <tr>
-              <th>Position</th>
-              <th>Name</th>
-              <th class="tooltip_enable" title="Current Position">CP</th>
-              <th class="tooltip_enable" title="Natural Position">NP</th>
-              <th>Age</th>
-              <th class="info_cell">Height</th>
-              <th class="info_cell">Weight</th>
-              <th class="info_cell">Bats</th>
-              <th class="info_cell">Throws</th>
-              <th class="info_cell">Salary</th>
-              <th class="attribute_cell tooltip_enable" title="Batting Average">Bat</th>
-              <th class="attribute_cell tooltip_enable" title="Power">Pow</th>
-              <th class="attribute_cell tooltip_enable" title="Contact">Con</th>
-              <th class="attribute_cell tooltip_enable" title="Plate Vision">Ptv</th>
-              <th class="attribute_cell tooltip_enable" title="Patience">Pat</th>
-              <th class="attribute_cell tooltip_enable" title="Pull Amount">Pul</th>
-              <th class="attribute_cell tooltip_enable" title="Uppercut Amount">Upp</th>
-              <th class="attribute_cell tooltip_enable" title="Speed">Spd</th>
-              <th class="attribute_cell tooltip_enable" title="Agility">Agl</th>
-              <th class="attribute_cell tooltip_enable" title="Reaction Time">Rct</th>
-              <th class="attribute_cell tooltip_enable" title="Arm Strength">Arm</th>
-              <th class="attribute_cell tooltip_enable" title="Fielding">Fld</th>
-              <th class="attribute_cell tooltip_enable" title="Throwing">Thr</th>
-              <th class="attribute_cell tooltip_enable" title="Intelligence">Int</th>
-              <th class="attribute_cell tooltip_enable" title="Endurance">End</th>
-              <th class="stats_cell tooltip_enable" title="At-bats">AB</th>
-              <th class="stats_cell tooltip_enable" title="Runs scored">R</th>
-              <th class="stats_cell tooltip_enable" title="Hits">H</th>
-              <th class="stats_cell tooltip_enable" title="Doubles">2B</th>
-              <th class="stats_cell tooltip_enable" title="Triples">3B</th>
-              <th class="stats_cell tooltip_enable" title="Home runs">HR</th>
-              <th class="stats_cell tooltip_enable" title="Runs batted in">RBI</th>
-              <th class="stats_cell tooltip_enable" title="Walks">BB</th>
-              <th class="stats_cell tooltip_enable" title="Strikeouts">K</th>
-              <th class="stats_cell tooltip_enable" title="Stolen bases">SB</th>
-              <th class="stats_cell tooltip_enable" title="Caught stealing">CS</th>
-              <th class="stats_cell tooltip_enable" title="Batting average">AVG</th>
-              <th class="stats_cell tooltip_enable" title="On-base percentage">OBP</th>
-              <th class="stats_cell tooltip_enable" title="Slugging percentage">SLG</th>
-              <th class="stats_cell tooltip_enable" title="On-base plus slugging percentage">OPS</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @team.players.where("position != ?", 'P').each do |player| %>
-            <tr class="player_row">
-              <td class="position_select_cell">
-                <span class="hidden_position_abbrev" hidden="true"><%= @team.find_position_abbreviation_of_player(player.id)%></span>
-                <span class="hidden_player_id" hidden="true"><%= player.id %></span>
-                <select class="position_select">
-                  <option value="DH">DH</option>
-                  <option value="C">C</option>
-                  <option value="1B">1B</option>
-                  <option value="2B">2B</option>
-                  <option value="3B">3B</option>
-                  <option value="SS">SS</option>
-                  <option value="LF">LF</option>
-                  <option value="CF">CF</option>
-                  <option value="RF">RF</option>
-                  <option value="BN">BN</option>
-                </select>
-              </td>
-              <td class="custom-border-left">
-                <% if @team.is_in_starting_lineup(player.id) %>
-                <strong><%= link_to player.full_name, player, method: :get %></strong>
-                <% else %>
-                <%= link_to player.full_name, player, method: :get %>
-                <% end %>
-                <span "hidden_id" hidden><%= player.id %></span>
-              </td>
-              <td><%= @team.find_position_abbreviation_of_player(player.id) %></td>
-              <td><%= player.natural_position_name %></td>
-              <td><%= player.age %></td>
-              <td class="height info_cell"><%= player.formatted_height %></td>
-              <td class="info_cell"><%= player.weight %> lb.</td>
-              <td class="info_cell"><%= player.hitting_side.capitalize %></td>
-              <td class="info_cell"><%= player.throwing_hand.capitalize %></td>
-              <td class="info_cell"><%= number_to_currency(player.salary) %></td>
-              <td class="attribute_cell hotcold custom-border-left"><%= player.batting_average %></td>
-              <td class="attribute_cell hotcold"><%= player.power %></td>
-              <td class="attribute_cell hotcold"><%= player.contact %></td>
-              <td class="attribute_cell hotcold"><%= player.plate_vision %></td>
-              <td class="attribute_cell hotcold"><%= player.patience %></td>
-              <td class="attribute_cell hotcold"><%= player.pull_amount %></td>
-              <td class="attribute_cell hotcold"><%= player.uppercut_amount %></td>
-              <td class="attribute_cell hotcold custom-border-left"><%= player.speed %></td>
-              <td class="attribute_cell hotcold"><%= player.agility %></td>
-              <td class="attribute_cell hotcold"><%= player.reactionTime %></td>
-              <td class="attribute_cell hotcold"><%= player.armStrength %></td>
-              <td class="attribute_cell hotcold"><%= player.average_fielding %></td>
-              <td class="attribute_cell hotcold"><%= player.average_throwing %></td>
-              <td class="attribute_cell hotcold"><%= player.intelligence %></td>
-              <td class="attribute_cell hotcold"><%= player.endurance %></td>
-              <td class="stats_cell custom-border-left"><%= player.atbats %></td>
-              <td class="stats_cell"><%= player.runs %></td>
-              <td class="stats_cell"><%= player.hits %></td>
-              <td class="stats_cell"><%= player.doubles %></td>
-              <td class="stats_cell"><%= player.triples %></td>
-              <td class="stats_cell"><%= player.home_runs %></td>
-              <td class="stats_cell"><%= player.rbi %></td>
-              <td class="stats_cell"><%= player.walks %></td>
-              <td class="stats_cell"><%= player.strikeouts %></td>
-              <td class="stats_cell"><%= player.stolen_bases %></td>
-              <td class="stats_cell"><%= player.caught_stealing %></td>
-              <% @avg = player.hits.to_f/player.atbats.to_f %>
-              <% @obp = (player.hits + player.walks).to_f/(player.atbats + player.walks).to_f %>
-              <% @slg = (player.hits - player.doubles - player.triples - player.home_runs + 2 * player.doubles + 3 * player.triples + 4 * player.home_runs).to_f/player.atbats.to_f %>
-              <% @ops = @obp + @slg %>
-              <td class="stats_cell custom-border-left"><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></td>
-              <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
-              <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
-              <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
-            </tr>
-            <% end %>
-            <tr class="stats_cell">
-              <td>-</td>
-              <% @total_atbats = 0 %>
-              <% @total_runs = 0 %>
-              <% @total_hits = 0 %>
-              <% @total_doubles = 0 %>
-              <% @total_triples = 0 %>
-              <% @total_home_runs = 0 %>
-              <% @total_rbi = 0 %>
-              <% @total_walks = 0 %>
-              <% @total_strikeouts = 0 %>
-              <% @total_stolen_bases = 0 %>
-              <% @total_caught_stealing = 0 %>
-              <% @team.players.each do |player| %>
-              <% @total_atbats += player.atbats %>
-              <% @total_runs += player.runs %>
-              <% @total_hits += player.hits %>
-              <% @total_doubles += player.doubles %>
-              <% @total_triples += player.triples %>
-              <% @total_home_runs += player.home_runs %>
-              <% @total_rbi += player.rbi %>
-              <% @total_walks += player.walks %>
-              <% @total_strikeouts += player.strikeouts %>
-              <% @total_stolen_bases += player.stolen_bases %>
-              <% @total_caught_stealing += player.caught_stealing %>
-              <% end %>
-              <td><strong>Total</strong></td>
-              <td>-</td><td>-</td><td>-</td>
-              <td><strong><%= @total_atbats %></strong></td>
-              <td><strong><%= @total_runs %></strong></td>
-              <td><strong><%= @total_hits %></strong></td>
-              <td><strong><%= @total_doubles %></strong></td>
-              <td><strong><%= @total_triples %></strong></td>
-              <td><strong><%= @total_home_runs %></strong></td>
-              <td><strong><%= @total_rbi %></strong></td>
-              <td><strong><%= @total_walks %></strong></td>
-              <td><strong><%= @total_strikeouts %></strong></td>
-              <td><strong><%= @total_stolen_bases %></strong></td>
-              <td><strong><%= @total_caught_stealing %></strong></td>
-              <% @avg = @total_hits.to_f/@total_atbats.to_f %>
-              <% @obp = (@total_hits + @total_walks).to_f/(@total_atbats + @total_walks).to_f %>
-              <% @slg = (@total_hits - @total_doubles - @total_triples - @total_home_runs + 2 * @total_doubles + 3 * @total_triples + 4 * @total_home_runs).to_f/@total_atbats.to_f %>
-              <% @ops = @obp + @slg %>
-              <td><strong><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></strong></td>
-              <td><strong><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></strong></td>
-              <td><strong><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></strong></td>
-              <td><strong><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></strong></td>
-            </tr>
-          </tbody>
-        </table>
-      </div> <!-- end tabs-batting -->
-      <div id="tabs-pitching">
-        <button id="update_pitching_roles_button" class="ui-button ui-widget ui-corner-all" style="float:left">Update Roles</button>
-        <fieldset style="padding-left: 10px; padding-top: 10px">
-          <label for="radio-info-2">Info</label>
-          <input type="radio" name="radio-2" id="radio-info-2" checked>
-          <label for="radio-stats-2">Stats</label>
-          <input type="radio" name="radio-2" id="radio-stats-2">
-          <label for="radio-attributes-2">Attributes</label>
-          <input type="radio" name="radio-2" id="radio-attributes-2">
-        </fieldset>
-        <table class="default-table" style="margin-top: 15px">
-          <thead>
-            <tr>
-              <th>Role</th>
-              <th>Name</th>
-              <th class="tooltip_enable" title="Current Role">CR</th>
-              <th>Age</th>
-              <th class="info_cell">Height</th>
-              <th class="info_cell">Weight</th>
-              <th class="info_cell">Throws</th>
-              <th class="info_cell">Salary</th>
-              <th class="attribute_cell tooltip_enable" title="How hard this player can throw the ball">Arm</th>
-              <th class="attribute_cell tooltip_enable" title="How well this player can make a pitch deviate from its expected path">Mov</th>
-              <th class="attribute_cell tooltip_enable" title="How well this player can throw strikes instead of balls">Ctr</th>
-              <th class="attribute_cell tooltip_enable" title="How well this player can hit a specific location with a pitch">Loc</th>
-              <th class="attribute_cell tooltip_enable" title="How well this player can make quick, sudden movements">Agi</th>
-              <th class="attribute_cell tooltip_enable" title="How quickly this player reacts to a play">Rtm</th>
-              <th class="attribute_cell tooltip_enable" title="How well this player can field the ball">Fld</th>
-              <th class="attribute_cell tooltip_enable" title="How accurately this player can throw the ball">Thr</th>
-              <th class="attribute_cell tooltip_enable" title="How often this player makes the right decision for a given play">Int</th>
-              <th class="attribute_cell tooltip_enable" title="How quickly this player gets tired">End</th>
-              <th class="stats_cell tooltip_enable" title="Wins">W</th>
-              <th class="stats_cell tooltip_enable" title="Losses">L</th>
-              <th class="stats_cell tooltip_enable" title="Innings pitched">IP</th>
-              <th class="stats_cell tooltip_enable" title="Hits allowed">H</th>
-              <th class="stats_cell tooltip_enable" title="Runs allowed">R</th>
-              <th class="stats_cell tooltip_enable" title="Earned runs allowed">ER</th>
-              <th class="stats_cell tooltip_enable" title="Home runs allowed">HR</th>
-              <th class="stats_cell tooltip_enable" title="Walks">BB</th>
-              <th class="stats_cell tooltip_enable" title="Strikeouts recorded">K</th>
-              <th class="stats_cell tooltip_enable" title="Earned run average">ERA</th>
-              <th class="stats_cell tooltip_enable" title="Walks plus hits per inning pitched">WHIP</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @team.players.where("position = ?", 'P').each do |player| %>
-            <tr class="player_row">
-              <td class="pitching_role_select_cell">
-                <span class="hidden_pitching_role_abbrev" hidden="true"><%= @team.find_pitching_role_of_player(player.id)%></span>
-                <span class="hidden_player_id" hidden="true"><%= player.id %></span>
-                <select class="pitching_roles_select">
-                  <option value="SP1">SP1</option>
-                  <option value="SP2">SP2</option>
-                  <option value="SP3">SP3</option>
-                  <option value="SP4">SP4</option>
-                  <option value="SP5">SP5</option>
-                  <option value="LR">LR</option>
-                  <option value="MR1">MR1</option>
-                  <option value="MR2">MR2</option>
-                  <option value="MR3">MR3</option>
-                  <option value="SU1">SU1</option>
-                  <option value="SU2">SU2</option>
-                  <option value="CL">CL</option>
-                </select>
-              </td>
-              <td class="custom-border-left">
-                <%= link_to player.full_name, player, method: :get %>
-                <span "hidden_id" hidden><%= player.id %></span>
-              </td>
-              <td><%= @team.find_pitching_role_of_player(player.id)%></td>
-              <td><%= player.age %></td>
-              <td class="height info_cell"><%= player.formatted_height %></td>
-              <td class="info_cell"><%= player.weight %> lb.</td>
-              <td class="info_cell"><%= player.throwing_hand.capitalize %></td>
-              <td class="info_cell"><%= number_to_currency(player.salary) %></td>
-              <td class="attribute_cell hotcold custom-border-left"><%= player.armStrength %></td>
-              <td class="attribute_cell hotcold"><%= player.movement %></td>
-              <td class="attribute_cell hotcold"><%= player.control %></td>
-              <td class="attribute_cell hotcold"><%= player.location %></td>
-              <td class="attribute_cell hotcold custom-border-left"><%= player.agility %></td>
-              <td class="attribute_cell hotcold"><%= player.reactionTime %></td>
-              <td class="attribute_cell hotcold"><%= player.average_fielding %></td>
-              <td class="attribute_cell hotcold"><%= player.average_throwing %></td>
-              <td class="attribute_cell hotcold"><%= player.intelligence %></td>
-              <td class="attribute_cell hotcold"><%= player.endurance %></td>
-              <td class="stats_cell custom-border-left"><%= player.wins %></td>
-              <td class="stats_cell"><%= player.losses %></td>
-              <td class="stats_cell"><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td>
-              <td class="stats_cell"><%= player.hits_allowed %></td>
-              <td class="stats_cell"><%= player.runs_allowed %></td>
-              <td class="stats_cell"><%= player.earned_runs_allowed %></td>
-              <td class="stats_cell"><%= player.home_runs_allowed %></td>
-              <td class="stats_cell"><%= player.walks_allowed %></td>
-              <td class="stats_cell"><%= player.strikeouts_recorded %></td>
-              <td class="stats_cell custom-border-left"><%= number_with_precision(zero_if_nan(player.earned_runs_allowed.to_f*27/player.outs_recorded.to_f), precision: 2) %></td>
-              <td class="stats_cell"><%= number_with_precision(zero_if_nan((player.walks_allowed + player.hits_allowed).to_f*3/player.outs_recorded.to_f), precision: 2) %></td>
-            </tr>
-            <% end %>
-            <tr class="stats_cell">
-              <% @total_wins = 0 %>
-              <% @total_losses = 0 %>
-              <% @total_outs_recorded = 0 %>
-              <% @total_hits_allowed = 0 %>
-              <% @total_runs_allowed = 0 %>
-              <% @total_earned_runs_allowed = 0 %>
-              <% @total_home_runs_allowed = 0 %>
-              <% @total_walks_allowed = 0 %>
-              <% @total_strikeouts_recorded = 0 %>
-              <% @team.players.each do |player| %>
-              <% @total_outs_recorded += player.outs_recorded %>
-              <% @total_hits_allowed += player.hits_allowed %>
-              <% @total_runs_allowed += player.runs_allowed %>
-              <% @total_earned_runs_allowed += player.earned_runs_allowed %>
-              <% @total_home_runs_allowed += player.home_runs_allowed %>
-              <% @total_walks_allowed += player.walks_allowed %>
-              <% @total_strikeouts_recorded += player.strikeouts_recorded %>
-              <% @total_wins += player.wins %>
-              <% @total_losses += player.losses %>
-              <% end %>
-              <td>-</td>
-              <td><strong>Total</strong></td>
-              <td>-</td><td>-</td>
-              <td><strong><%= @total_wins %></strong></td>
-              <td><strong><%= @total_losses %></strong></td>
-              <td><strong><%= number_with_precision(@total_outs_recorded.to_f/3, precision: 1) %></strong></td>
-              <td><strong><%= @total_hits_allowed %></strong></td>
-              <td><strong><%= @total_runs_allowed %></strong></td>
-              <td><strong><%= @total_earned_runs_allowed %></strong></td>
-              <td><strong><%= @total_home_runs_allowed %></strong></td>
-              <td><strong><%= @total_walks_allowed %></strong></td>
-              <td><strong><%= @total_strikeouts_recorded %></strong></td>
-              <td><strong><%= number_with_precision(zero_if_nan(@total_earned_runs_allowed.to_f*27/@total_outs_recorded.to_f), precision: 2) %></strong></td>
-              <td><strong><%= number_with_precision(zero_if_nan((@total_walks_allowed + @total_hits_allowed).to_f*3/@total_outs_recorded.to_f), precision: 2) %></strong></td>
-            </tr>
-          </tbody>
-        </table>
-      </div><!-- end tabs-pitching -->
-      <div id="tabs-lineup">
-        <fieldset style="padding-left: 10px; padding-top: 10px">
-          <label for="radio-info-3">Info</label>
-          <input type="radio" name="radio-3" id="radio-info-3" checked>
-          <label for="radio-stats-3">Stats</label>
-          <input type="radio" name="radio-3" id="radio-stats-3">
-          <label for="radio-attributes-3">Attributes</label>
-          <input type="radio" name="radio-3" id="radio-attributes-3">
-        </fieldset>
-        <table class="lineup default-table">
-          <thead>
-            <tr>
-              <th>Order</th>
-              <th>Name</th>
-              <th class="tooltip_enable" title="Current Position">CP</th>
-              <th class="tooltip_enable" title="Natural Position">NP</th>
-              <th>Age</th>
-              <th class="info_cell">Height</th>
-              <th class="info_cell">Weight</th>
-              <th class="info_cell">Bats</th>
-              <th class="info_cell">Throws</th>
-              <th class="info_cell">Salary</th>
-              <th class="attribute_cell tooltip_enable" title="Batting Average">Bat</th>
-              <th class="attribute_cell tooltip_enable" title="Power">Pow</th>
-              <th class="attribute_cell tooltip_enable" title="Contact">Con</th>
-              <th class="attribute_cell tooltip_enable" title="Plate Vision">Ptv</th>
-              <th class="attribute_cell tooltip_enable" title="Patience">Pat</th>
-              <th class="attribute_cell tooltip_enable" title="Pull Amount">Pul</th>
-              <th class="attribute_cell tooltip_enable" title="Uppercut Amount">Upp</th>
-              <th class="attribute_cell tooltip_enable" title="Speed">Spd</th>
-              <th class="attribute_cell tooltip_enable" title="Agility">Agl</th>
-              <th class="attribute_cell tooltip_enable" title="Reaction Time">Rct</th>
-              <th class="attribute_cell tooltip_enable" title="Arm Strength">Arm</th>
-              <th class="attribute_cell tooltip_enable" title="Fielding">Fld</th>
-              <th class="attribute_cell tooltip_enable" title="Throwing">Thr</th>
-              <th class="attribute_cell tooltip_enable" title="Intelligence">Int</th>
-              <th class="attribute_cell tooltip_enable" title="Endurance">End</th>
-              <th class="stats_cell tooltip_enable" title="At-bats">AB</th>
-              <th class="stats_cell tooltip_enable" title="Runs scored">R</th>
-              <th class="stats_cell tooltip_enable" title="Hits">H</th>
-              <th class="stats_cell tooltip_enable" title="Doubles">2B</th>
-              <th class="stats_cell tooltip_enable" title="Triples">3B</th>
-              <th class="stats_cell tooltip_enable" title="Home runs">HR</th>
-              <th class="stats_cell tooltip_enable" title="Runs batted in">RBI</th>
-              <th class="stats_cell tooltip_enable" title="Walks">BB</th>
-              <th class="stats_cell tooltip_enable" title="Strikeouts">K</th>
-              <th class="stats_cell tooltip_enable" title="Stolen bases">SB</th>
-              <th class="stats_cell tooltip_enable" title="Caught stealing">CS</th>
-              <th class="stats_cell tooltip_enable" title="Batting average">AVG</th>
-              <th class="stats_cell tooltip_enable" title="On-base percentage">OBP</th>
-              <th class="stats_cell tooltip_enable" title="Slugging percentage">SLG</th>
-              <th class="stats_cell tooltip_enable" title="On-base plus slugging percentage">OPS</th>
-            </tr>
-          </thead>
-          <tbody>
-              <% for i in 1..9 do %>
-              <tr>
-                <% @player = @team.find_player_by_lineup_index(i) %>
-                <td><%= i %></td>
-                <td class=><%= link_to @player, @player, method: :get %></td>
-                <td class="current_position_cell"><%= @team.find_position_abbreviation_of_player(@player.id) %></td>
-                <td><%= @player.natural_position_name %></td>
-                <td><%= @player.age %></td>
-                <td class="height info_cell"><%= @player.formatted_height %></td>
-                <td class="info_cell"><%= @player.weight %> lb.</td>
-                <td class="info_cell"><%= @player.hitting_side.capitalize %></td>
-                <td class="info_cell"><%= @player.throwing_hand.capitalize %></td>
-                <td class="info_cell"><%= number_to_currency(@player.salary) %></td>
-                <td class="attribute_cell hotcold custom-border-left"><%= @player.batting_average %></td>
-                <td class="attribute_cell hotcold"><%= @player.power %></td>
-                <td class="attribute_cell hotcold"><%= @player.contact %></td>
-                <td class="attribute_cell hotcold"><%= @player.plate_vision %></td>
-                <td class="attribute_cell hotcold"><%= @player.patience %></td>
-                <td class="attribute_cell hotcold"><%= @player.pull_amount %></td>
-                <td class="attribute_cell hotcold"><%= @player.uppercut_amount %></td>
-                <td class="attribute_cell hotcold custom-border-left"><%= @player.speed %></td>
-                <td class="attribute_cell hotcold"><%= @player.agility %></td>
-                <td class="attribute_cell hotcold"><%= @player.reactionTime %></td>
-                <td class="attribute_cell hotcold"><%= @player.armStrength %></td>
-                <td class="attribute_cell hotcold"><%= @player.average_fielding %></td>
-                <td class="attribute_cell hotcold"><%= @player.average_throwing %></td>
-                <td class="attribute_cell hotcold"><%= @player.intelligence %></td>
-                <td class="attribute_cell hotcold"><%= @player.endurance %></td>
-                <td class="stats_cell custom-border-left"><%= @player.atbats %></td>
-                <td class="stats_cell"><%= @player.runs %></td>
-                <td class="stats_cell"><%= @player.hits %></td>
-                <td class="stats_cell"><%= @player.doubles %></td>
-                <td class="stats_cell"><%= @player.triples %></td>
-                <td class="stats_cell"><%= @player.home_runs %></td>
-                <td class="stats_cell"><%= @player.rbi %></td>
-                <td class="stats_cell"><%= @player.walks %></td>
-                <td class="stats_cell"><%= @player.strikeouts %></td>
-                <td class="stats_cell"><%= @player.stolen_bases %></td>
-                <td class="stats_cell"><%= @player.caught_stealing %></td>
-                <% @avg = @player.hits.to_f/@player.atbats.to_f %>
-                <% @obp = (@player.hits + @player.walks).to_f/(@player.atbats + @player.walks).to_f %>
-                <% @slg = (@player.hits - @player.doubles - @player.triples - @player.home_runs + 2 * @player.doubles + 3 * @player.triples + 4 * @player.home_runs).to_f/@player.atbats.to_f %>
-                <% @ops = @obp + @slg %>
-                <td class="stats_cell custom-border-left"><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></td>
-                <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
-                <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
-                <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
-              <% end %>
-              </tr>
-              <tr/>
-          </tbody>
-        </table>
-      </div><!-- end tabs-lineup -->
-      <div id="tabs-schedule">
-        <h3 class="app_text_main">Schedule</h3>
-        <table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
-          <thead>
-            <tr>
-              <th>Team</th>
-              <th>Result</th>
-              <th>Winning Pitcher</th>
-              <th>Losing Pitcher</th>
-            </tr>
-          </thead>
-          <% @schedule = @team.schedule.split(", ").map {|s| s.to_i} %>
-          <tbody>
-            <% game_number = 0 %>
-            <% @schedule.each do |opponent_id| %>
-            <tr>
-              <td>
-                <% @opponent = Team.find(opponent_id) %>
-              <%= link_to @opponent.full_name, @opponent, method: :get %>
-            </td>
-            <td>
-              <% game = Game.where("(home_team_id = ? OR away_team_id = ?) AND game_number = ?", @team.id, @team.id, game_number).first %>
-              <% @game_display = "" %>
-              <% if !game.nil? %>
-                <% @home_team_runs = game.home_runs_scored.split("_").map(&:to_i).sum %>
-                <% @away_team_runs = game.away_runs_scored.split("_").map(&:to_i).sum %>
-                <% if @team.id == game.home_team_id %>
-                  <% if @home_team_runs > @away_team_runs %>
-                    <% @game_display += "W, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
-                  <% else %>
-                    <% @game_display += "L, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
-                  <% end %>
-                <% else %>
-                  <% if @home_team_runs > @away_team_runs %>
-                    <% @game_display += "L, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
-                  <% else %>
-                    <% @game_display += "W, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
-                  <% end %>
-                <% end %>
-                <% @num_innings = game.home_inning_scores.split("_").map(&:to_i).length %>
-                <% if @num_innings > 9 %>
-                  <% @game_display += " (F/" + @num_innings.to_s + ")" %>
-                <% end %>
-              <% end %>
-              <%= link_to @game_display, game, method: :get %>
-            </td>
-            <% if !game.nil? %>
-            <td><%= link_to Player.find(game.winning_pitcher).full_name, Player.find(game.winning_pitcher), method: :get %></td>
-            <td><%= link_to Player.find(game.losing_pitcher).full_name, Player.find(game.losing_pitcher), method: :get %></td>
-            <% else %>
-            <td></td>
-            <td></td>
-            <% end %>
+  <div class="col-sm-2">
 
-            </tr>
-            <% game_number += 1 %>
-            <% end %>
-          </tbody>
-        </table>
-      </div><!-- end tabs-schedule -->
-    </div>
+    <p>
+      <strong>Record:</strong>
+      <%= link_to @team.wins.to_s + "-" + @team.losses.to_s, "/teams", method: :get %>
+    </p>
   </div>
 </div>
 
+<!-- <div class="container-fluid">
+
+
+  <ul id="sortable">
+  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 1</li>
+  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 2</li>
+  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 3</li>
+  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 4</li>
+  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 5</li>
+  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 6</li>
+  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 7</li>
+</ul>
+</div> -->
+<div class="container-fluid">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#teamNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="teamNavbar">
+        <ul class="nav navbar-nav">
+          <li><a id="edit-defense-link">Edit Defense</a></li>
+          <li><a id="edit-pitching-link">Edit Pitching</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div id="edit-pitching-partial" hidden><%= render partial: "editPitching" %></div>
+<div id="edit-defense-partial" hidden><%= render partial: "editPositions" %></div>
+
+<style media="screen">
+  .position-highlight {
+    background-color: green;
+  }
+  .cell-with-right-border {
+    border-right: 1px solid #e6e6e6;
+  }
+  td {
+    font-size: 12px;
+    padding: 8px !important;
+    height: 40px;
+  }
+  .position-mismatch {
+    color: red;
+  }
+</style>
+
+
+
+<div id="tabs-schedule" hidden>
+  <h3 class="app_text_main">Schedule</h3>
+  <table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
+    <thead>
+      <tr>
+        <th>Team</th>
+        <th>Result</th>
+        <th>Winning Pitcher</th>
+        <th>Losing Pitcher</th>
+      </tr>
+    </thead>
+    <% @schedule = @team.schedule.split(", ").map {|s| s.to_i} %>
+    <tbody>
+      <% game_number = 0 %>
+      <% @schedule.each do |opponent_id| %>
+      <tr>
+        <td>
+          <% @opponent = Team.find(opponent_id) %>
+        <%= link_to @opponent.full_name, @opponent, method: :get %>
+      </td>
+      <td>
+        <% game = Game.where("(home_team_id = ? OR away_team_id = ?) AND game_number = ?", @team.id, @team.id, game_number).first %>
+        <% @game_display = "" %>
+        <% if !game.nil? %>
+          <% @home_team_runs = game.home_runs_scored.split("_").map(&:to_i).sum %>
+          <% @away_team_runs = game.away_runs_scored.split("_").map(&:to_i).sum %>
+          <% if @team.id == game.home_team_id %>
+            <% if @home_team_runs > @away_team_runs %>
+              <% @game_display += "W, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
+            <% else %>
+              <% @game_display += "L, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
+            <% end %>
+          <% else %>
+            <% if @home_team_runs > @away_team_runs %>
+              <% @game_display += "L, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
+            <% else %>
+              <% @game_display += "W, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
+            <% end %>
+          <% end %>
+          <% @num_innings = game.home_inning_scores.split("_").map(&:to_i).length %>
+          <% if @num_innings > 9 %>
+            <% @game_display += " (F/" + @num_innings.to_s + ")" %>
+          <% end %>
+        <% end %>
+        <%= link_to @game_display, game, method: :get %>
+      </td>
+      <% if !game.nil? %>
+      <td><%= link_to Player.find(game.winning_pitcher).full_name, Player.find(game.winning_pitcher), method: :get %></td>
+      <td><%= link_to Player.find(game.losing_pitcher).full_name, Player.find(game.losing_pitcher), method: :get %></td>
+      <% else %>
+      <td></td>
+      <td></td>
+      <% end %>
+
+      </tr>
+      <% game_number += 1 %>
+      <% end %>
+    </tbody>
+  </table>
+</div><!-- end tabs-schedule -->
+
+
 <script>
 
+$("#edit-pitching-link").click(function() {
+  $("#edit-pitching-partial").show();
+  $("#edit-defense-partial").hide();
+});
 
+$("#edit-defense-link").click(function() {
+  $("#edit-pitching-partial").hide();
+  $("#edit-defense-partial").show();
+});
 
-// Everything that needs to be reloaded on an ajax call goes here (LOL)
-function stuffToBeReloadedOnAjaxCall() {
-  hotCold();
-
-  setJqueryUiFunctionality();
-  $(".attribute_cell").hide();
-  $(".stats_cell").hide();
-formatData();
-}
+$(".attribute_cell").hide();
+$(".stats_cell").hide();
 
 function hotCold() {
   $('.hotcold').each(function() {
@@ -663,404 +304,6 @@ function hotCold() {
   });
 }
 hotCold();
-
-
-$(".attribute_cell").hide();
-$(".stats_cell").hide();
-
-
-
-// Radio button functionality for edit position view options
-function setJqueryUiFunctionality() {
-  $(".lineup tbody").sortable({
-    helper: 'clone',
-    delay: 150,
-    tolerance: "pointer",
-
-    start: function(event, ui) {
-      console.log("dragging started");
-      $(this).toggleClass('dragging');
-
-    },
-    stop: function(event, ui) {
-      console.log("dragging stopped");
-      saveLineupChanges();
-      $(this).toggleClass('dragging');
-    },
-    // containment: "#view_lineup"
-  }).disableSelection();
-
-  function saveLineupChanges() {
-    lineup = $.map($('.current_position_cell'), function(element) {
-      return $(element).text();
-    });
-    console.log(lineup);
-
-    $.ajax({
-      url: window.location.href,
-      type: 'PATCH',
-      dataType: 'json',
-      data: { "team": { "lineup1": lineup[0],
-      "lineup2": lineup[1],
-      "lineup3": lineup[2],
-      "lineup4": lineup[3],
-      "lineup5": lineup[4],
-      "lineup6": lineup[5],
-      "lineup7": lineup[6],
-      "lineup8": lineup[7],
-      "lineup9": lineup[8]
-    }
-  },
-  });
-
-  $('.lineup tbody tr').each(function(index, element) {
-    $(this).find('td:first').text(index + 1);
-  });
-
-  }
-
-  $('.position_select_cell').each(function() {
-    var selected_position = $(this).find('span').first().text();
-    $(this).find('select').val(selected_position);
-  });
-
-  $('.pitching_role_select_cell').each(function() {
-    var selected_role = $(this).find('span').first().text();
-    $(this).find('select').val(selected_role);
-  });
-
-  $( "#tabs" ).tabs();
-  $('.position_select').selectmenu({
-    width: 50
-  });
-  $('.pitching_roles_select').selectmenu({
-    width: 50
-  });
-
-  $(function() {
-    $("input").checkboxradio({
-    icon: false
-    });
-  });
-
-  // Edit position: Info view option clicked
-  $("#radio-info").click(function() {
-    $(".attribute_cell").hide();
-    $(".info_cell").show();
-    $(".stats_cell").hide();
-    $("#radio-info-2").prop("checked", true).checkboxradio("refresh");
-    $("#radio-stats-2").prop("checked", false).checkboxradio("refresh");
-    $("#radio-attributes-2").prop("checked", false).checkboxradio("refresh");
-    $("#radio-info-3").prop("checked", true).checkboxradio("refresh");
-    $("#radio-stats-3").prop("checked", false).checkboxradio("refresh");
-    $("#radio-attributes-3").prop("checked", false).checkboxradio("refresh");
-  });
-
-  // Edit position: Stats view option clicked
-  $("#radio-stats").click(function() {
-    $(".attribute_cell").hide();
-    $(".info_cell").hide();
-    $(".stats_cell").show();
-    $("#radio-info-2").prop("checked", false).checkboxradio("refresh");
-    $("#radio-stats-2").prop("checked", true).checkboxradio("refresh");
-    $("#radio-attributes-2").prop("checked", false).checkboxradio("refresh");
-    $("#radio-info-3").prop("checked", false).checkboxradio("refresh");
-    $("#radio-stats-3").prop("checked", true).checkboxradio("refresh");
-    $("#radio-attributes-3").prop("checked", false).checkboxradio("refresh");
-  });
-
-  // Edit position: Attributes view option clicked
-  $("#radio-attributes").click(function() {
-    $(".attribute_cell").show();
-    $(".info_cell").hide();
-    $(".stats_cell").hide();
-    $("#radio-info-2").prop("checked", false).checkboxradio("refresh");
-    $("#radio-stats-2").prop("checked", false).checkboxradio("refresh");
-    $("#radio-attributes-2").prop("checked", true).checkboxradio("refresh");
-    $("#radio-info-3").prop("checked", false).checkboxradio("refresh");
-    $("#radio-stats-3").prop("checked", false).checkboxradio("refresh");
-    $("#radio-attributes-3").prop("checked", true).checkboxradio("refresh");
-  });
-
-  // Edit pitching_role: Info view option clicked
-  $("#radio-info-2").click(function() {
-    $(".attribute_cell").hide();
-    $(".info_cell").show();
-    $(".stats_cell").hide();
-    $("#radio-info").prop("checked", true).checkboxradio("refresh");
-    $("#radio-stats").prop("checked", false).checkboxradio("refresh");
-    $("#radio-attributes").prop("checked", false).checkboxradio("refresh");
-    $("#radio-info-3").prop("checked", true).checkboxradio("refresh");
-    $("#radio-stats-3").prop("checked", false).checkboxradio("refresh");
-    $("#radio-attributes-3").prop("checked", false).checkboxradio("refresh");
-  });
-
-  // Edit pitching_role: Stats view option clicked
-  $("#radio-stats-2").click(function() {
-    $(".attribute_cell").hide();
-    $(".info_cell").hide();
-    $(".stats_cell").show();
-    $("#radio-info").prop("checked", false).checkboxradio("refresh");
-    $("#radio-stats").prop("checked", true).checkboxradio("refresh");
-    $("#radio-attributes").prop("checked", false).checkboxradio("refresh");
-    $("#radio-info-3").prop("checked", false).checkboxradio("refresh");
-    $("#radio-stats-3").prop("checked", true).checkboxradio("refresh");
-    $("#radio-attributes-3").prop("checked", false).checkboxradio("refresh");
-  });
-
-  // Edit pitching_role: Attributes view option clicked
-  $("#radio-attributes-2").click(function() {
-    $(".attribute_cell").show();
-    $(".info_cell").hide();
-    $(".stats_cell").hide();
-    $("#radio-info").prop("checked", false).checkboxradio("refresh");
-    $("#radio-stats").prop("checked", false).checkboxradio("refresh");
-    $("#radio-attributes").prop("checked", true).checkboxradio("refresh");
-    $("#radio-info-3").prop("checked", false).checkboxradio("refresh");
-    $("#radio-stats-3").prop("checked", false).checkboxradio("refresh");
-    $("#radio-attributes-3").prop("checked", true).checkboxradio("refresh");
-  });
-
-  // Edit pitching_role: Info view option clicked
-  $("#radio-info-3").click(function() {
-    $(".attribute_cell").hide();
-    $(".info_cell").show();
-    $(".stats_cell").hide();
-    $("#radio-info").prop("checked", true).checkboxradio("refresh");
-    $("#radio-stats").prop("checked", false).checkboxradio("refresh");
-    $("#radio-attributes").prop("checked", false).checkboxradio("refresh");
-    $("#radio-info-2").prop("checked", true).checkboxradio("refresh");
-    $("#radio-stats-2").prop("checked", false).checkboxradio("refresh");
-    $("#radio-attributes-2").prop("checked", false).checkboxradio("refresh");
-  });
-
-  // Edit pitching_role: Stats view option clicked
-  $("#radio-stats-3").click(function() {
-    $(".attribute_cell").hide();
-    $(".info_cell").hide();
-    $(".stats_cell").show();
-    $("#radio-info").prop("checked", false).checkboxradio("refresh");
-    $("#radio-stats").prop("checked", true).checkboxradio("refresh");
-    $("#radio-attributes").prop("checked", false).checkboxradio("refresh");
-    $("#radio-info-2").prop("checked", false).checkboxradio("refresh");
-    $("#radio-stats-2").prop("checked", true).checkboxradio("refresh");
-    $("#radio-attributes-2").prop("checked", false).checkboxradio("refresh");
-  });
-
-  // Edit pitching_role: Attributes view option clicked
-  $("#radio-attributes-3").click(function() {
-    $(".attribute_cell").show();
-    $(".info_cell").hide();
-    $(".stats_cell").hide();
-    $("#radio-info").prop("checked", false).checkboxradio("refresh");
-    $("#radio-stats").prop("checked", false).checkboxradio("refresh");
-    $("#radio-attributes").prop("checked", true).checkboxradio("refresh");
-    $("#radio-info-2").prop("checked", false).checkboxradio("refresh");
-    $("#radio-stats-2").prop("checked", false).checkboxradio("refresh");
-    $("#radio-attributes-2").prop("checked", true).checkboxradio("refresh");
-  });
-
-  $("#update_positions_button").button();
-  $("#update_pitching_roles_button").button();
-
-  $('#update_positions_button').click(function() {
-    savePositionChanges();
-  });
-
-  $('#update_pitching_roles_button').click(function() {
-    savePitchingRoleChanges();
-  });
-
-  // Disable button if multiple players at the same position
-  $('.position_select').on("selectmenuchange", function(event, ui) {
-    if (positionsValid()) {
-      $("#update_positions_button").button("option", "disabled", false);
-    } else {
-      $("#update_positions_button").button("option", "disabled", true);
-    }
-  });
-
-  // Disable button if multiple players at the same pitching role
-  $('.pitching_roles_select').on("selectmenuchange", function(event, ui) {
-    if (pitchingRolesValid()) {
-      $("#update_pitching_roles_button").button("option", "disabled", false);
-    } else {
-      $("#update_pitching_roles_button").button("option", "disabled", true);
-    }
-  });
-}
-setJqueryUiFunctionality();
-
-// This function checks if the position configuration is valid (when user edits positions)
-function positionsValid() {
-  var positions = {};
-  positions["DH"] = 0;
-  positions["C"] = 0;
-  positions["1B"] = 0;
-  positions["2B"] = 0;
-  positions["3B"] = 0;
-  positions["SS"] = 0;
-  positions["LF"] = 0;
-  positions["CF"] = 0;
-  positions["RF"] = 0;
-  positions["BN"] = 0;
-
-  $('.position_select_cell').each(function() {
-    var selected_position = $(this).find('select').val();
-    positions[selected_position] += 1;
-  });
-
-  var valid = true;
-  if (positions["DH"] != 1) valid = false;
-  if (positions["C"] != 1) valid = false;
-  if (positions["1B"] != 1) valid = false;
-  if (positions["2B"] != 1) valid = false;
-  if (positions["3B"] != 1) valid = false;
-  if (positions["SS"] != 1) valid = false;
-  if (positions["LF"] != 1) valid = false;
-  if (positions["CF"] != 1) valid = false;
-  if (positions["RF"] != 1) valid = false;
-  if (positions["BN"] != 4) valid = false;
-
-  return valid;
-}
-
-// This function checks if the pitching roles configuration is valid (when user edits pitching roles)
-function pitchingRolesValid() {
-  var pitchingRoles = {};
-  pitchingRoles["SP1"] = 0;
-  pitchingRoles["SP2"] = 0;
-  pitchingRoles["SP3"] = 0;
-  pitchingRoles["SP4"] = 0;
-  pitchingRoles["SP5"] = 0;
-  pitchingRoles["LR"] = 0;
-  pitchingRoles["MR1"] = 0;
-  pitchingRoles["MR2"] = 0;
-  pitchingRoles["MR3"] = 0;
-  pitchingRoles["SU1"] = 0;
-  pitchingRoles["SU2"] = 0;
-  pitchingRoles["CL"] = 0;
-
-  $('.pitching_role_select_cell').each(function() {
-    var selected_role = $(this).find('select').val();
-    pitchingRoles[selected_role] += 1;
-  });
-
-  var valid = true;
-  if (pitchingRoles["SP1"] != 1) valid = false;
-  if (pitchingRoles["SP2"] != 1) valid = false;
-  if (pitchingRoles["SP3"] != 1) valid = false;
-  if (pitchingRoles["SP4"] != 1) valid = false;
-  if (pitchingRoles["SP5"] != 1) valid = false;
-  if (pitchingRoles["LR"] != 1) valid = false;
-  if (pitchingRoles["MR1"] != 1) valid = false;
-  if (pitchingRoles["MR2"] != 1) valid = false;
-  if (pitchingRoles["MR3"] != 1) valid = false;
-  if (pitchingRoles["SU1"] != 1) valid = false;
-  if (pitchingRoles["SU2"] != 1) valid = false;
-  if (pitchingRoles["CL"] != 1) valid = false;
-
-  return valid;
-}
-
-function savePositionChanges() {
-
-  var new_position_ids = {};
-
-  $('.position_select_cell').each(function() {
-    var selected_position = $(this).find('select').val();
-    new_position_ids[selected_position] = $(this).find(".hidden_player_id").text();
-  });
-
-  $.ajax({
-    url: window.location.href,
-    type: 'PATCH',
-    dataType: 'json',
-    data: { "team": {
-    "designated_hitter": new_position_ids["DH"],
-    "catcher": new_position_ids["C"],
-    "first_base": new_position_ids["1B"],
-    "second_base": new_position_ids["2B"],
-    "third_base": new_position_ids["3B"],
-    "shortstop": new_position_ids["SS"],
-    "left_field": new_position_ids["LF"],
-    "center_field": new_position_ids["CF"],
-    "right_field": new_position_ids["RF"]
-    }
-    },
-    success: function (data, textStatus, jqXHR) {
-
-      // Reload batting table
-      $("#tabs-batting").load("/teams/" + data.id + " #tabs-batting", function(responseText, textStatus, XMLHttpRequest) {
-        stuffToBeReloadedOnAjaxCall();
-      });
-
-      // Reload pitching table
-      $("#tabs-pitching").load("/teams/" + data.id + " #tabs-pitching", function(responseText, textStatus, XMLHttpRequest) {
-        stuffToBeReloadedOnAjaxCall();
-      });
-
-      // Reload lineup
-      $("#tabs-lineup").load("/teams/" + data.id + " #tabs-lineup", function(responseText, textStatus, XMLHttpRequest) {
-        stuffToBeReloadedOnAjaxCall();
-      });
-
-    }
-  });
-}
-
-function savePitchingRoleChanges() {
-  var pitching_role_ids = {};
-
-  $('.pitching_role_select_cell').each(function() {
-    var selected_role = $(this).find('select').val();
-    pitching_role_ids[selected_role] = $(this).find(".hidden_player_id").text();
-  });
-  $.ajax({
-    url: window.location.href,
-    type: 'PATCH',
-    dataType: 'json',
-    data: { "team": {
-    "sp1": pitching_role_ids["SP1"],
-    "sp2": pitching_role_ids["SP2"],
-    "sp3": pitching_role_ids["SP3"],
-    "sp4": pitching_role_ids["SP4"],
-    "sp5": pitching_role_ids["SP5"],
-    "lr": pitching_role_ids["LR"],
-    "mr1": pitching_role_ids["MR1"],
-    "mr2": pitching_role_ids["MR2"],
-    "mr3": pitching_role_ids["MR3"],
-    "su1": pitching_role_ids["SU1"],
-    "su2": pitching_role_ids["SU2"],
-    "cl": pitching_role_ids["CL"]
-    }
-    },
-    success: function (data, textStatus, jqXHR) {
-
-      // Reload batting table
-      $("#tabs-batting").load("/teams/" + data.id + " #tabs-batting", function(responseText, textStatus, XMLHttpRequest) {
-        stuffToBeReloadedOnAjaxCall();
-      });
-
-      // Reload pitching table
-      $("#tabs-pitching").load("/teams/" + data.id + " #tabs-pitching", function(responseText, textStatus, XMLHttpRequest) {
-        stuffToBeReloadedOnAjaxCall();
-      });
-
-      // Reload lineup
-      $("#tabs-lineup").load("/teams/" + data.id + " #tabs-lineup", function(responseText, textStatus, XMLHttpRequest) {
-        stuffToBeReloadedOnAjaxCall();
-      });
-
-
-    }
-  });
-}
-
-</script>
-
-
-<script>
 
 $(function() {
   $(".tooltip_enable").tooltip({
