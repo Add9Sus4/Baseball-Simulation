@@ -10,7 +10,7 @@
 
 <!-- <p id="notice"><%= notice %></p> -->
 
-<div class="container-fluid">
+<div id="player-div">
 <p>
   <h2 class="app_text_main"><%= @player.full_name %></h2>
 </p>
@@ -263,6 +263,10 @@
 </div>
 
 <style media="screen">
+#player-div {
+  padding-left: 28px;
+}
+
 .ui-tooltip-content {
   font-size:8pt;
 }

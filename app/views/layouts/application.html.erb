@@ -7,6 +7,8 @@
   <%= csrf_meta_tags %>
 
   <style>
+
+
   #main_nav.affix {
     position: fixed;
     top: 0;
@@ -49,12 +51,18 @@
     /*.dropdown:hover ul.dropdown-menu {
       display: block;
     }*/
+
+    .nav-wrapper
+{
+    min-height:50px;
+}
+
   </style>
 
 </head>
 
 <body id="app_body" hidden>
-<div class="content">
+<div class="content nav-wrapper">
   <nav id="main_nav" class="navbar navbar-inverse">
     <div>
       <div class="navbar-header">
