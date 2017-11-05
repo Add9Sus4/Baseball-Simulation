@@ -1,5 +1,5 @@
 <style media="screen">
-  #table-schedule td {
+  .table-schedule td {
     height: 70px;
     font-size: 10px;
   }
@@ -10,77 +10,91 @@
   .opponent-name {
     font-size: 12px;
   }
+  #calendar-div {
+    height: 550px;
+    overflow-y: scroll;
+  }
 </style>
 
-<div class="container-fluid">
-  <h3 class="app_text_main">April</h3>
-  <table id="table-schedule" class="table table-default table-bordered">
-    <thead>
-      <tr>
-        <th>M</th><th>T</th><th>W</th><th>Th</th><th>F</th><th>Sa</th><th>Su</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% (0..4).each do |index| %>
-        <% @cal_dates = @team.get_dates_array(index) %>
+
+
+<div id="calendar-div" class="container-fluid">
+  <%= link_to "August", "#August" %>
+  <% @months = ["April", "May", "June", "July", "August", "September"] %>
+  <% @months.each do |month| %>
+    <h3 class="month-name"><%= month %></h3>
+    <table class="table table-default table-bordered table-schedule">
+      <thead>
         <tr>
-          <% @cal_dates.each do |date| %>
-            <td><%= date.nil? == true ? '-' : date.day %>
-            <br/><br/><% @game = Game.where("(home_team_id = ? OR away_team_id = ?) AND sim_date = ?", @team.id, @team.id, date).first %>
-              <% if !@game.nil? %>
-                <% if @game.home_team_id == @team.id %>
-                  <% @opponent = Team.find(@game.away_team_id) %>
-                  <!-- <span class="home"></span> -->
-                  <span class="opponent-name"><%= link_to @opponent.full_name, @opponent, method: :get %></span>
-                <% elsif @game.away_team_id == @team.id %>
-                  <% @opponent = Team.find(@game.home_team_id) %>
-                  <!-- <span class="away"></span> -->
-                  <span class="opponent-name">@<%= link_to @opponent.full_name, @opponent, method: :get %></span>
-                <% end %>
-              <% end %>
-
-              <% @game_display = "" %>
-              <% if !@game.nil? && !@game.attendance.nil? %>
-                <% @home_team_runs = @game.home_runs_scored.split("_").map(&:to_i).sum %>
-                <% @away_team_runs = @game.away_runs_scored.split("_").map(&:to_i).sum %>
-                <% if @team.id == @game.home_team_id %>
-                  <% if @home_team_runs > @away_team_runs %>
-                  <span class="win"></span>
-                    <% @game_display += "W, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
-                  <% else %>
-                  <span class="loss"></span>
-                    <% @game_display += "L, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
-                  <% end %>
-                <% else %>
-                  <% if @home_team_runs > @away_team_runs %>
-                  <span class="loss"></span>
-                    <% @game_display += "L, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
-                  <% else %>
-                  <span class="win"></span>
-                    <% @game_display += "W, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
-                  <% end %>
-                <% end %>
-                <% @num_innings = @game.home_inning_scores.split("_").map(&:to_i).length %>
-                <% if @num_innings > 9 %>
-                  <% @game_display += " (F/" + @num_innings.to_s + ")" %>
-                <% end %>
-              <% end %>
-              <span class="game-display"><strong><%= link_to @game_display, @game, method: :get %></strong></span>
-
-            <% if !@game.nil? && !@game.attendance.nil? %>
-              <br/>W: <%= link_to Player.find(@game.winning_pitcher).full_name, Player.find(@game.winning_pitcher), method: :get %>
-              <br/>L: <%= link_to Player.find(@game.losing_pitcher).full_name, Player.find(@game.losing_pitcher), method: :get %>
-              <% end %>
-            </td>
-          <% end %>
+          <th>M</th><th>T</th><th>W</th><th>Th</th><th>F</th><th>Sa</th><th>Su</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% (0..5).each do |index| %>
+          <% @cal_dates = @team.get_dates_array(index, month) %>
+          <tr>
+            <% @cal_dates.each do |date| %>
+              <td><%= date.nil? == true ? '-' : date.day %>
+              <br/><br/><% @game = Game.where("(home_team_id = ? OR away_team_id = ?) AND sim_date = ?", @team.id, @team.id, date).first %>
+                <% if !@game.nil? %>
+                  <% if @game.home_team_id == @team.id %>
+                    <% @opponent = Team.find(@game.away_team_id) %>
+                    <!-- <span class="home"></span> -->
+                    <span class="opponent-name"><%= link_to @opponent.full_name, @opponent, method: :get %></span>
+                  <% elsif @game.away_team_id == @team.id %>
+                    <% @opponent = Team.find(@game.home_team_id) %>
+                    <!-- <span class="away"></span> -->
+                    <span class="opponent-name">@<%= link_to @opponent.full_name, @opponent, method: :get %></span>
+                  <% end %>
+                <% end %>
+
+                <% @game_display = "" %>
+                <% if !@game.nil? && !@game.attendance.nil? %>
+                  <% @home_team_runs = @game.home_runs_scored.split("_").map(&:to_i).sum %>
+                  <% @away_team_runs = @game.away_runs_scored.split("_").map(&:to_i).sum %>
+                  <% if @team.id == @game.home_team_id %>
+                    <% if @home_team_runs > @away_team_runs %>
+                    <span class="win"></span>
+                      <% @game_display += "W, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
+                    <% else %>
+                    <span class="loss"></span>
+                      <% @game_display += "L, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
+                    <% end %>
+                  <% else %>
+                    <% if @home_team_runs > @away_team_runs %>
+                    <span class="loss"></span>
+                      <% @game_display += "L, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
+                    <% else %>
+                    <span class="win"></span>
+                      <% @game_display += "W, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
+                    <% end %>
+                  <% end %>
+                  <% @num_innings = @game.home_inning_scores.split("_").map(&:to_i).length %>
+                  <% if @num_innings > 9 %>
+                    <% @game_display += " (F/" + @num_innings.to_s + ")" %>
+                  <% end %>
+                <% end %>
+                <span class="game-display"><strong><%= link_to @game_display, @game, method: :get %></strong></span>
+
+              <% if !@game.nil? && !@game.attendance.nil? %>
+                <br/>W: <%= link_to Player.find(@game.winning_pitcher).full_name, Player.find(@game.winning_pitcher), method: :get %>
+                <br/>L: <%= link_to Player.find(@game.losing_pitcher).full_name, Player.find(@game.losing_pitcher), method: :get %>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
 </div>
 
 
 <script type="text/javascript">
+  $(".month-name").each(function() {
+    $(this).attr("id", $(this).text());
+  });
+
   $(".away").each(function() {
     $(this).closest('td').css({"background-color":"#fff7e6"});
   });

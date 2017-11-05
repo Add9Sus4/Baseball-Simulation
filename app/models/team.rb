@@ -95,9 +95,24 @@ class Team < ActiveRecord::Base
     position_names[index]
   end
 
-  def get_dates_array(row_index)
+  def get_dates_array(row_index, month)
     cal_dates = []
-    date_array = Date.parse("1st April 2000")..Date.parse("30st September 2000")
+    date_array = nil
+    case month
+    when "April"
+      date_array = Date.parse("1st April 2000")..(Date.parse("1st May 2000") - 1)
+    when "May"
+      date_array = Date.parse("1st May 2000")..(Date.parse("1st June 2000") - 1)
+    when "June"
+      date_array = Date.parse("1st June 2000")..(Date.parse("1st July 2000") - 1)
+    when "July"
+      date_array = Date.parse("1st July 2000")..(Date.parse("1st August 2000") - 1)
+    when "August"
+      date_array = Date.parse("1st August 2000")..(Date.parse("1st September 2000") - 1)
+    when "September"
+      date_array = Date.parse("1st September 2000")..(Date.parse("1st November 2000") - 1)
+    end
+
     row_count = 0
 
     if row_index == 0
