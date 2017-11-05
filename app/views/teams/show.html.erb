@@ -9,6 +9,12 @@
 
 <style>
 
+.custom-smaller-table td {
+  font-size: 12px;
+  height: 15px;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
 .ui-tooltip-content {
   font-size:8pt;
 }
@@ -91,6 +97,10 @@
 
 .player_table td {
   font-size: 12px;
+}
+
+.nav li {
+  cursor: pointer;
 }
 
 </style>
@@ -177,16 +187,33 @@
       </div>
       <div class="collapse navbar-collapse" id="teamNavbar">
         <ul class="nav navbar-nav">
+          <li><a id="show-roster-position-players-link">View Hitters</a></li>
+          <li><a id="show-roster-pitchers-link">View Pitchers</a></li>
           <li><a id="edit-defense-link">Edit Defense</a></li>
           <li><a id="edit-pitching-link">Edit Pitching</a></li>
+          <li><a id="show-schedule-link">Schedule</a></li>
         </ul>
       </div>
     </div>
   </nav>
 </div>
 
+<div id="view-mode-div" class="container-fluid" hidden>
+  <fieldset>
+    <label for="radio-info">Info</label>
+    <input type="radio" name="radio-view-type" id="radio-info" checked>
+    <label for="radio-stats">Stats</label>
+    <input type="radio" name="radio-view-type" id="radio-stats">
+    <label for="radio-attributes">Attributes</label>
+    <input type="radio" name="radio-view-type" id="radio-attributes">
+  </fieldset>
+</div>
+
+<div id="show-roster-position-players-partial" hidden><%= render partial: "showRosterPositionPlayers" %></div>
+<div id="show-roster-pitchers-partial" hidden><%= render partial: "showRosterPitchers" %></div>
 <div id="edit-pitching-partial" hidden><%= render partial: "editPitching" %></div>
 <div id="edit-defense-partial" hidden><%= render partial: "editPositions" %></div>
+<div id="show-schedule-partial"><%= render partial: "showSchedule" %></div>
 
 <style media="screen">
   .position-highlight {
@@ -205,80 +232,91 @@
   }
 </style>
 
-
-
-<div id="tabs-schedule" hidden>
-  <h3 class="app_text_main">Schedule</h3>
-  <table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
-    <thead>
-      <tr>
-        <th>Team</th>
-        <th>Result</th>
-        <th>Winning Pitcher</th>
-        <th>Losing Pitcher</th>
-      </tr>
-    </thead>
-    <% @schedule = @team.schedule.split(", ").map {|s| s.to_i} %>
-    <tbody>
-      <% game_number = 0 %>
-      <% @schedule.each do |opponent_id| %>
-      <tr>
-        <td>
-          <% @opponent = Team.find(opponent_id) %>
-        <%= link_to @opponent.full_name, @opponent, method: :get %>
-      </td>
-      <td>
-        <% game = Game.where("(home_team_id = ? OR away_team_id = ?) AND game_number = ?", @team.id, @team.id, game_number).first %>
-        <% @game_display = "" %>
-        <% if !game.nil? %>
-          <% @home_team_runs = game.home_runs_scored.split("_").map(&:to_i).sum %>
-          <% @away_team_runs = game.away_runs_scored.split("_").map(&:to_i).sum %>
-          <% if @team.id == game.home_team_id %>
-            <% if @home_team_runs > @away_team_runs %>
-              <% @game_display += "W, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
-            <% else %>
-              <% @game_display += "L, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
-            <% end %>
-          <% else %>
-            <% if @home_team_runs > @away_team_runs %>
-              <% @game_display += "L, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
-            <% else %>
-              <% @game_display += "W, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
-            <% end %>
-          <% end %>
-          <% @num_innings = game.home_inning_scores.split("_").map(&:to_i).length %>
-          <% if @num_innings > 9 %>
-            <% @game_display += " (F/" + @num_innings.to_s + ")" %>
-          <% end %>
-        <% end %>
-        <%= link_to @game_display, game, method: :get %>
-      </td>
-      <% if !game.nil? %>
-      <td><%= link_to Player.find(game.winning_pitcher).full_name, Player.find(game.winning_pitcher), method: :get %></td>
-      <td><%= link_to Player.find(game.losing_pitcher).full_name, Player.find(game.losing_pitcher), method: :get %></td>
-      <% else %>
-      <td></td>
-      <td></td>
-      <% end %>
-
-      </tr>
-      <% game_number += 1 %>
-      <% end %>
-    </tbody>
-  </table>
-</div><!-- end tabs-schedule -->
-
-
 <script>
+
+$("input").checkboxradio({
+    icon: false
+});
+
+$("#radio-info").click(function() {
+  $(".info_cell").each(function() {
+    $(this).show();
+  });
+  $(".stats_cell").each(function() {
+    $(this).hide();
+  });
+  $(".attribute_cell").each(function() {
+    $(this).hide();
+  });
+});
+
+$("#radio-stats").click(function() {
+  $(".info_cell").each(function() {
+    $(this).hide();
+  });
+  $(".stats_cell").each(function() {
+    $(this).show();
+  });
+  $(".attribute_cell").each(function() {
+    $(this).hide();
+  });
+});
+
+$("#radio-attributes").click(function() {
+  $(".info_cell").each(function() {
+    $(this).hide();
+  });
+  $(".stats_cell").each(function() {
+    $(this).hide();
+  });
+  $(".attribute_cell").each(function() {
+    $(this).show();
+  });
+});
+
+$("#show-schedule-link").click(function() {
+  $("#edit-pitching-partial").hide();
+  $("#edit-defense-partial").hide();
+  $("#show-roster-position-players-partial").hide();
+  $("#show-roster-pitchers-partial").hide();
+  $("#show-schedule-partial").show();
+  $("#view-mode-div").hide();
+});
+
+$("#show-roster-position-players-link").click(function() {
+  $("#edit-pitching-partial").hide();
+  $("#edit-defense-partial").hide();
+  $("#show-roster-position-players-partial").show();
+  $("#show-roster-pitchers-partial").hide();
+  $("#show-schedule-partial").hide();
+  $("#view-mode-div").show();
+});
+
+$("#show-roster-pitchers-link").click(function() {
+  $("#edit-pitching-partial").hide();
+  $("#edit-defense-partial").hide();
+  $("#show-roster-position-players-partial").hide();
+  $("#show-roster-pitchers-partial").show();
+  $("#show-schedule-partial").hide();
+  $("#view-mode-div").show();
+});
 
 $("#edit-pitching-link").click(function() {
   $("#edit-pitching-partial").show();
   $("#edit-defense-partial").hide();
+  $("#show-roster-position-players-partial").hide();
+  $("#show-roster-pitchers-partial").hide();
+  $("#show-schedule-partial").hide();
+  $("#view-mode-div").show();
 });
 
 $("#edit-defense-link").click(function() {
   $("#edit-pitching-partial").hide();
   $("#edit-defense-partial").show();
+  $("#show-roster-position-players-partial").hide();
+  $("#show-roster-pitchers-partial").hide();
+  $("#show-schedule-partial").hide();
+  $("#view-mode-div").show();
 });
 
 $(".attribute_cell").hide();

@@ -95,6 +95,45 @@ class Team < ActiveRecord::Base
     position_names[index]
   end
 
+  def get_dates_array(row_index)
+    cal_dates = []
+    date_array = Date.parse("1st April 2000")..Date.parse("30st September 2000")
+    row_count = 0
+
+    if row_index == 0
+      leading_empty_cells = 0
+      first_date = date_array.first
+      if first_date.monday?
+        leading_empty_cells = 0
+      elsif first_date.tuesday?
+        leading_empty_cells = 1
+      elsif first_date.wednesday?
+        leading_empty_cells = 2
+      elsif first_date.thursday?
+        leading_empty_cells = 3
+      elsif first_date.friday?
+        leading_empty_cells = 4
+      elsif first_date.saturday?
+        leading_empty_cells = 5
+      else
+        leading_empty_cells = 6
+      end
+      leading_empty_cells.times do
+        cal_dates.push(nil)
+      end
+    end
+
+    date_array.each do |date|
+      if row_index == row_count
+        cal_dates.push(date)
+      end
+      if date.sunday?
+        row_count += 1
+      end
+    end
+    cal_dates
+  end
+
   # returns the player currently playing the given position (in abbreviated form)
   def find_player_by_position_abbrev(abbrev)
     case abbrev

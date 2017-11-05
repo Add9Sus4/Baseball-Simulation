@@ -1,17 +1,8 @@
-<div class="container-fluid">
-  <fieldset>
-    <label for="radio-info">Info</label>
-    <input type="radio" name="radio-view-type" id="radio-info" checked>
-    <label for="radio-stats">Stats</label>
-    <input type="radio" name="radio-view-type" id="radio-stats">
-    <label for="radio-attributes">Attributes</label>
-    <input type="radio" name="radio-view-type" id="radio-attributes">
-  </fieldset>
-</div>
+
 
 <div id="edit-pitching-div">
   <div class="col-md-3">
-    <table id="pitching-role-table" class="table">
+    <table id="pitching-role-table" class="table custom-smaller-table">
       <thead>
         <tr>
           <th>Role</th>
@@ -28,9 +19,10 @@
         <% end %>
       </tbody>
     </table>
+    <button id="btn-save-pitching-changes" class="btn btn-primary">Save Changes</button>
   </div>
   <div class="edit-pitching col-md-9">
-    <table id="pitching-table" class="table table-default" style="margin-top: 15px">
+    <table id="pitching-table" class="table table-default custom-smaller-table" style="margin-top: 15px">
       <thead>
         <tr>
           <th><button id="btn-clear-pitching" class="btn btn-default btn-xs">Clear All</button>
@@ -120,7 +112,6 @@
         <% end %>
       </tbody>
     </table>
-    <button id="btn-save-pitching-changes" class="btn btn-primary">Save Changes</button>
   </div>
 </div>
 
@@ -181,46 +172,6 @@ $(".pitching-select").change(function() {
 $(".pitching-select").each(function() {
   var pitching_role = $(this).closest("td").find(".hidden_pitching_role_abbrev").text();
   $(this).val(pitching_role);
-});
-
-$("input").checkboxradio({
-    icon: false
-});
-
-$("#radio-info").click(function() {
-  $(".info_cell").each(function() {
-    $(this).show();
-  });
-  $(".stats_cell").each(function() {
-    $(this).hide();
-  });
-  $(".attribute_cell").each(function() {
-    $(this).hide();
-  });
-});
-
-$("#radio-stats").click(function() {
-  $(".info_cell").each(function() {
-    $(this).hide();
-  });
-  $(".stats_cell").each(function() {
-    $(this).show();
-  });
-  $(".attribute_cell").each(function() {
-    $(this).hide();
-  });
-});
-
-$("#radio-attributes").click(function() {
-  $(".info_cell").each(function() {
-    $(this).hide();
-  });
-  $(".stats_cell").each(function() {
-    $(this).hide();
-  });
-  $(".attribute_cell").each(function() {
-    $(this).show();
-  });
 });
 
 $("#btn-save-pitching-changes").click(function() {

@@ -16,6 +16,7 @@ class Game < ActiveRecord::Base
 
   # Prepare for the game
   def prepare home_team, away_team, game_num, season_num
+    @game_date = Season.first.current_date
     @home_team = home_team
     @away_team = away_team
     @game_number = game_num
@@ -839,11 +840,12 @@ class Game < ActiveRecord::Base
     :player_of_the_game => nil,
     :home_inning_scores => @home_team.game_inning_scores,
     :away_inning_scores => @away_team.game_inning_scores,
-    :pbp => play_by_play,
+    :pbp => "play_by_play", # TODO: change this back to play_by_play
     :season_id => @season_id,
     :game_number => @game_number,
     :winning_pitcher => winning_pitcher,
-    :losing_pitcher => losing_pitcher)
+    :losing_pitcher => losing_pitcher,
+    :sim_date => @game_date)
 
   end
 

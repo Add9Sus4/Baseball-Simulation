@@ -984,7 +984,7 @@ team_names = {
 
 
 # Create season
-season = Season.create!(next_game: 0, simulating: 1)
+season = Season.create!(next_game: 0, simulating: 1, current_date: Date.parse("1st April 2000"))
 
 ["NL", "AL"].each do |current_league|
   ["East", "Central", "West"].each do |current_division|
@@ -1107,104 +1107,271 @@ end
 
 # Create the schedules
 
-# First, determine series lengths
-TOTAL_TWO_GAME_SERIES = 2
-TOTAL_THREE_GAME_SERIES = 38
-TOTAL_FOUR_GAME_SERIES = 11
+TOTAL_HOME_TWO_GAME_SERIES = 1
+TOTAL_HOME_THREE_GAME_SERIES = 21
+TOTAL_HOME_FOUR_GAME_SERIES = 4
 
-@two_game_series = 0
-@three_game_series = 0
-@four_game_series = 0
+TOTAL_AWAY_TWO_GAME_SERIES = 1
+TOTAL_AWAY_THREE_GAME_SERIES = 21
+TOTAL_AWAY_FOUR_GAME_SERIES = 4
 
-def two_game_series_remaining
-    TOTAL_TWO_GAME_SERIES - @two_game_series
+TOTAL_HOMESTANDS = 7
+TOTAL_ROAD_TRIPS = 8
+
+TOTAL_DIVISION_SERIES = 24
+TOTAL_INTERDIVISION_SERIES = 20
+TOTAL_INTERLEAGUE_SERIES = 8
+
+# one off day every 3 series
+
+@current_date = Date.parse("1st April 2000")
+
+@series = Hash.new 0
+
+@series["TWO_GAME"] = 2
+@series["THREE_GAME"] = 42
+@series["FOUR_GAME"] = 8
+@series["DIVISION"] = 24
+@series["INTERDIVISION"] = 20
+@series["INTERLEAGUE"] = 8
+
+def create_series(series_index, num_games, series_type, remaining_team_ids, current_date)
+
+  puts "remaining_team_ids: #{remaining_team_ids}"
+  team_id = remaining_team_ids.sample
+  remaining_team_ids.delete(team_id)
+  team = Team.find(team_id)
+  # CREATE NEW SERIES
+  # Home or away?
+  home = [true, false].sample
+  # Find opponent
+  opponent_id = remaining_team_ids.sample
+  remaining_team_ids.delete(opponent_id)
+  # @possible_opponents = nil
+  # case series_type
+  # when "DIVISION"
+  #   @possible_opponents = Team.where("league = ? and division = ? and id != ?", team.league, team.division, team.id)
+  # when "INTERDIVISION"
+  #   @possible_opponents = Team.where("league = ? and id != ?", team.league, team.id)
+  # when "INTERLEAGUE"
+  #   @possible_opponents = Team.where("league != ?", team.league)
+  # end
+
+
+
+  home_id = home ? team_id : opponent_id
+  away_id = home ? opponent_id : team_id
+
+  # Now, create games
+  num_games.times do |game_num|
+
+    game_params = {:home_team_id => home_id, :away_team_id => away_id,
+      :sim_date => current_date + game_num}
+
+    game = Game.new(game_params)
+
+    # save the game
+    game.save
+    puts "Series #{series_index}, game #{game_num}, will simulate on #{current_date + game_num} between team #{home_id} and team #{away_id}."
+  end
+
+
 end
 
-def three_game_series_remaining
-    TOTAL_THREE_GAME_SERIES - @three_game_series
+52.times do |index|
+
+  # Array of remaining team ids (so that there are no duplicate games)
+  remaining_team_ids = []
+
+  @all_teams.each do |team|
+    remaining_team_ids.push(team.id)
+  end
+
+  # Next, how many games in the series
+  num_games = 0
+  rand = Random.new.rand(@series["TWO_GAME"] + @series["THREE_GAME"] + @series["FOUR_GAME"])
+  if rand < @series["TWO_GAME"] # Two game series
+    num_games = 2
+    @series["TWO_GAME"] -= 1
+  elsif rand < @series["TWO_GAME"] + @series["THREE_GAME"] # Three game series
+    num_games = 3
+    @series["THREE_GAME"] -= 1
+  else # Four game series
+    num_games = 4
+    @series["FOUR_GAME"] -= 1
+  end
+
+  # Next, vs. division, interdivision, or interleague?
+  series_type = ""
+  rand = Random.new.rand(@series["DIVISION"] + @series["INTERDIVISION"] + @series["INTERLEAGUE"])
+  if rand < @series["DIVISION"] # Division opponent
+    series_type = "DIVISION"
+    @series["DIVISION"] -= 1
+  elsif rand < @series["DIVISION"] + @series["INTERDIVISION"] # Interdivision opponent
+    series_type = "INTERDIVISION"
+    @series["INTERDIVISION"] -= 1
+  else # Interleague opponent
+    series_type = "INTERLEAGUE"
+    @series["INTERLEAGUE"] -= 1
+  end
+
+  count = 0
+  while remaining_team_ids.length > 0
+    count += 1
+    puts "MATCHUP: #{count}"
+    create_series(index, num_games, series_type, remaining_team_ids, @current_date)
+  end
+
+  @current_date += num_games
+
+  # off day every 3 series
+  if index % 3 == 0
+    @current_date += 1
+  end
+
 end
 
-def four_game_series_remaining
-    TOTAL_FOUR_GAME_SERIES - @four_game_series
-end
-
-@series_lengths = []
-
-def add_series
-    # determine length of new series
-    rand = Random.new.rand(two_game_series_remaining + three_game_series_remaining + four_game_series_remaining)
-    if rand < two_game_series_remaining
-        @series_lengths.push(2)
-        @two_game_series += 1
-    elsif rand < two_game_series_remaining + three_game_series_remaining
-        @series_lengths.push(3)
-        @three_game_series += 1
-    else
-        @series_lengths.push(4)
-        @four_game_series += 1
-    end
-end
 
 
 
-51.times do
-    add_series
-end
 
-# @counts = Hash.new 0
 
-# @series_lengths.each do |series|
-#     @counts[series] += 1
+
+
+
+
+
+
+
+
+
+# # Create the schedules
+#
+# # First, determine series lengths
+# TOTAL_TWO_GAME_SERIES = 2
+# TOTAL_THREE_GAME_SERIES = 38
+# TOTAL_FOUR_GAME_SERIES = 11
+#
+# @two_game_series = 0
+# @three_game_series = 0
+# @four_game_series = 0
+#
+# def two_game_series_remaining
+#     TOTAL_TWO_GAME_SERIES - @two_game_series
 # end
-
-# puts @series_lengths
-
-# puts @counts
-
-# Next, determine matchups
-@all_teams = Team.all
-@teams = []
-
-@all_teams.each do |team|
-  @teams.push(team.id)
-end
-
-@season_matchups = Hash.new 0
-
-51.times do |index|
-
-    @matchups = Hash.new 0
-    @current_series_teams = Array.new(@teams)
-
-    15.times do
-        home_team = @current_series_teams.delete(@current_series_teams.sample)
-        away_team = @current_series_teams.delete(@current_series_teams.sample)
-        @matchups[home_team] = away_team
-        @matchups[away_team] = home_team
-    end
-
-    @season_matchups[index] = @matchups
-
-end
-
-# puts @season_matchups
-
-@team_schedules = Hash.new 0
-
-30.times do |index|
-    schedule = []
-    51.times do |j|
-        @series_lengths[j].times do
-            schedule.push(@season_matchups[j][@teams[index]])
-        end
-    end
-    @team_schedules[@teams[index]] = schedule
-end
-
-# @team_schedules is a hash where the key is the team id (here, 0 to 29) and the value is an array of opponent team ids (0 to 29)
-# puts @team_schedules
-
-@all_teams.each do |team|
-  team.update(
-  schedule: @team_schedules[team.id].to_s.chop[1..-1])
-end
+#
+# def three_game_series_remaining
+#     TOTAL_THREE_GAME_SERIES - @three_game_series
+# end
+#
+# def four_game_series_remaining
+#     TOTAL_FOUR_GAME_SERIES - @four_game_series
+# end
+#
+# # Array of series lengths (this will look like [4, 2, 3, 3, 2, 4, 3, etc...])
+# @series_lengths = []
+#
+# def add_series
+#     # determine length of new series
+#     rand = Random.new.rand(two_game_series_remaining + three_game_series_remaining + four_game_series_remaining)
+#     if rand < two_game_series_remaining
+#         @series_lengths.push(2)
+#         @two_game_series += 1
+#     elsif rand < two_game_series_remaining + three_game_series_remaining
+#         @series_lengths.push(3)
+#         @three_game_series += 1
+#     else
+#         @series_lengths.push(4)
+#         @four_game_series += 1
+#     end
+# end
+#
+# 51.times do
+#     add_series
+# end
+#
+# # @counts = Hash.new 0
+#
+# # @series_lengths.each do |series|
+# #     @counts[series] += 1
+# # end
+#
+# # puts @series_lengths
+#
+# # puts @counts
+#
+# # Next, determine matchups
+# @all_teams = Team.all
+#
+# # array of team ids
+# @teams = []
+#
+# @all_teams.each do |team|
+#   @teams.push(team.id)
+# end
+#
+# # This maps
+# @season_matchups = Hash.new 0
+#
+# # loops over each series
+# 51.times do |index|
+#
+#     @matchups = Hash.new 0
+#
+#     # start with all the teams in the array
+#     @current_series_teams = Array.new(@teams)
+#
+#     # remove 2 teams and match them up
+#     15.times do
+#         home_team = @current_series_teams.delete(@current_series_teams.sample)
+#         away_team = @current_series_teams.delete(@current_series_teams.sample)
+#         @matchups[home_team] = away_team
+#         @matchups[away_team] = home_team
+#     end
+#
+#     # this now matches a series index (0 to 50) with a map of team ids to opponent ids
+#     @season_matchups[index] = @matchups
+#
+# end
+#
+# # Now, create the schedules
+# @team_schedules = Hash.new 0
+#
+# # 30 teams, each of which needs a schedule
+# 30.times do |index|
+#
+#   # # Current date
+#   # @current_date = Date.parse("1st April 2000")
+#
+#     schedule = []
+#
+#     # loop over each series
+#     51.times do |j|
+#
+#         # loop over each game in the series
+#         @series_lengths[j].times do
+#
+#           # # Create the game object to store in the database. This will be updated
+#           # # with stats once the game is actually played.
+#           # game_params = {:home_team_id => home_team, :away_team_id => away_team,
+#           # :sim_date => @current_date}
+#           #
+#           # @game = Game.new(game_params)
+#
+#             # add the opponent's id to the schedule
+#             schedule.push(@season_matchups[j][@teams[index]])
+#         end
+#     end
+#
+#     # Now, put this into a hash that maps team id with the schedule (an array of opponent ids)
+#     @team_schedules[@teams[index]] = schedule
+# end
+#
+# # @team_schedules is a hash where the key is the team id (here, 0 to 29) and the value is an array of opponent team ids (0 to 29)
+# # puts @team_schedules
+#
+# # Now, update the schedule in the database (this will end up as a string of comma-separated values)
+# @all_teams.each do |team|
+#   team.update(
+#   schedule: @team_schedules[team.id].to_s.chop[1..-1])
+# end

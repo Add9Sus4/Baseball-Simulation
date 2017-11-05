@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171025165301) do
+ActiveRecord::Schema.define(version: 20171104192043) do
 
   create_table "called_strike_percentages", force: :cascade do |t|
     t.integer "zone_id",                  limit: 4
@@ -104,6 +104,7 @@ ActiveRecord::Schema.define(version: 20171025165301) do
     t.integer  "game_number",                    limit: 4
     t.integer  "winning_pitcher",                limit: 4
     t.integer  "losing_pitcher",                 limit: 4
+    t.date     "sim_date"
   end
 
   create_table "pitch_locations", force: :cascade do |t|
@@ -262,10 +263,11 @@ ActiveRecord::Schema.define(version: 20171025165301) do
   end
 
   create_table "seasons", force: :cascade do |t|
-    t.integer  "next_game",  limit: 4
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
-    t.integer  "simulating", limit: 4
+    t.integer  "next_game",    limit: 4
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.integer  "simulating",   limit: 4
+    t.date     "current_date"
   end
 
   create_table "swing_percentages", force: :cascade do |t|
