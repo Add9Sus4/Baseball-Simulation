@@ -15,61 +15,64 @@
   <h2 class="app_text_main"><%= @player.full_name %></h2>
 </p>
 <div class="player_info_data">
-  <p class="app_text_main">
-    <strong>Team:</strong>
-    <%= link_to @player.team.full_name, @player.team, method: :get %>
-  </p>
+  <div class="col-md-3">
+    <p class="app_text_main">
+      <strong>Team:</strong>
+      <%= link_to @player.team.full_name, @player.team, method: :get %>
+    </p>
+    <p class="app_text_main">
+      <strong>Age:</strong>
+      <%= @player.age %>
+    </p>
+  </div>
+  <div class="col-md-3">
+    <p class="app_text_main">
+      <strong>Height:</strong>
+      <span class="height"><%= @player.height %></span>
+    </p>
 
-  <p class="app_text_main">
-    <strong>Age:</strong>
-    <%= @player.age %>
-  </p>
+    <p class="app_text_main">
+      <strong>Weight:</strong>
+      <%= @player.weight %> lb.
+    </p>
+  </div>
+  <div class="col-md-3">
+    <p class="app_text_main">
+      <strong>Position:</strong>
+      <span class="position"><%= @player.position %></span>
+    </p>
 
-  <p class="app_text_main">
-    <strong>Height:</strong>
-    <span class="height"><%= @player.height %></span>
-  </p>
+    <p class="app_text_main">
+      <strong>Role:</strong>
+      <span class="pitching_role"><%= @player.team.find_pitching_role_of_player(@player.id) %></span>
+    </p>
+  </div>
+  <div class="col-md-3">
+    <p class="app_text_main">
+      <strong>Salary:</strong>
+      <span><%= number_to_currency(@player.salary) %></span>
+    </p>
 
-  <p class="app_text_main">
-    <strong>Weight:</strong>
-    <%= @player.weight %> lb.
-  </p>
+    <% if !@player.is_pitcher %>
+    <p class="app_text_main">
+      <strong>Bats:</strong>
+      <%= @player.hitting_side.capitalize %>
+    </p>
+    <% end %>
 
-  <p class="app_text_main">
-    <strong>Position:</strong>
-    <span class="position"><%= @player.position %></span>
-  </p>
-
-  <p class="app_text_main">
-    <strong>Role:</strong>
-    <span class="pitching_role"><%= @player.team.find_pitching_role_of_player(@player.id) %></span>
-  </p>
-
-  <p class="app_text_main">
-    <strong>Salary:</strong>
-    <span><%= number_to_currency(@player.salary) %></span>
-  </p>
-
-  <% if !@player.is_pitcher %>
-  <p class="app_text_main">
-    <strong>Bats:</strong>
-    <%= @player.hitting_side.capitalize %>
-  </p>
-  <% end %>
-
-  <p class="app_text_main">
-    <strong>Throws:</strong>
-    <%= @player.throwing_hand.capitalize %>
-  </p>
-  <% if @player.is_pitcher %>
-  <p class="app_text_main">
-    <strong>Pitches:</strong>
-    <%= @player.pitches %>
-  </p>
-  <% end %>
-
+    <p class="app_text_main">
+      <strong>Throws:</strong>
+      <%= @player.throwing_hand.capitalize %>
+    </p>
+    <% if @player.is_pitcher %>
+    <p class="app_text_main">
+      <strong>Pitches:</strong>
+      <%= @player.pitches %>
+    </p>
+    <% end %>
+  </div>
 </div>
-</br>
+
 <!-- <%= link_to 'Edit Player Info', edit_player_path(@player), method: :get %> | -->
 <!-- <%= link_to 'Delete Player', @player, method: :delete, data: { confirm: 'Are you sure you want to delete ' + @player.full_name + '?' } %> | -->
 <!-- <%= link_to 'All Players', players_path, method: :get %> | -->
@@ -107,52 +110,39 @@
 <% end %>
 
 <% if @player.is_pitcher %>
-<h3 class="app_text_main">Pitching Attributes</h3>
+<h3 class="app_text_main">Attributes</h3>
 
 <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
   <thead>
     <tr>
-      <th class="tooltip_enable" title="How well this player can make a pitch deviate from its expected path">Pitch Movement</th>
-      <th class="tooltip_enable" title="How well this player can throw strikes instead of balls">Pitch Control</th>
-      <th class="tooltip_enable" title="How well this player can hit a specific location with a pitch">Pitch Location</th>
+      <th class="attribute_cell tooltip_enable" title="How hard this player can throw the ball">Arm</th>
+      <th class="attribute_cell tooltip_enable" title="How well this player can make a pitch deviate from its expected path">Mov</th>
+      <th class="attribute_cell tooltip_enable" title="How well this player can throw strikes instead of balls">Ctr</th>
+      <th class="attribute_cell tooltip_enable" title="How well this player can hit a specific location with a pitch">Loc</th>
+      <th class="attribute_cell tooltip_enable" title="How well this player can make quick, sudden movements">Agi</th>
+      <th class="attribute_cell tooltip_enable" title="How quickly this player reacts to a play">Rtm</th>
+      <th class="attribute_cell tooltip_enable" title="How well this player can field the ball">Fld</th>
+      <th class="attribute_cell tooltip_enable" title="How accurately this player can throw the ball">Thr</th>
+      <th class="attribute_cell tooltip_enable" title="How often this player makes the right decision for a given play">Int</th>
+      <th class="attribute_cell tooltip_enable" title="How quickly this player gets tired">End</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td class="hotcold"><%= @player.movement %></td>
-      <td class="hotcold"><%= @player.control %></td>
-      <td class="hotcold"><%= @player.location %></td>
+      <td class="attribute_cell hotcold custom-border-left"><%= @player.armStrength %></td>
+      <td class="attribute_cell hotcold"><%= @player.movement %></td>
+      <td class="attribute_cell hotcold"><%= @player.control %></td>
+      <td class="attribute_cell hotcold"><%= @player.location %></td>
+      <td class="attribute_cell hotcold custom-border-left"><%= @player.agility %></td>
+      <td class="attribute_cell hotcold"><%= @player.reactionTime %></td>
+      <td class="attribute_cell hotcold"><%= @player.average_fielding %></td>
+      <td class="attribute_cell hotcold"><%= @player.average_throwing %></td>
+      <td class="attribute_cell hotcold"><%= @player.intelligence %></td>
+      <td class="attribute_cell hotcold"><%= @player.endurance %></td>
     </tr>
   </tbody>
 </table>
 <% end %>
-
-<h3 class="app_text_main">Fielding Attributes</h3>
-
-<table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
-  <thead>
-    <tr>
-      <th class="tooltip_enable" title="How well this player can make quick, sudden movements">Agility</th>
-      <th class="tooltip_enable" title="How quickly this player reacts to a play">Reaction Time</th>
-      <th class="tooltip_enable" title="How far this player can throw">Arm Strength</th>
-      <th class="tooltip_enable" title="How well this player can field the ball">Fielding</th>
-      <th class="tooltip_enable" title="How accurately this player can throw the ball">Throwing</th>
-      <th class="tooltip_enable" title="How often this player makes the right decision for a given play">Intelligence</th>
-      <th class="tooltip_enable" title="How quickly this player gets tired">Endurance</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td class="hotcold"><%= @player.agility %></td>
-      <td class="hotcold"><%= @player.reactionTime %></td>
-      <td class="hotcold"><%= @player.armStrength %></td>
-      <td class="hotcold"><%= @player.average_fielding %></td>
-      <td class="hotcold"><%= @player.average_throwing %></td>
-      <td class="hotcold"><%= @player.intelligence %></td>
-      <td class="hotcold"><%= @player.endurance %></td>
-    </tr>
-  </tbody>
-</table>
 
 <% if !@player.is_pitcher %>
 <h3 class="app_text_main">Batting Stats</h3>
