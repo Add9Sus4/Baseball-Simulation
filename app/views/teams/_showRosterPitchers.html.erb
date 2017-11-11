@@ -1,9 +1,10 @@
 
 
-<div class="container-fluid">
+<div class="col-sm-8">
 <table id="pitcher-roster-table" class="table table-default custom-smaller-table">
   <thead>
     <th>Name</th>
+    <th>Role</th>
     <th>Age</th>
     <th class="info_cell">Height</th>
     <th class="info_cell">Weight</th>
@@ -19,6 +20,7 @@
     <th class="attribute_cell tooltip_enable" title="How accurately this player can throw the ball">Thr</th>
     <th class="attribute_cell tooltip_enable" title="How often this player makes the right decision for a given play">Int</th>
     <th class="attribute_cell tooltip_enable" title="How quickly this player gets tired">End</th>
+    <th class="attribute_cell">Energy</th>
     <th class="stats_cell tooltip_enable" title="Wins">W</th>
     <th class="stats_cell tooltip_enable" title="Losses">L</th>
     <th class="stats_cell tooltip_enable" title="Innings pitched">IP</th>
@@ -46,6 +48,7 @@
     <% @team.players.where("position = ?", 'P').each do |player| %>
     <tr>
       <td><%= link_to player, player, method: :get %></td>
+      <td><%= @team.find_pitching_role_of_player_formatted(player.id) %></td>
       <td><%= player.age %></td>
       <td class="height info_cell"><%= player.formatted_height %></td>
       <td class="info_cell"><%= player.weight %> lb.</td>
@@ -61,6 +64,7 @@
       <td class="attribute_cell hotcold"><%= player.average_throwing %></td>
       <td class="attribute_cell hotcold"><%= player.intelligence %></td>
       <td class="attribute_cell hotcold"><%= player.endurance %></td>
+      <td class="attribute_cell hotcold"><%= player.current_energy %></td>
       <td class="stats_cell custom-border-left"><%= player.wins %></td><% @total_wins += player.wins %>
       <td class="stats_cell"><%= player.losses %></td><% @total_losses += player.losses %>
       <td class="stats_cell"><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td><% @total_outs_recorded += player.outs_recorded %>
@@ -73,10 +77,23 @@
       <td class="stats_cell custom-border-left"><%= number_with_precision(zero_if_nan(player.earned_runs_allowed.to_f*27/player.outs_recorded.to_f), precision: 2) %></td>
       <td class="stats_cell"><%= number_with_precision(zero_if_nan((player.walks_allowed + player.hits_allowed).to_f*3/player.outs_recorded.to_f), precision: 2) %></td>
     </tr>
+    <tr class="attribute_cell potentials_cell" hidden>
+      <td class="no-top-border">&nbsp;</td><td class="no-top-border">&nbsp;</td><td class="no-top-border">&nbsp;</td>
+      <td class="hotcold custom-border-left no-top-border"><%= player.armStrength_potential %></td>
+      <td class="hotcold no-top-border"><%= player.movement_potential %></td>
+      <td class="hotcold no-top-border"><%= player.control_potential %></td>
+      <td class="hotcold no-top-border"><%= player.location_potential %></td>
+      <td class="hotcold custom-border-left no-top-border"><%= player.agility_potential %></td>
+      <td class="hotcold no-top-border"><%= player.reaction_time_potential %></td>
+      <td class="hotcold no-top-border"><%= player.average_fielding_potential %></td>
+      <td class="hotcold no-top-border"><%= player.average_throwing_potential %></td>
+      <td class="hotcold no-top-border"><%= player.intelligence_potential %></td>
+      <td class="hotcold no-top-border"><%= player.endurance_potential %></td>
+    </tr>
     <% end %>
     <tr class="stats_cell">
       <td><strong>Totals</strong></td>
-      <td>&nbsp;</td>
+      <td>&nbsp;</td><td>&nbsp;</td>
       <td><strong><%= @total_wins %></strong></td>
       <td><strong><%= @total_losses %></strong></td>
       <td><strong><%= number_with_precision(@total_outs_recorded.to_f/3, precision: 1) %></strong></td>

@@ -124,15 +124,34 @@ task :run_attribute_tests => :environment do
   test_attribute({"uppercut_amount" => 0}, @game)
 end
 
+
+
+task :test_rng => :environment do
+  include Reusable
+  100.times do
+    puts getRandomValue(0, 1, 0, 100, 10, 40)
+  end
+end
+
 task :simulate_games => :environment do
 
   @season = Season.first
 
-  20.times do |index|
-    puts "Starting simulate_games task"
+  puts "Starting sim at #{Time.now}"
+
+  # @teams = Team.all
+  #
+  # @teams_by_id = {}
+  #
+  # @teams.each do |team|
+  #   @teams_by_id[team.id] = team
+  # end
+
+  190.times do |index|
+    # puts "Starting simulate_games task"
 
     # Simulate games
-    puts "Simulating game #{index + 1} of 20..."
+    # puts "Simulating game #{index + 1} of 20..."
 
     # # hash to determine if a team has already played a game (to avoid duplicate games)
     # @already_played_hash = Hash.new 0
@@ -151,6 +170,12 @@ task :simulate_games => :environment do
     # Increment season date
     @season.update_columns(:next_game => @season.next_game + 1,
     :current_date => @season.current_date.next_day)
+
+    Team.all.each do |team|
+      team.players.each do |player|
+        player.update_columns(:current_energy => [player.current_energy + 35, 100].min)
+      end
+    end
 
     # unless @game_number >= 161 then
     #
@@ -194,5 +219,7 @@ task :simulate_games => :environment do
     #   end # end simulating games
 
   end
+
+  puts "Ending sim at #{Time.now}"
 end
-puts "done simulating games."
+# puts "done simulating games."

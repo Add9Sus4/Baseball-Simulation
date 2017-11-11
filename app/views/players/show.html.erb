@@ -79,156 +79,185 @@
 <!-- <%= link_to 'Back', 'javascript:history.go(-1);' %> -->
 
 <% if !@player.is_pitcher %>
-<h3 class="app_text_main">Batting Attributes</h3>
-
-<table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
-  <thead>
-    <tr>
-      <th class="tooltip_enable" title="How far this player is able to hit the ball">Power</th>
-      <th class="tooltip_enable" title="How well this player makes contact with the ball">Contact</th>
-      <th class="tooltip_enable" title="How fast this player can run">Speed</th>
-      <th class="tooltip_enable" title="How aggressive this player is at the plate">Patience</th>
-      <th class="tooltip_enable" title="How well this player can tell balls from strikes">Plate Vision</th>
-      <th class="tooltip_enable" title="How much this player tends to pull the ball">Pull Amount</th>
-      <th class="tooltip_enable" title="How much this player tends to hit the ball in the air instead of on the ground">Uppercut Amount</th>
-      <th class="tooltip_enable" title="How often this player makes solid contact">Batting Average</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td class="hotcold"><%= @player.power %></td>
-      <td class="hotcold"><%= @player.contact %></td>
-      <td class="hotcold"><%= @player.speed %></td>
-      <td class="hotcold"><%= @player.patience %></td>
-      <td class="hotcold"><%= @player.plate_vision %></td>
-      <td class="hotcold"><%= @player.pull_amount %></td>
-      <td class="hotcold"><%= @player.uppercut_amount %></td>
-      <td class="hotcold"><%= @player.batting_average %></td>
-    </tr>
-  </tbody>
-</table>
+<div class="container-fluid">
+  <h3 class="app_text_main">Batting Attributes</h3>
+  <table class="table table-condensed table-striped table-bordered table-responsive">
+    <thead>
+      <tr>
+        <th class="tooltip_enable" title="How far this player is able to hit the ball">Power</th>
+        <th class="tooltip_enable" title="How well this player makes contact with the ball">Contact</th>
+        <th class="tooltip_enable" title="How fast this player can run">Speed</th>
+        <th class="tooltip_enable" title="How aggressive this player is at the plate">Patience</th>
+        <th class="tooltip_enable" title="How well this player can tell balls from strikes">Plate Vision</th>
+        <th class="tooltip_enable" title="How much this player tends to pull the ball">Pull Amount</th>
+        <th class="tooltip_enable" title="How much this player tends to hit the ball in the air instead of on the ground">Uppercut Amount</th>
+        <th class="tooltip_enable" title="How often this player makes solid contact">Batting Average</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="hotcold"><%= @player.power %></td>
+        <td class="hotcold"><%= @player.contact %></td>
+        <td class="hotcold"><%= @player.speed %></td>
+        <td class="hotcold"><%= @player.patience %></td>
+        <td class="hotcold"><%= @player.plate_vision %></td>
+        <td class="hotcold"><%= @player.pull_amount %></td>
+        <td class="hotcold"><%= @player.uppercut_amount %></td>
+        <td class="hotcold"><%= @player.batting_average %></td>
+      </tr>
+      <tr>
+        <td class="hotcold"><%= @player.power_potential %></td>
+        <td class="hotcold"><%= @player.contact_potential %></td>
+        <td class="hotcold"><%= @player.speed_potential %></td>
+        <td class="hotcold"><%= @player.patience_potential %></td>
+        <td class="hotcold"><%= @player.plate_vision_potential %></td>
+        <td class="hotcold"><%= @player.pull_amount_potential %></td>
+        <td class="hotcold"><%= @player.uppercut_amount_potential %></td>
+        <td class="hotcold"><%= @player.batting_average_potential %></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 <% end %>
 
 <% if @player.is_pitcher %>
-<h3 class="app_text_main">Attributes</h3>
+<div class="container-fluid">
+  <h3 class="app_text_main">Attributes</h3>
 
-<table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
-  <thead>
-    <tr>
-      <th class="attribute_cell tooltip_enable" title="How hard this player can throw the ball">Arm</th>
-      <th class="attribute_cell tooltip_enable" title="How well this player can make a pitch deviate from its expected path">Mov</th>
-      <th class="attribute_cell tooltip_enable" title="How well this player can throw strikes instead of balls">Ctr</th>
-      <th class="attribute_cell tooltip_enable" title="How well this player can hit a specific location with a pitch">Loc</th>
-      <th class="attribute_cell tooltip_enable" title="How well this player can make quick, sudden movements">Agi</th>
-      <th class="attribute_cell tooltip_enable" title="How quickly this player reacts to a play">Rtm</th>
-      <th class="attribute_cell tooltip_enable" title="How well this player can field the ball">Fld</th>
-      <th class="attribute_cell tooltip_enable" title="How accurately this player can throw the ball">Thr</th>
-      <th class="attribute_cell tooltip_enable" title="How often this player makes the right decision for a given play">Int</th>
-      <th class="attribute_cell tooltip_enable" title="How quickly this player gets tired">End</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td class="attribute_cell hotcold custom-border-left"><%= @player.armStrength %></td>
-      <td class="attribute_cell hotcold"><%= @player.movement %></td>
-      <td class="attribute_cell hotcold"><%= @player.control %></td>
-      <td class="attribute_cell hotcold"><%= @player.location %></td>
-      <td class="attribute_cell hotcold custom-border-left"><%= @player.agility %></td>
-      <td class="attribute_cell hotcold"><%= @player.reactionTime %></td>
-      <td class="attribute_cell hotcold"><%= @player.average_fielding %></td>
-      <td class="attribute_cell hotcold"><%= @player.average_throwing %></td>
-      <td class="attribute_cell hotcold"><%= @player.intelligence %></td>
-      <td class="attribute_cell hotcold"><%= @player.endurance %></td>
-    </tr>
-  </tbody>
-</table>
+  <table class="table table-condensed table-striped table-bordered table-responsive">
+    <thead>
+      <tr>
+        <th class="attribute_cell tooltip_enable" title="How hard this player can throw the ball">Arm</th>
+        <th class="attribute_cell tooltip_enable" title="How well this player can make a pitch deviate from its expected path">Mov</th>
+        <th class="attribute_cell tooltip_enable" title="How well this player can throw strikes instead of balls">Ctr</th>
+        <th class="attribute_cell tooltip_enable" title="How well this player can hit a specific location with a pitch">Loc</th>
+        <th class="attribute_cell tooltip_enable" title="How well this player can make quick, sudden movements">Agi</th>
+        <th class="attribute_cell tooltip_enable" title="How quickly this player reacts to a play">Rtm</th>
+        <th class="attribute_cell tooltip_enable" title="How well this player can field the ball">Fld</th>
+        <th class="attribute_cell tooltip_enable" title="How accurately this player can throw the ball">Thr</th>
+        <th class="attribute_cell tooltip_enable" title="How often this player makes the right decision for a given play">Int</th>
+        <th class="attribute_cell tooltip_enable" title="How quickly this player gets tired">End</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="attribute_cell hotcold custom-border-left"><%= @player.armStrength %></td>
+        <td class="attribute_cell hotcold"><%= @player.movement %></td>
+        <td class="attribute_cell hotcold"><%= @player.control %></td>
+        <td class="attribute_cell hotcold"><%= @player.location %></td>
+        <td class="attribute_cell hotcold custom-border-left"><%= @player.agility %></td>
+        <td class="attribute_cell hotcold"><%= @player.reactionTime %></td>
+        <td class="attribute_cell hotcold"><%= @player.average_fielding %></td>
+        <td class="attribute_cell hotcold"><%= @player.average_throwing %></td>
+        <td class="attribute_cell hotcold"><%= @player.intelligence %></td>
+        <td class="attribute_cell hotcold"><%= @player.endurance %></td>
+      </tr>
+      <tr>
+        <td class="attribute_cell hotcold custom-border-left"><%= @player.armStrength_potential %></td>
+        <td class="attribute_cell hotcold"><%= @player.movement_potential %></td>
+        <td class="attribute_cell hotcold"><%= @player.control_potential %></td>
+        <td class="attribute_cell hotcold"><%= @player.location_potential %></td>
+        <td class="attribute_cell hotcold custom-border-left"><%= @player.agility_potential %></td>
+        <td class="attribute_cell hotcold"><%= @player.reaction_time_potential %></td>
+        <td class="attribute_cell hotcold"><%= @player.average_fielding_potential %></td>
+        <td class="attribute_cell hotcold"><%= @player.average_throwing_potential %></td>
+        <td class="attribute_cell hotcold"><%= @player.intelligence_potential %></td>
+        <td class="attribute_cell hotcold"><%= @player.endurance_potential %></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 <% end %>
 
 <% if !@player.is_pitcher %>
-<h3 class="app_text_main">Batting Stats</h3>
-<table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
-  <thead>
-    <tr>
-      <th class="tooltip_enable" title="At-bats">AB</th>
-      <th class="tooltip_enable" title="Runs scored">R</th>
-      <th class="tooltip_enable" title="Hits">H</th>
-      <th class="tooltip_enable" title="Doubles">2B</th>
-      <th class="tooltip_enable" title="Triples">3B</th>
-      <th class="tooltip_enable" title="Home runs">HR</th>
-      <th class="tooltip_enable" title="Runs batted in">RBI</th>
-      <th class="tooltip_enable" title="Walks">BB</th>
-      <th class="tooltip_enable" title="Strikeouts">K</th>
-      <th class="tooltip_enable" title="Stolen bases">SB</th>
-      <th class="tooltip_enable" title="Caught stealing">CS</th>
-      <th class="tooltip_enable" title="Batting average">AVG</th>
-      <th class="tooltip_enable" title="On-base percentage">OBP</th>
-      <th class="tooltip_enable" title="Slugging percentage">SLG</th>
-      <th class="tooltip_enable" title="On-base plus slugging percentage">OPS</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><%= @player.atbats %></td>
-      <td><%= @player.runs %></td>
-      <td><%= @player.hits %></td>
-      <td><%= @player.doubles %></td>
-      <td><%= @player.triples %></td>
-      <td><%= @player.home_runs %></td>
-      <td><%= @player.rbi %></td>
-      <td><%= @player.walks %></td>
-      <td><%= @player.strikeouts %></td>
-      <td><%= @player.stolen_bases %></td>
-      <td><%= @player.caught_stealing %></td>
-      <% @avg = @player.hits.to_f/@player.atbats.to_f %>
-      <% @obp = (@player.hits + @player.walks).to_f/(@player.atbats + @player.walks).to_f %>
-      <% @slg = (@player.hits - @player.doubles - @player.triples - @player.home_runs + 2 * @player.doubles + 3 * @player.triples + 4 * @player.home_runs).to_f/@player.atbats.to_f %>
-      <% @ops = @obp + @slg %>
-      <td><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></td>
-      <td><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
-      <td><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
-      <td><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
-    </tr>
-  </tbody>
-</table>
+<div class="container-fluid">
+  <h3 class="app_text_main">Batting Stats</h3>
+  <table class="table table-condensed table-striped table-bordered table-responsive">
+    <thead>
+      <tr>
+        <th class="tooltip_enable" title="At-bats">AB</th>
+        <th class="tooltip_enable" title="Runs scored">R</th>
+        <th class="tooltip_enable" title="Hits">H</th>
+        <th class="tooltip_enable" title="Doubles">2B</th>
+        <th class="tooltip_enable" title="Triples">3B</th>
+        <th class="tooltip_enable" title="Home runs">HR</th>
+        <th class="tooltip_enable" title="Runs batted in">RBI</th>
+        <th class="tooltip_enable" title="Walks">BB</th>
+        <th class="tooltip_enable" title="Strikeouts">K</th>
+        <th class="tooltip_enable" title="Stolen bases">SB</th>
+        <th class="tooltip_enable" title="Caught stealing">CS</th>
+        <th class="tooltip_enable" title="Batting average">AVG</th>
+        <th class="tooltip_enable" title="On-base percentage">OBP</th>
+        <th class="tooltip_enable" title="Slugging percentage">SLG</th>
+        <th class="tooltip_enable" title="On-base plus slugging percentage">OPS</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><%= @player.atbats %></td>
+        <td><%= @player.runs %></td>
+        <td><%= @player.hits %></td>
+        <td><%= @player.doubles %></td>
+        <td><%= @player.triples %></td>
+        <td><%= @player.home_runs %></td>
+        <td><%= @player.rbi %></td>
+        <td><%= @player.walks %></td>
+        <td><%= @player.strikeouts %></td>
+        <td><%= @player.stolen_bases %></td>
+        <td><%= @player.caught_stealing %></td>
+        <% @avg = @player.hits.to_f/@player.atbats.to_f %>
+        <% @obp = (@player.hits + @player.walks).to_f/(@player.atbats + @player.walks).to_f %>
+        <% @slg = (@player.hits - @player.doubles - @player.triples - @player.home_runs + 2 * @player.doubles + 3 * @player.triples + 4 * @player.home_runs).to_f/@player.atbats.to_f %>
+        <% @ops = @obp + @slg %>
+        <td><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></td>
+        <td><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
+        <td><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
+        <td><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 <% end %>
 
 <% if @player.is_pitcher %>
-<h3 class="app_text_main">Pitching Stats</h3>
-</br>
-<table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
-  <thead>
-    <tr>
-      <th class="tooltip_enable" title="Wins">W</th>
-      <th class="tooltip_enable" title="Losses">L</th>
-      <th class="tooltip_enable" title="Innings pitched">IP</th>
-      <th class="tooltip_enable" title="Hits allowed">H</th>
-      <th class="tooltip_enable" title="Runs allowed">R</th>
-      <th class="tooltip_enable" title="Earned runs allowed">ER</th>
-      <th class="tooltip_enable" title="Home runs allowed">HR</th>
-      <th class="tooltip_enable" title="Walks allowed">BB</th>
-      <th class="tooltip_enable" title="Strikeouts recorded">K</th>
-      <th class="tooltip_enable" title="Earned run average">ERA</th>
-      <th class="tooltip_enable" title="Walks plus hits per inning pitched">WHIP</th>
-      <th class="tooltip_enable" title="Percent of pitches thrown that were strikes">%S</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><%= @player.wins %></td>
-      <td><%= @player.losses %></td>
-      <td><%= number_with_precision(@player.outs_recorded.to_f/3, precision: 1) %></td>
-      <td class="tooltip_enable" title="<%= number_with_precision(@player.hits_allowed.to_f*27/@player.outs_recorded.to_f, precision: 2) %> H/9"><%= @player.hits_allowed %></td>
-      <td><%= @player.runs_allowed %></td>
-      <td class="tooltip_enable"><%= @player.earned_runs_allowed %></td>
-      <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(@player.home_runs_allowed.to_f*27/@player.outs_recorded.to_f, precision: 2) %> HR/9"><%= @player.home_runs_allowed %></td>
-      <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(@player.walks_allowed.to_f*27/@player.outs_recorded.to_f, precision: 2) %> BB/9"><%= @player.walks_allowed %></td>
-      <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(@player.strikeouts_recorded.to_f*27/@player.outs_recorded.to_f, precision: 2) %> K/9"><%= @player.strikeouts_recorded %></td>
-      <td><%= number_with_precision(zero_if_nan(@player.earned_runs_allowed.to_f*27/@player.outs_recorded.to_f), precision: 2) %></td>
-      <td><%= number_with_precision(zero_if_nan((@player.walks_allowed + @player.hits_allowed).to_f*3/@player.outs_recorded.to_f), precision: 2) %></td>
-      <td><%= number_to_percentage(100*@player.strikes_thrown.to_f/@player.total_pitches.to_f, :precision => 2) %></td>
-    </tr>
-  </tbody>
-</table>
+<div class="container-fluid">
+  <h3 class="app_text_main">Pitching Stats</h3>
+  </br>
+  <table id="table_with_custom_border" class="test table-condensed table-striped table-bordered table-responsive">
+    <thead>
+      <tr>
+        <th class="tooltip_enable" title="Wins">W</th>
+        <th class="tooltip_enable" title="Losses">L</th>
+        <th class="tooltip_enable" title="Innings pitched">IP</th>
+        <th class="tooltip_enable" title="Hits allowed">H</th>
+        <th class="tooltip_enable" title="Runs allowed">R</th>
+        <th class="tooltip_enable" title="Earned runs allowed">ER</th>
+        <th class="tooltip_enable" title="Home runs allowed">HR</th>
+        <th class="tooltip_enable" title="Walks allowed">BB</th>
+        <th class="tooltip_enable" title="Strikeouts recorded">K</th>
+        <th class="tooltip_enable" title="Earned run average">ERA</th>
+        <th class="tooltip_enable" title="Walks plus hits per inning pitched">WHIP</th>
+        <th class="tooltip_enable" title="Percent of pitches thrown that were strikes">%S</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><%= @player.wins %></td>
+        <td><%= @player.losses %></td>
+        <td><%= number_with_precision(@player.outs_recorded.to_f/3, precision: 1) %></td>
+        <td class="tooltip_enable" title="<%= number_with_precision(@player.hits_allowed.to_f*27/@player.outs_recorded.to_f, precision: 2) %> H/9"><%= @player.hits_allowed %></td>
+        <td><%= @player.runs_allowed %></td>
+        <td class="tooltip_enable"><%= @player.earned_runs_allowed %></td>
+        <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(@player.home_runs_allowed.to_f*27/@player.outs_recorded.to_f, precision: 2) %> HR/9"><%= @player.home_runs_allowed %></td>
+        <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(@player.walks_allowed.to_f*27/@player.outs_recorded.to_f, precision: 2) %> BB/9"><%= @player.walks_allowed %></td>
+        <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(@player.strikeouts_recorded.to_f*27/@player.outs_recorded.to_f, precision: 2) %> K/9"><%= @player.strikeouts_recorded %></td>
+        <td><%= number_with_precision(zero_if_nan(@player.earned_runs_allowed.to_f*27/@player.outs_recorded.to_f), precision: 2) %></td>
+        <td><%= number_with_precision(zero_if_nan((@player.walks_allowed + @player.hits_allowed).to_f*3/@player.outs_recorded.to_f), precision: 2) %></td>
+        <td><%= number_to_percentage(100*@player.strikes_thrown.to_f/@player.total_pitches.to_f, :precision => 2) %></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 <h3 class="app_text_main">Pitch Locations</h3>
 <br/><br/>
 <table id="pitch_locations_table">

@@ -1,4 +1,8 @@
-
+<style media="screen">
+  .starting {
+    font-weight: bold;
+  }
+</style>
 
 <div id="edit-defense-div">
   <div class="col-md-3">
@@ -29,6 +33,7 @@
         <th>Player</th>
         <th><button id="btn-bench-all" class="btn btn-default btn-xs">Bench All</button>
         <button id="btn-reset-all" class="btn btn-default btn-xs">Reset All</button></th>
+        <th>Nat. Pos.</th>
         <th class="info_cell">Age</th>
         <th class="info_cell">Height</th>
         <th class="info_cell">Weight</th>
@@ -50,6 +55,7 @@
         <th class="attribute_cell tooltip_enable" title="Throwing">Thr</th>
         <th class="attribute_cell tooltip_enable" title="Intelligence">Int</th>
         <th class="attribute_cell tooltip_enable" title="Endurance">End</th>
+        <th class="attribute_cell">Energy</th>
         <th class="stats_cell tooltip_enable" title="At-bats">AB</th>
         <th class="stats_cell tooltip_enable" title="Runs scored">R</th>
         <th class="stats_cell tooltip_enable" title="Hits">H</th>
@@ -69,7 +75,7 @@
       <tbody>
         <% @team.players.where("position != ?", 'P').each_with_index do |player, index| %>
         <tr>
-          <td><%= link_to player, player, method: :get %></td>
+          <td class="player-name-cell"><%= link_to player, player, method: :get %></td>
           <td>
             <span class="hidden-pos-id" hidden><%= player.id %></span>
             <span class="hidden-pos-abbrev" hidden><%= @team.find_position_abbreviation_of_player(player.id) %></span>
@@ -86,6 +92,7 @@
               <option>BN</option>
             </select>
           </td>
+          <td><%= player.position %></td>
           <td class="info_cell"><%= player.age %></td>
           <td class="height info_cell"><%= player.formatted_height %></td>
           <td class="info_cell"><%= player.weight %> lb.</td>
@@ -107,6 +114,7 @@
           <td class="attribute_cell hotcold"><%= player.average_throwing %></td>
           <td class="attribute_cell hotcold"><%= player.intelligence %></td>
           <td class="attribute_cell hotcold"><%= player.endurance %></td>
+          <td class="attribute_cell hotcold"><%= player.current_energy %></td>
           <td class="stats_cell"><%= player.atbats %></td>
           <td class="stats_cell"><%= player.runs %></td>
           <td class="stats_cell"><%= player.hits %></td>
@@ -126,6 +134,24 @@
           <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
           <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
           <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
+        </tr>
+        <tr class="attribute_cell potentials_cell" hidden>
+          <td class="no-top-border">&nbsp;</td><td class="no-top-border">&nbsp;</td><td class="no-top-border">&nbsp;</td>
+          <td class="hotcold no-top-border"><%= player.batting_average_potential %></td>
+          <td class="hotcold no-top-border"><%= player.power_potential %></td>
+          <td class="hotcold no-top-border"><%= player.contact_potential %></td>
+          <td class="hotcold no-top-border"><%= player.plate_vision_potential %></td>
+          <td class="hotcold no-top-border"><%= player.patience_potential %></td>
+          <td class="hotcold no-top-border"><%= player.pull_amount_potential %></td>
+          <td class="hotcold no-top-border"><%= player.uppercut_amount_potential %></td>
+          <td class="hotcold custom-border-left no-top-border"><%= player.speed_potential %></td>
+          <td class="hotcold no-top-border"><%= player.agility_potential %></td>
+          <td class="hotcold no-top-border"><%= player.reaction_time_potential %></td>
+          <td class="hotcold no-top-border"><%= player.armStrength_potential %></td>
+          <td class="hotcold no-top-border"><%= player.average_fielding_potential %></td>
+          <td class="hotcold no-top-border"><%= player.average_throwing_potential %></td>
+          <td class="hotcold no-top-border"><%= player.intelligence_potential %></td>
+          <td class="hotcold no-top-border"><%= player.endurance_potential %></td>
         </tr>
         <% end %>
       </tbody>
@@ -151,6 +177,7 @@ $("#btn-reset-all").click(function() {
 });
 
 function lineupChanged() {
+  boldStarters();
   var valid = true;
   // For each position in the lineup
   $("#lineup-table tbody tr").each(function() {
@@ -249,4 +276,18 @@ $("#btn-save-position-changes").click(function() {
     }
   });
 });
+
+function boldStarters() {
+  // Bold starting players
+  $(".position-select").each(function() {
+    if ($(this).val() != "BN") {
+      $(this).closest('tr').find(".player-name-cell").addClass("starting");
+      console.log("adding");
+    } else {
+      $(this).closest('tr').find(".player-name-cell").removeClass("starting");
+      console.log("removing");
+    }
+  });
+}
+boldStarters();
 </script>

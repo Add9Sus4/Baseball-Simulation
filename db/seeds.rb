@@ -6,7 +6,7 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 require 'ffaker'
-
+include Reusable
 numUsers = 2 # How many users to add to database
 numTeams = 5 # How many teams per division to add to database
 numPlayersPerTeam = 13 # How many players on each team to add to database
@@ -37,6 +37,20 @@ User.create!(name: "Example User",
 # end
 
 def generate_random_player_attributes
+
+  throwShort = rand(1..100)
+  throwLong = rand(1..100)
+  throwMedium = (throwShort + throwLong) / 2
+
+  fieldFlyball = rand(1..100)
+  fieldPopup = fieldFlyball + rand(-20..20)
+  if fieldPopup > 100
+    fieldPopup = 100
+  end
+  if fieldPopup < 0
+    fieldPopup = 0
+  end
+
   attributes_hash = {
     "First Name" => FFaker::Name.first_name_male,
     "Last Name" => Faker::Name.last_name,
@@ -45,7 +59,7 @@ def generate_random_player_attributes
     "Weight" => rand(160..300),
     "Power" => rand(1..100),
     "Contact" => rand(1..100),
-    "Speed" => rand(1..100),
+    "Speed" => getRandomValueFromDistribution(0, 100, 36, 23),
     "Patience" => rand(1..100),
     "Plate Vision" => rand(1..100),
     "Pull Amount" => rand(1..100),
@@ -59,13 +73,13 @@ def generate_random_player_attributes
     "Arm Strength" => rand(1..100),
     "Field Grounder" => rand(1..100),
     "Field Liner" => rand(1..100),
-    "Field Flyball" => rand(1..100),
-    "Field Popup" => rand(1..100),
-    "Throw Short" => rand(1..100),
-    "Throw Medium" => rand(1..100),
-    "Throw Long" => rand(1..100),
+    "Field Flyball" => fieldFlyball,
+    "Field Popup" => fieldPopup,
+    "Throw Short" => throwShort,
+    "Throw Medium" => throwMedium,
+    "Throw Long" => throwLong,
     "Intelligence" => rand(1..100),
-    "Endurance" => rand(1..100)
+    "Endurance" => getRandomValueFromDistribution(0, 100, 63, 16)
   }
 
   # Calculate salary based on other attributes
@@ -155,6 +169,20 @@ def generate_average_player_attributes
   attributes_hash
 end
 def generate_random_pitcher_attributes
+
+  throwShort = rand(1..100)
+  throwLong = rand(1..100)
+  throwMedium = (throwShort + throwLong) / 2
+
+  fieldFlyball = rand(1..100)
+  fieldPopup = fieldFlyball + rand(-20..20)
+  if fieldPopup > 100
+    fieldPopup = 100
+  end
+  if fieldPopup < 0
+    fieldPopup = 0
+  end
+
   attributes_hash = {
     "First Name" => FFaker::Name.first_name_male,
     "Last Name" => Faker::Name.last_name,
@@ -163,7 +191,7 @@ def generate_random_pitcher_attributes
     "Weight" => rand(160..300),
     "Power" => rand(1..100),
     "Contact" => rand(1..100),
-    "Speed" => rand(1..100),
+    "Speed" => getRandomValueFromDistribution(0, 100, 36, 23),
     "Patience" => rand(1..100),
     "Plate Vision" => rand(1..100),
     "Pull Amount" => rand(1..100),
@@ -177,13 +205,13 @@ def generate_random_pitcher_attributes
     "Arm Strength" => rand(1..100),
     "Field Grounder" => rand(1..100),
     "Field Liner" => rand(1..100),
-    "Field Flyball" => rand(1..100),
-    "Field Popup" => rand(1..100),
-    "Throw Short" => rand(1..100),
-    "Throw Medium" => rand(1..100),
-    "Throw Long" => rand(1..100),
+    "Field Flyball" => fieldFlyball,
+    "Field Popup" => fieldPopup,
+    "Throw Short" => throwShort,
+    "Throw Medium" => throwMedium,
+    "Throw Long" => throwLong,
     "Intelligence" => rand(1..100),
-    "Endurance" => rand(1..100)
+    "Endurance" => getRandomValueFromDistribution(0, 100, 63, 16)
   }
 
   # Calculate salary based on other attributes
@@ -265,6 +293,38 @@ def completely_random_player(team_id)
 
   attributes_hash = generate_random_player_attributes
 
+  # All actual attributes scaled by age (start low, peak, then decline)
+  # Therefore, generated players' attributes should more or less be scaled according to age
+  age = attributes_hash["Age"]
+  scale_all_due_to_age = -0.00378788 * age * age + 0.215909 * age - 2.37576 # polynomial with 17 => 0.2, 28 => 0.7, 40 => 0.2
+  # Players who weigh less generally are faster and less agile
+  # Above weight of 180 lbs, speed potential is scaled linearly until max weight of 300, when it is multiplied by 0.2
+  # agility is scaled linearly, but less so (multiplied by 0.4 at max weight)
+  if attributes_hash["Weight"] > 180
+    attributes_hash["Speed"] *= 2.2 - 0.00666667 * attributes_hash["Weight"]
+    attributes_hash["Agility"] *= 1.9 - 0.005 * attributes_hash["Weight"]
+  end
+
+  # Calculate salary again
+  salary = 0
+  salary += attributes_hash["Movement"]*10000
+  salary += attributes_hash["Control"]*10000
+  salary += attributes_hash["Location"]*10000
+  salary += attributes_hash["Agility"]*1000
+  salary += attributes_hash["Reaction Time"]*1000
+  salary += attributes_hash["Arm Strength"]*10000
+  salary += attributes_hash["Field Grounder"]*1000
+  salary += attributes_hash["Field Liner"]*1000
+  salary += attributes_hash["Field Popup"]*1000
+  salary += attributes_hash["Throw Short"]*1000
+  salary += attributes_hash["Intelligence"]*5000
+  salary += attributes_hash["Endurance"]*8000
+
+  # Randomize salary a little bit
+  salary *= rand(0.9..1.11)
+
+  attributes_hash["Salary"] = salary
+
   Player.create!(team_id: team_id,
                               first_name: attributes_hash["First Name"],
                               last_name: attributes_hash["Last Name"],
@@ -273,29 +333,52 @@ def completely_random_player(team_id)
                               weight: attributes_hash["Weight"],
                               position: ['C','1B','2B','3B','SS','LF','CF','RF'].sample,
                               salary: attributes_hash["Salary"],
-                              power: attributes_hash["Power"],
-                              contact: attributes_hash["Contact"],
-                              speed: attributes_hash["Speed"],
-                              patience: attributes_hash["Patience"],
-                              plate_vision: attributes_hash["Plate Vision"],
-                              pull_amount: attributes_hash["Pull Amount"],
-                              uppercut_amount: attributes_hash["Uppercut Amount"],
-                              batting_average: attributes_hash["Batting Average"],
-                              movement: attributes_hash["Movement"],
-                              control: attributes_hash["Control"],
-                              location: attributes_hash["Location"],
-                              agility: attributes_hash["Agility"],
-                              reactionTime: attributes_hash["Reaction Time"],
-                              armStrength: attributes_hash["Arm Strength"],
-                              fieldGrounder: attributes_hash["Field Grounder"],
-                              fieldLiner: attributes_hash["Field Liner"],
-                              fieldFlyball: attributes_hash["Field Flyball"],
-                              fieldPopup: attributes_hash["Field Popup"],
-                              throwShort: attributes_hash["Throw Short"],
-                              throwMedium: attributes_hash["Throw Medium"],
-                              throwLong: attributes_hash["Throw Long"],
-                              intelligence: attributes_hash["Intelligence"],
-                              endurance: attributes_hash["Endurance"],
+                              power: attributes_hash["Power"]*rand(scale_all_due_to_age..1.0),
+                              contact: attributes_hash["Contact"]*rand(scale_all_due_to_age..1.0),
+                              speed: attributes_hash["Speed"]*rand(scale_all_due_to_age..1.0),
+                              patience: attributes_hash["Patience"]*rand(scale_all_due_to_age..1.0),
+                              plate_vision: attributes_hash["Plate Vision"]*rand(scale_all_due_to_age..1.0),
+                              pull_amount: attributes_hash["Pull Amount"]*rand(scale_all_due_to_age..1.0),
+                              uppercut_amount: attributes_hash["Uppercut Amount"]*rand(scale_all_due_to_age..1.0),
+                              batting_average: attributes_hash["Batting Average"]*rand(scale_all_due_to_age..1.0),
+                              movement: attributes_hash["Movement"]*rand(scale_all_due_to_age..1.0),
+                              control: attributes_hash["Control"]*rand(scale_all_due_to_age..1.0),
+                              location: attributes_hash["Location"]*rand(scale_all_due_to_age..1.0),
+                              agility: attributes_hash["Agility"]*rand(scale_all_due_to_age..1.0),
+                              reactionTime: attributes_hash["Reaction Time"]*rand(scale_all_due_to_age..1.0),
+                              armStrength: attributes_hash["Arm Strength"]*rand(scale_all_due_to_age..1.0),
+                              fieldGrounder: attributes_hash["Field Grounder"]*rand(scale_all_due_to_age..1.0),
+                              fieldLiner: attributes_hash["Field Liner"]*rand(scale_all_due_to_age..1.0),
+                              fieldFlyball: attributes_hash["Field Flyball"]*rand(scale_all_due_to_age..1.0),
+                              fieldPopup: attributes_hash["Field Popup"]*rand(scale_all_due_to_age..1.0),
+                              throwShort: attributes_hash["Throw Short"]*rand(scale_all_due_to_age..1.0),
+                              throwMedium: attributes_hash["Throw Medium"]*rand(scale_all_due_to_age..1.0),
+                              throwLong: attributes_hash["Throw Long"]*rand(scale_all_due_to_age..1.0),
+                              intelligence: attributes_hash["Intelligence"]*rand(scale_all_due_to_age..1.0),
+                              endurance: attributes_hash["Endurance"]*rand(scale_all_due_to_age..1.0),
+                              power_potential: attributes_hash["Power"],
+                              contact_potential: attributes_hash["Contact"],
+                              speed_potential: attributes_hash["Speed"],
+                              patience_potential: attributes_hash["Patience"],
+                              plate_vision_potential: attributes_hash["Plate Vision"],
+                              pull_amount_potential: attributes_hash["Pull Amount"],
+                              uppercut_amount_potential: attributes_hash["Uppercut Amount"],
+                              batting_average_potential: attributes_hash["Batting Average"],
+                              movement_potential: attributes_hash["Movement"],
+                              control_potential: attributes_hash["Control"],
+                              location_potential: attributes_hash["Location"],
+                              agility_potential: attributes_hash["Agility"],
+                              reaction_time_potential: attributes_hash["Reaction Time"],
+                              armStrength_potential: attributes_hash["Arm Strength"],
+                              fieldGrounder_potential: attributes_hash["Field Grounder"],
+                              fieldLiner_potential: attributes_hash["Field Liner"],
+                              fieldFlyball_potential: attributes_hash["Field Flyball"],
+                              fieldPopup_potential: attributes_hash["Field Popup"],
+                              throwShort_potential: attributes_hash["Throw Short"],
+                              throwMedium_potential: attributes_hash["Throw Medium"],
+                              throwLong_potential: attributes_hash["Throw Long"],
+                              intelligence_potential: attributes_hash["Intelligence"],
+                              endurance_potential: attributes_hash["Endurance"],
                               atbats: 0,
                               runs: 0,
                               hits: 0,
@@ -402,7 +485,8 @@ def completely_random_player(team_id)
                               pitch_4: "--",
                               pitch_5: "--",
                               wins: 0,
-                              losses: 0)
+                              losses: 0,
+                              current_energy: 100)
 
 
 
@@ -443,6 +527,29 @@ def completely_average_player(team_id)
                               throwLong: attributes_hash["Throw Long"],
                               intelligence: attributes_hash["Intelligence"],
                               endurance: attributes_hash["Endurance"],
+                              power_potential: attributes_hash["Power"],
+                              contact_potential: attributes_hash["Contact"],
+                              speed_potential: attributes_hash["Speed"],
+                              patience_potential: attributes_hash["Patience"],
+                              plate_vision_potential: attributes_hash["Plate Vision"],
+                              pull_amount_potential: attributes_hash["Pull Amount"],
+                              uppercut_amount_potential: attributes_hash["Uppercut Amount"],
+                              batting_average_potential: attributes_hash["Batting Average"],
+                              movement_potential: attributes_hash["Movement"],
+                              control_potential: attributes_hash["Control"],
+                              location_potential: attributes_hash["Location"],
+                              agility_potential: attributes_hash["Agility"],
+                              reaction_time_potential: attributes_hash["Reaction Time"],
+                              armStrength_potential: attributes_hash["Arm Strength"],
+                              fieldGrounder_potential: attributes_hash["Field Grounder"],
+                              fieldLiner_potential: attributes_hash["Field Liner"],
+                              fieldFlyball_potential: attributes_hash["Field Flyball"],
+                              fieldPopup_potential: attributes_hash["Field Popup"],
+                              throwShort_potential: attributes_hash["Throw Short"],
+                              throwMedium_potential: attributes_hash["Throw Medium"],
+                              throwLong_potential: attributes_hash["Throw Long"],
+                              intelligence_potential: attributes_hash["Intelligence"],
+                              endurance_potential: attributes_hash["Endurance"],
                               atbats: 0,
                               runs: 0,
                               hits: 0,
@@ -549,7 +656,8 @@ def completely_average_player(team_id)
                               pitch_4: "--",
                               pitch_5: "--",
                               wins: 0,
-                              losses: 0)
+                              losses: 0,
+                              current_energy: 100)
 end
 
 def completely_random_pitcher(team_id)
@@ -589,6 +697,38 @@ def completely_random_pitcher(team_id)
 
   attributes_hash = generate_random_pitcher_attributes
 
+  # All actual attributes scaled by age (start low, peak, then decline)
+  # Therefore, generated players' attributes should more or less be scaled according to age
+  age = attributes_hash["Age"]
+  scale_all_due_to_age = -0.00378788 * age * age + 0.215909 * age - 2.37576 # polynomial with 17 => 0.2, 28 => 0.7, 40 => 0.2
+  # Players who weigh less generally are faster and less agile
+  # Above weight of 180 lbs, speed potential is scaled linearly until max weight of 300, when it is multiplied by 0.2
+  # agility is scaled linearly, but less so (multiplied by 0.4 at max weight)
+  if attributes_hash["Weight"] > 180
+    attributes_hash["Speed"] *= 2.2 - 0.00666667 * attributes_hash["Weight"]
+    attributes_hash["Agility"] *= 1.9 - 0.005 * attributes_hash["Weight"]
+  end
+
+  # Calculate salary again
+  salary = 0
+  salary += attributes_hash["Movement"]*10000
+  salary += attributes_hash["Control"]*10000
+  salary += attributes_hash["Location"]*10000
+  salary += attributes_hash["Agility"]*1000
+  salary += attributes_hash["Reaction Time"]*1000
+  salary += attributes_hash["Arm Strength"]*10000
+  salary += attributes_hash["Field Grounder"]*1000
+  salary += attributes_hash["Field Liner"]*1000
+  salary += attributes_hash["Field Popup"]*1000
+  salary += attributes_hash["Throw Short"]*1000
+  salary += attributes_hash["Intelligence"]*5000
+  salary += attributes_hash["Endurance"]*8000
+
+  # Randomize salary a little bit
+  salary *= rand(0.9..1.11)
+
+  attributes_hash["Salary"] = salary
+
   Player.create!(team_id: team_id,
                               first_name: attributes_hash["First Name"],
                               last_name: attributes_hash["Last Name"],
@@ -597,29 +737,52 @@ def completely_random_pitcher(team_id)
                               weight: attributes_hash["Weight"],
                               position: 'P',
                               salary: attributes_hash["Salary"],
-                              power: attributes_hash["Power"],
-                              contact: attributes_hash["Contact"],
-                              speed: attributes_hash["Speed"],
-                              patience: attributes_hash["Patience"],
-                              plate_vision: attributes_hash["Plate Vision"],
-                              pull_amount: attributes_hash["Pull Amount"],
-                              uppercut_amount: attributes_hash["Uppercut Amount"],
-                              batting_average: attributes_hash["Batting Average"],
-                              movement: attributes_hash["Movement"],
-                              control: attributes_hash["Control"],
-                              location: attributes_hash["Location"],
-                              agility: attributes_hash["Agility"],
-                              reactionTime: attributes_hash["Reaction Time"],
-                              armStrength: attributes_hash["Arm Strength"],
-                              fieldGrounder: attributes_hash["Field Grounder"],
-                              fieldLiner: attributes_hash["Field Liner"],
-                              fieldFlyball: attributes_hash["Field Flyball"],
-                              fieldPopup: attributes_hash["Field Popup"],
-                              throwShort: attributes_hash["Throw Short"],
-                              throwMedium: attributes_hash["Throw Medium"],
-                              throwLong: attributes_hash["Throw Long"],
-                              intelligence: attributes_hash["Intelligence"],
-                              endurance: attributes_hash["Endurance"],
+                              power: attributes_hash["Power"]*rand(scale_all_due_to_age..1.0),
+                              contact: attributes_hash["Contact"]*rand(scale_all_due_to_age..1.0),
+                              speed: attributes_hash["Speed"]*rand(scale_all_due_to_age..1.0),
+                              patience: attributes_hash["Patience"]*rand(scale_all_due_to_age..1.0),
+                              plate_vision: attributes_hash["Plate Vision"]*rand(scale_all_due_to_age..1.0),
+                              pull_amount: attributes_hash["Pull Amount"]*rand(scale_all_due_to_age..1.0),
+                              uppercut_amount: attributes_hash["Uppercut Amount"]*rand(scale_all_due_to_age..1.0),
+                              batting_average: attributes_hash["Batting Average"]*rand(scale_all_due_to_age..1.0),
+                              movement: attributes_hash["Movement"]*rand(scale_all_due_to_age..1.0),
+                              control: attributes_hash["Control"]*rand(scale_all_due_to_age..1.0),
+                              location: attributes_hash["Location"]*rand(scale_all_due_to_age..1.0),
+                              agility: attributes_hash["Agility"]*rand(scale_all_due_to_age..1.0),
+                              reactionTime: attributes_hash["Reaction Time"]*rand(scale_all_due_to_age..1.0),
+                              armStrength: attributes_hash["Arm Strength"]*rand(scale_all_due_to_age..1.0),
+                              fieldGrounder: attributes_hash["Field Grounder"]*rand(scale_all_due_to_age..1.0),
+                              fieldLiner: attributes_hash["Field Liner"]*rand(scale_all_due_to_age..1.0),
+                              fieldFlyball: attributes_hash["Field Flyball"]*rand(scale_all_due_to_age..1.0),
+                              fieldPopup: attributes_hash["Field Popup"]*rand(scale_all_due_to_age..1.0),
+                              throwShort: attributes_hash["Throw Short"]*rand(scale_all_due_to_age..1.0),
+                              throwMedium: attributes_hash["Throw Medium"]*rand(scale_all_due_to_age..1.0),
+                              throwLong: attributes_hash["Throw Long"]*rand(scale_all_due_to_age..1.0),
+                              intelligence: attributes_hash["Intelligence"]*rand(scale_all_due_to_age..1.0),
+                              endurance: attributes_hash["Endurance"]*rand(scale_all_due_to_age..1.0),
+                              power_potential: attributes_hash["Power"],
+                              contact_potential: attributes_hash["Contact"],
+                              speed_potential: attributes_hash["Speed"],
+                              patience_potential: attributes_hash["Patience"],
+                              plate_vision_potential: attributes_hash["Plate Vision"],
+                              pull_amount_potential: attributes_hash["Pull Amount"],
+                              uppercut_amount_potential: attributes_hash["Uppercut Amount"],
+                              batting_average_potential: attributes_hash["Batting Average"],
+                              movement_potential: attributes_hash["Movement"],
+                              control_potential: attributes_hash["Control"],
+                              location_potential: attributes_hash["Location"],
+                              agility_potential: attributes_hash["Agility"],
+                              reaction_time_potential: attributes_hash["Reaction Time"],
+                              armStrength_potential: attributes_hash["Arm Strength"],
+                              fieldGrounder_potential: attributes_hash["Field Grounder"],
+                              fieldLiner_potential: attributes_hash["Field Liner"],
+                              fieldFlyball_potential: attributes_hash["Field Flyball"],
+                              fieldPopup_potential: attributes_hash["Field Popup"],
+                              throwShort_potential: attributes_hash["Throw Short"],
+                              throwMedium_potential: attributes_hash["Throw Medium"],
+                              throwLong_potential: attributes_hash["Throw Long"],
+                              intelligence_potential: attributes_hash["Intelligence"],
+                              endurance_potential: attributes_hash["Endurance"],
                               atbats: 0,
                               runs: 0,
                               hits: 0,
@@ -726,7 +889,8 @@ def completely_random_pitcher(team_id)
                               pitch_4: pitches[3],
                               pitch_5: pitches[4],
                               wins: 0,
-                              losses: 0 )
+                              losses: 0,
+                              current_energy: 100)
 
 
 
@@ -799,6 +963,29 @@ def completely_average_pitcher(team_id)
                               throwLong: attributes_hash["Throw Long"],
                               intelligence: attributes_hash["Intelligence"],
                               endurance: attributes_hash["Endurance"],
+                              power_potential: attributes_hash["Power"],
+                              contact_potential: attributes_hash["Contact"],
+                              speed_potential: attributes_hash["Speed"],
+                              patience_potential: attributes_hash["Patience"],
+                              plate_vision_potential: attributes_hash["Plate Vision"],
+                              pull_amount_potential: attributes_hash["Pull Amount"],
+                              uppercut_amount_potential: attributes_hash["Uppercut Amount"],
+                              batting_average_potential: attributes_hash["Batting Average"],
+                              movement_potential: attributes_hash["Movement"],
+                              control_potential: attributes_hash["Control"],
+                              location_potential: attributes_hash["Location"],
+                              agility_potential: attributes_hash["Agility"],
+                              reaction_time_potential: attributes_hash["Reaction Time"],
+                              armStrength_potential: attributes_hash["Arm Strength"],
+                              fieldGrounder_potential: attributes_hash["Field Grounder"],
+                              fieldLiner_potential: attributes_hash["Field Liner"],
+                              fieldFlyball_potential: attributes_hash["Field Flyball"],
+                              fieldPopup_potential: attributes_hash["Field Popup"],
+                              throwShort_potential: attributes_hash["Throw Short"],
+                              throwMedium_potential: attributes_hash["Throw Medium"],
+                              throwLong_potential: attributes_hash["Throw Long"],
+                              intelligence_potential: attributes_hash["Intelligence"],
+                              endurance_potential: attributes_hash["Endurance"],
                               atbats: 0,
                               runs: 0,
                               hits: 0,
@@ -905,7 +1092,8 @@ def completely_average_pitcher(team_id)
                               pitch_4: pitches[3],
                               pitch_5: pitches[4],
                               wins: 0,
-                              losses: 0)
+                              losses: 0,
+                              current_energy: 100)
 end
 
 team_names = {
@@ -1137,7 +1325,6 @@ TOTAL_INTERLEAGUE_SERIES = 8
 
 def create_series(series_index, num_games, series_type, remaining_team_ids, current_date)
 
-  puts "remaining_team_ids: #{remaining_team_ids}"
   team_id = remaining_team_ids.sample
   remaining_team_ids.delete(team_id)
   team = Team.find(team_id)
@@ -1172,7 +1359,6 @@ def create_series(series_index, num_games, series_type, remaining_team_ids, curr
 
     # save the game
     game.save
-    puts "Series #{series_index}, game #{game_num}, will simulate on #{current_date + game_num} between team #{home_id} and team #{away_id}."
   end
 
 
@@ -1218,7 +1404,7 @@ end
   count = 0
   while remaining_team_ids.length > 0
     count += 1
-    puts "MATCHUP: #{count}"
+
     create_series(index, num_games, series_type, remaining_team_ids, @current_date)
   end
 

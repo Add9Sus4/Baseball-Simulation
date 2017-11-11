@@ -29,6 +29,10 @@ module Reusable
     rand()) - 3) / 3;
   end
 
+  def getRandomValueFromDistribution(min, max, mean, stdev)
+    generateDistribution(min, max, mean, stdev).first
+  end
+
   # This function generates a distribution of 100 data points between a min and max value, with desired mean and standard deviation.
   def generateDistribution(min, max, mean, stdev)
     counter = 0

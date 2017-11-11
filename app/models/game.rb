@@ -147,7 +147,7 @@ class Game < ActiveRecord::Base
       end
       @inning_number = @inning_number + 1
     end # game is over here
-    puts 'game is over'
+    # puts 'game is over'
     collect_stats
   end
 
@@ -216,7 +216,7 @@ class Game < ActiveRecord::Base
     :wins => @away_team.wins + away_wins,
     :streak => away_streak)
 
-    puts 'updating home player stats'
+    # puts 'updating home player stats'
 
     # player stats
     @home_team.game_lineup_players.each do |player|
@@ -253,7 +253,7 @@ class Game < ActiveRecord::Base
       :chances => player.chances + player.game_chances)
     end
 
-    puts 'updating away player stats'
+    # puts 'updating away player stats'
 
     @away_team.game_lineup_players.each do |player|
 
@@ -301,7 +301,7 @@ class Game < ActiveRecord::Base
       :chances => player.chances + player.game_chances)
     end
 
-    puts 'updating home fielding stats'
+    # puts 'updating home fielding stats'
 
     @home_team.game_position_players.each do |key, player|
       player.update_columns(:errors_committed => player.errors_committed + player.game_errors_committed,
@@ -310,7 +310,7 @@ class Game < ActiveRecord::Base
         :assists => player.assists + player.game_assists)
     end
 
-    puts 'updating away fielding stats'
+    # puts 'updating away fielding stats'
 
     @away_team.game_position_players.each do |key, player|
       player.update_columns(:errors_committed => player.errors_committed + player.game_errors_committed,
@@ -319,7 +319,7 @@ class Game < ActiveRecord::Base
         :assists => player.assists + player.game_assists)
     end
 
-    puts 'updating home pitcher stats'
+    # puts 'updating home pitcher stats'
 
     # pitcher stats
     @home_team.game_pitcher_list.each do |player|
@@ -426,11 +426,12 @@ class Game < ActiveRecord::Base
       :zone_69_pitches => player.zone_69_pitches + player.zone_pitches_thrown[68],
       :zone_70_pitches => player.zone_70_pitches + player.zone_pitches_thrown[69],
       :zone_71_pitches => player.zone_71_pitches + player.zone_pitches_thrown[70],
-      :zone_72_pitches => player.zone_72_pitches + player.zone_pitches_thrown[71])
+      :zone_72_pitches => player.zone_72_pitches + player.zone_pitches_thrown[71],
+      :current_energy => player.game_current_energy)
 
     end
 
-    puts 'updating away pitcher stats'
+    # puts 'updating away pitcher stats'
 
     @away_team.game_pitcher_list.each do |player|
 
@@ -536,7 +537,8 @@ class Game < ActiveRecord::Base
       :zone_69_pitches => player.zone_69_pitches + player.zone_pitches_thrown[68],
       :zone_70_pitches => player.zone_70_pitches + player.zone_pitches_thrown[69],
       :zone_71_pitches => player.zone_71_pitches + player.zone_pitches_thrown[70],
-      :zone_72_pitches => player.zone_72_pitches + player.zone_pitches_thrown[71])
+      :zone_72_pitches => player.zone_72_pitches + player.zone_pitches_thrown[71],
+      :current_energy => player.game_current_energy)
 
     end
 
@@ -776,7 +778,7 @@ class Game < ActiveRecord::Base
     home_pitchers = @home_team.game_pitcher_list.map { |pitcher| pitcher.id }.join("_")
     away_pitchers = @away_team.game_pitcher_list.map { |pitcher| pitcher.id }.join("_")
 
-    puts 'updating game stats'
+    # puts 'updating game stats'
 
     # Game attributes
     update_attributes(:attendance => @home_team.capacity,

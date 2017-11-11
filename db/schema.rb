@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171104192043) do
+ActiveRecord::Schema.define(version: 20171110163336) do
 
   create_table "called_strike_percentages", force: :cascade do |t|
     t.integer "zone_id",                  limit: 4
@@ -260,6 +260,30 @@ ActiveRecord::Schema.define(version: 20171104192043) do
     t.integer  "losses",                    limit: 4
     t.text     "current_position",          limit: 65535
     t.integer  "lineup_position",           limit: 4
+    t.integer  "power_potential",           limit: 4
+    t.integer  "contact_potential",         limit: 4
+    t.integer  "speed_potential",           limit: 4
+    t.integer  "patience_potential",        limit: 4
+    t.integer  "plate_vision_potential",    limit: 4
+    t.integer  "pull_amount_potential",     limit: 4
+    t.integer  "uppercut_amount_potential", limit: 4
+    t.integer  "batting_average_potential", limit: 4
+    t.integer  "movement_potential",        limit: 4
+    t.integer  "control_potential",         limit: 4
+    t.integer  "location_potential",        limit: 4
+    t.integer  "agility_potential",         limit: 4
+    t.integer  "reaction_time_potential",   limit: 4
+    t.integer  "armStrength_potential",     limit: 4
+    t.integer  "fieldGrounder_potential",   limit: 4
+    t.integer  "fieldLiner_potential",      limit: 4
+    t.integer  "fieldFlyball_potential",    limit: 4
+    t.integer  "fieldPopup_potential",      limit: 4
+    t.integer  "throwShort_potential",      limit: 4
+    t.integer  "throwMedium_potential",     limit: 4
+    t.integer  "throwLong_potential",       limit: 4
+    t.integer  "intelligence_potential",    limit: 4
+    t.integer  "endurance_potential",       limit: 4
+    t.integer  "current_energy",            limit: 4
   end
 
   create_table "seasons", force: :cascade do |t|

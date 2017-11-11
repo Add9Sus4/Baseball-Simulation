@@ -2,7 +2,12 @@
   .table-schedule td {
     height: 70px;
     font-size: 10px;
+    background-color: #FBFBFC;
   }
+  .table-schedule th {
+    background-color: #e0e6eb;
+  }
+
   .game-display {
     font-size: 15px;
     float: right;
@@ -19,7 +24,6 @@
 
 
 <div id="calendar-div" class="container-fluid">
-  <%= link_to "August", "#August" %>
   <% @months = ["April", "May", "June", "July", "August", "September"] %>
   <% @months.each do |month| %>
     <h3 class="month-name"><%= month %></h3>
@@ -35,6 +39,7 @@
           <tr>
             <% @cal_dates.each do |date| %>
               <td><%= date.nil? == true ? '-' : date.day %>
+                <% if !date.nil? && date == Season.first.current_date %><span id="current-date"><strong>Today</strong></span><% end %>
               <br/><br/><% @game = Game.where("(home_team_id = ? OR away_team_id = ?) AND sim_date = ?", @team.id, @team.id, date).first %>
                 <% if !@game.nil? %>
                   <% if @game.home_team_id == @team.id %>
@@ -91,6 +96,8 @@
 
 
 <script type="text/javascript">
+  $("#current-date").closest('td').css({"background-color":"#ffffcc","border":"4px solid black"});
+
   $(".month-name").each(function() {
     $(this).attr("id", $(this).text());
   });

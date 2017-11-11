@@ -59,7 +59,7 @@
   end
 
   def determine_pitch_speed(pitcher, pitch_type)
-    armStrengthFactor = pitcher.armStrength.to_f/100.0
+    armStrengthFactor = pitcher.get_armStrength.to_f/100.0
     case pitch_type
     when "FA" # 4-seam Fastball: min 80 mph, max 103 mph
       getRandomValue(0, 1, 80, 103, (103 - 80)*armStrengthFactor, 10)
@@ -142,7 +142,7 @@
       movement_factor     = 1.0 - rand()
     end
     movement_adjustment = map_attribute_to_range(pitcher.movement, AttributeAdjustments::PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MAX, true)
-    arm_strength_adjustment = map_attribute_to_range(pitcher.armStrength, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MAX, true)
+    arm_strength_adjustment = map_attribute_to_range(pitcher.get_armStrength, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MAX, true)
 
     # return weighted average of adjustments
     arm_strength_adjustment*arm_strength_factor + movement_adjustment*movement_factor
@@ -215,7 +215,7 @@
     end
 
     contact_percentage *= map_attribute_to_range(@batter.contact, AttributeAdjustments::BATTER_CONTACT_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::BATTER_CONTACT_AFFECTS_CONTACT_PERCENTAGE_MAX, false)*
-      map_attribute_to_range(@pitcher.armStrength, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MAX, true)*
+      map_attribute_to_range(@pitcher.get_armStrength, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MAX, true)*
       map_attribute_to_range(@pitcher.movement, AttributeAdjustments::PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MAX, true)
     # key = "#{zone_id}_#{pitcher_hand}_#{batter_hand}_#{balls}_#{strikes}_#{pitch_type}"
     # @heat_maps.contact_percentages[key]*
@@ -544,10 +544,22 @@
       targets = try_to_hit_the_edge
     end
 
-    modifiers = [rand()*2 - 1, rand()*2 - 1] # random values from -1 to 1
+    # Adjust for control attribute (this makes pitchers with low control throw more balls)
+    chance_of_aiming_just_off_the_edge = map_attribute_to_range(@pitcher.get_control, AttributeAdjustments::PITCHER_CONTROL_AFFECTS_PROBABILITY_OF_TRYING_TO_THROW_BALL_MIN, AttributeAdjustments::PITCHER_CONTROL_AFFECTS_PROBABILITY_OF_TRYING_TO_THROW_BALL_MAX, true)
+    if rand() < chance_of_aiming_just_off_the_edge
+      targets = try_to_hit_just_off_the_edge # override what happened earlier
+    end
+    # Adjust for control attribute (this makes pitchers with high control throw more strikes)
+    chance_of_aiming_for_strike = map_attribute_to_range(@pitcher.get_control, AttributeAdjustments::PITCHER_CONTROL_AFFECTS_PROBABILITY_OF_TRYING_TO_THROW_STRIKE_MIN, AttributeAdjustments::PITCHER_CONTROL_AFFECTS_PROBABILITY_OF_TRYING_TO_THROW_STRIKE_MAX, false)
+    if rand() < chance_of_aiming_for_strike
+      targets = try_to_throw_strike
+    end
+    modifiers = [rand()*2 - 1, rand()*2 - 1] # random values from -1 to 1 (these are used to give some variation to the targets)
 
-    targets[0] += 0.25 * modifiers[0]
-    targets[1] += 0.25 * modifiers[1]
+    modifier_scale = map_attribute_to_range(@pitcher.get_location, AttributeAdjustments::PITCHER_LOCATION_AFFECTS_TARGET_VARIATION_MIN, AttributeAdjustments::PITCHER_LOCATION_AFFECTS_TARGET_VARIATION_MAX, true)
+
+    targets[0] += modifier_scale * modifiers[0]
+    targets[1] += modifier_scale * modifiers[1]
 
     if targets[0] > 1.0
       targets[0] = 0.99
@@ -594,21 +606,6 @@
       true
     else
       false
-    end
-  end
-
-  # Adjusts location probabilities based on pitcher control attribute
-  def control_adjustment(pitcher, index)
-    control_multiplier = 1
-    if pitcher.control > 50
-      control_multiplier = pitcher.control.to_f/50 # 1 to 2
-    else
-      control_multiplier = (pitcher.control + 50).to_f/100 # 0.5 to 1
-    end
-    if is_in_strike_zone(index)
-      control_multiplier
-    else
-      1/control_multiplier
     end
   end
 
@@ -659,21 +656,6 @@
       true
     else
       false
-    end
-  end
-
-  # Adjusts location probabilities based on pitcher location attribute
-  def location_adjustment(pitcher, index)
-    location_multiplier = 1
-    if pitcher.location > 50
-      location_multiplier = pitcher.location.to_f/50 # 1 to 2
-    else
-      location_multiplier = (pitcher.location + 50).to_f/100 # 0.5 to 1
-    end
-    if is_close_to_edge(index)
-      location_multiplier
-    else
-      1/location_multiplier
     end
   end
 

@@ -10,8 +10,11 @@
   pointer-events: none;
   opacity: 0.5;
 }
+.indented-heading {
+  padding-left: 28px;
+}
 </style>
-<div class="container-fluid">
+<div class="indented-heading">
   <h1 class="app_text_main">League Leaders - Batting</h1>
 </div>
 <div class="container-fluid">
@@ -256,12 +259,30 @@
     </table>
   </div>
   <div class="col-md-3">
-
+    <h3 class="app_text_main">Walks</h3>
+    <table class="table table-condensed table-striped table-bordered table-responsive custom-smaller-table">
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th>Player</th>
+          <th>Walks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% Player.order('walks*-1').limit(10).each do |player| %>
+        <tr>
+          <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+          <td><%= link_to player.full_name, player, method: :get %></td>
+          <td><%= player.walks %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
   </div>
 </div>
 
-<div class="container-fluid">
-  <h1 class="app_text_main">League Leaders - Pitching</h1>
+<div>
+  <h1 class="indented-heading">League Leaders - Pitching</h1>
 </div>
 
 <div class="container-fluid">
@@ -333,5 +354,119 @@
     </table>
   </div>
   <div class="col-md-3">
+    <h3 class="app_text_main">K/9</h3>
+    <table class="table table-condensed table-striped table-bordered table-responsive custom-smaller-table">
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th>Player</th>
+          <th>IP</th>
+          <th>K/9</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% Player.where("outs_recorded > ?", 20).order('(strikeouts_recorded + 0.0)*27.0/(outs_recorded + 0.0)*-1').limit(10).each do |player| %>
+        <tr>
+          <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+          <td><%= link_to player.full_name, player, method: :get %></td>
+          <td><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td>
+          <td><%= number_with_precision(zero_if_nan((player.strikeouts_recorded).to_f*27.0/player.outs_recorded.to_f), precision: 2) %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="col-md-3">
+    <h3 class="app_text_main">BB/9</h3>
+    <table class="table table-condensed table-striped table-bordered table-responsive custom-smaller-table">
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th>Player</th>
+          <th>IP</th>
+          <th>BB/9</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% Player.where("outs_recorded > ?", 20).order('(walks_allowed + 0.0)*27.0/(outs_recorded + 0.0)').limit(10).each do |player| %>
+        <tr>
+          <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+          <td><%= link_to player.full_name, player, method: :get %></td>
+          <td><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td>
+          <td><%= number_with_precision(zero_if_nan((player.walks_allowed).to_f*27.0/player.outs_recorded.to_f), precision: 2) %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-md-3">
+    <h3 class="app_text_main">K/BB</h3>
+    <table class="table table-condensed table-striped table-bordered table-responsive custom-smaller-table">
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th>Player</th>
+          <th>IP</th>
+          <th>K/BB</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% Player.where("outs_recorded > ?", 20).order('(strikeouts_recorded + 0.0)/(walks_allowed + 0.0)*-1').limit(10).each do |player| %>
+        <tr>
+          <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+          <td><%= link_to player.full_name, player, method: :get %></td>
+          <td><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td>
+          <td><%= number_with_precision(zero_if_nan((player.strikeouts_recorded).to_f/player.walks_allowed.to_f), precision: 2) %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-md-3">
+    <h3 class="app_text_main">Strike %</h3>
+    <table class="table table-condensed table-striped table-bordered table-responsive custom-smaller-table">
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th>Player</th>
+          <th>IP</th>
+          <th>Strike %</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% Player.where("outs_recorded > ?", 20).order('(strikes_thrown + 0.0)/(total_pitches + 0.0)*-1').limit(10).each do |player| %>
+        <tr>
+          <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+          <td><%= link_to player.full_name, player, method: :get %></td>
+          <td><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td>
+          <td><%= number_with_precision(zero_if_nan((player.strikes_thrown).to_f*100/player.total_pitches.to_f), precision: 2) %>%</td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-md-3">
+    <h3 class="app_text_main">Wins</h3>
+    <table class="table table-condensed table-striped table-bordered table-responsive custom-smaller-table">
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th>Player</th>
+          <th>Record</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% Player.order('wins*-1').limit(10).each do |player| %>
+        <tr>
+          <td><%= link_to player.team.full_name, player.team, method: :get %></td>
+          <td><%= link_to player.full_name, player, method: :get %></td>
+          <td><%= player.wins %> - <%= player.losses%></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
   </div>
 </div>

@@ -1,10 +1,10 @@
 # Player class.
 class Player < ActiveRecord::Base
-
+  include Reusable
   # Player attributes (aka this is where game stats are stored for each player. These values
   # are initialized at the beginning of each game and get updated as the game progresses. Then
   # at the end of the game, player stats are updated in the database using these values.)
-  attr_accessor :zone_pitches_thrown, :game_atbats, :game_runs_scored, :game_hits, :game_doubles, :game_triples, :game_home_runs, :game_rbi, :game_walks, :game_strikeouts, :game_stolen_bases, :game_caught_stealing, :game_errors_committed, :game_assists, :game_putouts, :game_chances, :game_outs_recorded, :game_hits_allowed, :game_runs_allowed, :game_earned_runs_allowed, :game_walks_allowed, :game_strikeouts_recorded, :game_home_runs_allowed, :game_total_pitches, :game_strikes_thrown, :game_balls_thrown, :game_intentional_walks_allowed, :pitch_array, :current_position, :lineup_position
+  attr_accessor :zone_pitches_thrown, :game_atbats, :game_runs_scored, :game_hits, :game_doubles, :game_triples, :game_home_runs, :game_rbi, :game_walks, :game_strikeouts, :game_stolen_bases, :game_caught_stealing, :game_errors_committed, :game_assists, :game_putouts, :game_chances, :game_outs_recorded, :game_hits_allowed, :game_runs_allowed, :game_earned_runs_allowed, :game_walks_allowed, :game_strikeouts_recorded, :game_home_runs_allowed, :game_total_pitches, :game_strikes_thrown, :game_balls_thrown, :game_intentional_walks_allowed, :pitch_array, :current_position, :lineup_position, :game_current_energy
 
   # Make sure that all players have the following attributes when they are created
   validates :team, :first_name, :last_name, :age, :height, :weight, :position, :salary, presence: true
@@ -82,9 +82,19 @@ class Player < ActiveRecord::Base
     (fieldGrounder + fieldLiner + fieldFlyball + fieldPopup)/4
   end
 
+  # Average potential fielding rating (displayed on player page)
+  def average_fielding_potential
+    (fieldGrounder_potential + fieldLiner_potential + fieldFlyball_potential + fieldPopup_potential)/4
+  end
+
   # Average throwing rating (displayed on player page)
   def average_throwing
     (throwShort + throwMedium + throwLong)/3
+  end
+
+  # Average potential throwing rating (displayed on player page)
+  def average_throwing_potential
+    (throwShort_potential + throwMedium_potential + throwLong_potential)/3
   end
 
   # Display player's full name when to_s is called on a player
@@ -122,6 +132,7 @@ class Player < ActiveRecord::Base
     @game_intentional_walks_allowed = 0
     @zone_pitches_thrown = Array.new(72, 0)
     @pitch_array = Array.new
+    @game_current_energy = current_energy
     if (pitch_1 != "--") then @pitch_array.push(pitch_1) end
     if (pitch_2 != "--") then @pitch_array.push(pitch_2) end
     if (pitch_3 != "--") then @pitch_array.push(pitch_3) end
@@ -247,9 +258,25 @@ class Player < ActiveRecord::Base
     @game_home_runs_allowed = @game_home_runs_allowed + 1
   end
 
+  # Returns a pitcher's armStrength attribute, adjusted for endurance penalty
+  def get_armStrength
+    armStrength*map_attribute_to_range(armStrength, AttributeAdjustments::PITCHER_ENDURANCE_AFFECTS_ARM_STRENGTH_MIN, AttributeAdjustments::PITCHER_ENDURANCE_AFFECTS_ARM_STRENGTH_MAX, false)
+  end
+
+  # Returns a pitcher's control attribute, adjusted for endurance penalty
+  def get_control
+    control*map_attribute_to_range(control, AttributeAdjustments::PITCHER_ENDURANCE_AFFECTS_CONTROL_MIN, AttributeAdjustments::PITCHER_ENDURANCE_AFFECTS_CONTROL_MAX, false)
+  end
+
+  # Returns a pitcher's location attribute, adjusted for endurance penalty
+  def get_location
+    location*map_attribute_to_range(control, AttributeAdjustments::PITCHER_ENDURANCE_AFFECTS_LOCATION_MIN, AttributeAdjustments::PITCHER_ENDURANCE_AFFECTS_LOCATION_MAX, false)
+  end
+
   # Called every time this pitcher throws a pitch. The zone number is also recorded (this data is needed
   # so that pitcher zone maps can be displayed, showing where they typically throw the ball)
   def throws_pitch(zone_number)
+    @game_current_energy -= map_attribute_to_range(endurance, AttributeAdjustments::PITCHER_ENDURANCE_AFFECTS_ENERGY_LOSS_PER_PITCH_MIN, AttributeAdjustments::PITCHER_ENDURANCE_AFFECTS_ENERGY_LOSS_PER_PITCH_MAX, true)
     @zone_pitches_thrown[zone_number - 1] += 1
     @game_total_pitches = @game_total_pitches + 1
   end

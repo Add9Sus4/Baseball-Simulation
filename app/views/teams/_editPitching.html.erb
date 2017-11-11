@@ -43,6 +43,7 @@
           <th class="attribute_cell tooltip_enable" title="How accurately this player can throw the ball">Thr</th>
           <th class="attribute_cell tooltip_enable" title="How often this player makes the right decision for a given play">Int</th>
           <th class="attribute_cell tooltip_enable" title="How quickly this player gets tired">End</th>
+          <th class="attribute_cell">Energy</th>
           <th class="stats_cell tooltip_enable" title="Wins">W</th>
           <th class="stats_cell tooltip_enable" title="Losses">L</th>
           <th class="stats_cell tooltip_enable" title="Innings pitched">IP</th>
@@ -97,6 +98,7 @@
           <td class="attribute_cell hotcold"><%= player.average_throwing %></td>
           <td class="attribute_cell hotcold"><%= player.intelligence %></td>
           <td class="attribute_cell hotcold"><%= player.endurance %></td>
+          <td class="attribute_cell hotcold"><%= player.current_energy %></td>
           <td class="stats_cell custom-border-left"><%= player.wins %></td>
           <td class="stats_cell"><%= player.losses %></td>
           <td class="stats_cell"><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td>
@@ -108,6 +110,19 @@
           <td class="stats_cell"><%= player.strikeouts_recorded %></td>
           <td class="stats_cell custom-border-left"><%= number_with_precision(zero_if_nan(player.earned_runs_allowed.to_f*27/player.outs_recorded.to_f), precision: 2) %></td>
           <td class="stats_cell"><%= number_with_precision(zero_if_nan((player.walks_allowed + player.hits_allowed).to_f*3/player.outs_recorded.to_f), precision: 2) %></td>
+        </tr>
+        <tr class="attribute_cell potentials_cell" hidden>
+          <td class="no-top-border">&nbsp;</td><td class="no-top-border">&nbsp;</td><td class="no-top-border">&nbsp;</td>
+          <td class="hotcold custom-border-left no-top-border"><%= player.armStrength_potential %></td>
+          <td class="hotcold no-top-border"><%= player.movement_potential %></td>
+          <td class="hotcold no-top-border"><%= player.control_potential %></td>
+          <td class="hotcold no-top-border"><%= player.location_potential %></td>
+          <td class="hotcold custom-border-left no-top-border"><%= player.agility_potential %></td>
+          <td class="hotcold no-top-border"><%= player.reaction_time_potential %></td>
+          <td class="hotcold no-top-border"><%= player.average_fielding_potential %></td>
+          <td class="hotcold no-top-border"><%= player.average_throwing_potential %></td>
+          <td class="hotcold no-top-border"><%= player.intelligence_potential %></td>
+          <td class="hotcold no-top-border"><%= player.endurance_potential %></td>
         </tr>
         <% end %>
       </tbody>

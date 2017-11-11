@@ -22,11 +22,11 @@ class AttributeAdjustments
   #################### SWING PERCENTAGE ####################
 
   # Batter plate vision attribute (inverse)
-  BATTER_PLATE_VISION_AFFECTS_SWING_PERCENTAGE_MIN = 0.1  # 100 plate vision  -> 90% decrease in swing % on pitches out of the zone
+  BATTER_PLATE_VISION_AFFECTS_SWING_PERCENTAGE_MIN = 0.65  # 100 plate vision  -> 35% decrease in swing % on pitches out of the zone
   BATTER_PLATE_VISION_AFFECTS_SWING_PERCENTAGE_MAX = 1.25 # 0 plate vision    -> 25% increase in swing % on pitches out of the zone
 
   # Batter patience attribute when ahead in count (inverse)
-  BATTER_PATIENCE_AFFECTS_SWING_PERCENTAGE_WHEN_AHEAD_IN_COUNT_MIN = 0.6  # 100 patience  -> 40% decrease in overall swing %
+  BATTER_PATIENCE_AFFECTS_SWING_PERCENTAGE_WHEN_AHEAD_IN_COUNT_MIN = 0.7  # 100 patience  -> 30% decrease in overall swing %
   BATTER_PATIENCE_AFFECTS_SWING_PERCENTAGE_WHEN_AHEAD_IN_COUNT_MAX = 1.5  # 0 patience    -> 50% increase in overall swing %
 
   # Batter patience attribute when count is even (inverse)
@@ -95,4 +95,39 @@ class AttributeAdjustments
   FIELDER_SPEED_AFFECTS_FIELD_PROBABILITY_MIN = 0.85 # 0 speed -> 15% increase in hit probability
   FIELDER_SPEED_AFFECTS_FIELD_PROBABILITY_MAX = 1.15 # 100 speed -> 15% decrease in hit probability
 
+  #################### THROWING BALLS AND STRIKES ####################
+
+  # Pitching control (inverse)
+  PITCHER_CONTROL_AFFECTS_PROBABILITY_OF_TRYING_TO_THROW_BALL_MIN = 0.01  # 100 control -> 1% of the time, pitcher will try to throw "just off the edge" no matter the situation
+  PITCHER_CONTROL_AFFECTS_PROBABILITY_OF_TRYING_TO_THROW_BALL_MAX = 0.50  # 0 control -> 50% of the time, pitcher will try to throw "just off the edge" no matter the situation
+
+  # Pitching control
+  PITCHER_CONTROL_AFFECTS_PROBABILITY_OF_TRYING_TO_THROW_STRIKE_MIN = 0.01  # 0 control -> 1% of the time, pitcher will try to throw a strike near the middle of the zone (but not down the middle) no matter the situation
+  PITCHER_CONTROL_AFFECTS_PROBABILITY_OF_TRYING_TO_THROW_STRIKE_MAX = 0.50  # 100 control -> 50% of the time, pitcher will try to throw a strike near the middle of the zone (but not down the middle) no matter the situation
+
+  #################### PITCHER ACCURACY ####################
+
+  # Pitching location (inverse)
+  PITCHER_LOCATION_AFFECTS_TARGET_VARIATION_MIN = 0.15 # 100 location -> targets are off by a maximum of +/- 0.15
+  PITCHER_LOCATION_AFFECTS_TARGET_VARIATION_MAX = 0.35 # 0 location -> targets are off by a maximum of +/- 0.35
+
+  #################### ENDURANCE ####################
+
+  # Pitcher energy losses (inverse)
+  PITCHER_ENDURANCE_AFFECTS_ENERGY_LOSS_PER_PITCH_MIN = 0.75  # 100 endurance -> lose 0.75% energy each pitch
+  PITCHER_ENDURANCE_AFFECTS_ENERGY_LOSS_PER_PITCH_MAX = 3     # 0 endurance -> lose 3% energy each pitch
+
+  #################### ENDURANCE ####################
+
+  # Pitcher arm strength losses
+  PITCHER_ENDURANCE_AFFECTS_ARM_STRENGTH_MIN = 0.70 # 0 endurance -> lose 30% of arm strength attribute
+  PITCHER_ENDURANCE_AFFECTS_ARM_STRENGTH_MAX = 1.0 # 100 endurance -> lose 0% of arm strength attribute
+
+  # Pitcher location losses
+  PITCHER_ENDURANCE_AFFECTS_LOCATION_MIN = 0.80 # 0 endurance -> lose 20% of location attribute
+  PITCHER_ENDURANCE_AFFECTS_LOCATION_MAX = 1.0 # 100 endurance -> lose 0% of location attribute
+
+  # Pitcher control losses
+  PITCHER_ENDURANCE_AFFECTS_CONTROL_MIN = 0.80 # 0 endurance -> lose 20% of control attribute
+  PITCHER_ENDURANCE_AFFECTS_CONTROL_MAX = 1.0 # 100 endurance -> lose 0% of control attribute
 end

@@ -9,6 +9,20 @@
 
 <style>
 
+.ui-checkboxradio-label {
+  font-size: 12px !important;
+  padding: 5px;
+}
+
+.ui-checkboxradio {
+  padding: 5px;
+}
+
+.ui-checkboxradio-checked {
+  background-color: #0047b3;
+  border-color: #80b3ff;
+}
+
 .ui-tooltip-content {
   font-size:8pt;
 }
@@ -192,22 +206,24 @@
   </nav>
 </div>
 
-<div id="view-mode-div" class="container-fluid" hidden>
+<div id="view-mode-div" class="container-fluid">
   <fieldset>
     <label for="radio-info">Info</label>
-    <input type="radio" name="radio-view-type" id="radio-info" checked>
+    <input type="radio" name="radio-view-type" id="radio-info">
     <label for="radio-stats">Stats</label>
     <input type="radio" name="radio-view-type" id="radio-stats">
-    <label for="radio-attributes">Attributes</label>
-    <input type="radio" name="radio-view-type" id="radio-attributes">
+    <label for="radio-attributes">Actual Ratings</label>
+    <input type="radio" name="radio-view-type" id="radio-attributes" checked>
+    <label for="radio-potentials">Potential Ratings</label>
+    <input type="radio" name="radio-view-type" id="radio-potentials">
   </fieldset>
 </div>
 
-<div id="show-roster-position-players-partial" hidden><%= render partial: "showRosterPositionPlayers" %></div>
+<div id="show-roster-position-players-partial"><%= render partial: "showRosterPositionPlayers" %></div>
 <div id="show-roster-pitchers-partial" hidden><%= render partial: "showRosterPitchers" %></div>
 <div id="edit-pitching-partial" hidden><%= render partial: "editPitching" %></div>
 <div id="edit-defense-partial" hidden><%= render partial: "editPositions" %></div>
-<div id="show-schedule-partial"><%= render partial: "showSchedule" %></div>
+<div id="show-schedule-partial" hidden><%= render partial: "showSchedule" %></div>
 
 <style media="screen">
   .position-highlight {
@@ -242,6 +258,9 @@ $("#radio-info").click(function() {
   $(".attribute_cell").each(function() {
     $(this).hide();
   });
+  $(".potentials_cell").each(function() {
+    $(this).hide();
+  });
 });
 
 $("#radio-stats").click(function() {
@@ -254,6 +273,9 @@ $("#radio-stats").click(function() {
   $(".attribute_cell").each(function() {
     $(this).hide();
   });
+  $(".potentials_cell").each(function() {
+    $(this).hide();
+  });
 });
 
 $("#radio-attributes").click(function() {
@@ -264,6 +286,24 @@ $("#radio-attributes").click(function() {
     $(this).hide();
   });
   $(".attribute_cell").each(function() {
+    $(this).show();
+  });
+  $(".potentials_cell").each(function() {
+    $(this).hide();
+  });
+});
+
+$("#radio-potentials").click(function() {
+  $(".info_cell").each(function() {
+    $(this).hide();
+  });
+  $(".stats_cell").each(function() {
+    $(this).hide();
+  });
+  $(".attribute_cell").each(function() {
+    $(this).show();
+  });
+  $(".potentials_cell").each(function() {
     $(this).show();
   });
 });
@@ -313,7 +353,7 @@ $("#edit-defense-link").click(function() {
   $("#view-mode-div").show();
 });
 
-$(".attribute_cell").hide();
+$(".info_cell").hide();
 $(".stats_cell").hide();
 
 function hotCold() {

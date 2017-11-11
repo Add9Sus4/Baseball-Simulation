@@ -44,27 +44,27 @@ put more focus on throwing strikes.
 The strike zone is split into 72 small zones, and the pitcher will choose one of these
 zones on each pitch as the "target." The pitcher always throws to try to hit the target.
 
-Effect of pitching attribute "location:"
+Effect of pitching attribute "control:"
 
-The location attribute, roughly speaking, determines how well the pitcher can throw strikes.
+The control attribute, roughly speaking, determines how well the pitcher can throw strikes.
 This attribute has the following effect on the algorithm:
 
-- Pitchers with high location will choose targets in the strike zone more often. Such a
+- Pitchers with high control will choose targets in the strike zone more often. Such a
 pitcher is "aggressive," trying to get ahead of hitters and put them away early.
 
-- Pitchers with low location will choose targets outside of the strike zone more often.
+- Pitchers with low control will choose targets outside of the strike zone more often.
 These pitchers try to get batters to chase pitches more often and they throw a higher
 percentage of balls.
 
-Effect of pitching attribute "control:"
+Effect of pitching attribute "location:"
 
-The control attribute determines how well a pitcher can hit their spots. This has the
+The location attribute determines how well a pitcher can hit their spots. This has the
 following effect on the algorithm:
 
-- Pitchers with high control will be more likely to actually throw the pitch in the
+- Pitchers with high location will be more likely to actually throw the pitch in the
 zone they are aiming at (or zones close to it).
 
-- Pitchers with low control are more wild and will be more likely to throw the pitch
+- Pitchers with low location are more wild and will be more likely to throw the pitch
 in a zone that is not as close to the zone they are aiming for.
 
 Effect of pitching attribute "intelligence:"
