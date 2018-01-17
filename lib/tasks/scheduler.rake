@@ -311,7 +311,7 @@ task :simulate_games => :environment do
     # SIMULATE SEASON
     puts "Starting sim at #{Time.now}"
     190.times do |index|
-      Game.where("sim_date = ? && season_id = ?", @season.current_date, @season.id).each_with_index do |game, index| # Find all games on this date
+      Game.where("sim_date = ? AND season_id = ?", @season.current_date, @season.id).each_with_index do |game, index| # Find all games on this date
         puts "#{@season.current_date.strftime("%B %e, %Y")}: simulating game #{index + 1}..."
         game.prepare(Team.find(game.home_team_id), Team.find(game.away_team_id), @season.id)
         game.play
