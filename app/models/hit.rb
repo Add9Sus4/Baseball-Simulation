@@ -200,13 +200,13 @@ class Hit
 
     if random_num < adjusted_fielding_probability # fielder fields ball
       if random_num > initial_fielding_probability
-        @play_by_play += "\nAn average fielder would not have fielded this ball.\n"
+        # @play_by_play += "\nAn average fielder would not have fielded this ball.\n"
         fielder.records_web_gem
       end
       return true
     else # fielder doesn't field ball
       if random_num < initial_fielding_probability
-        @play_by_play += "\nAn average fielder would have fielded this ball.\n"
+        # @play_by_play += "\nAn average fielder would have fielded this ball.\n"
         fielder.records_anti_web_gem
       end
       return false
@@ -491,7 +491,7 @@ class Hit
     when "LF", "CF", "RF"
       adjustment = 0.1*agility_factor + 0.2*reaction_time_factor + 0.7*speed_factor
     end
-    @play_by_play += "\nFielder: Agi = #{fielder.agility}, Rtm = #{fielder.reaction_time}, Spd = #{fielder.speed}. Original field probabilility: #{field_probability}. New field probability: #{field_probability * adjustment}.\n"
+    # @play_by_play += "\nFielder: Agi = #{fielder.agility}, Rtm = #{fielder.reaction_time}, Spd = #{fielder.speed}. Original field probabilility: #{field_probability}. New field probability: #{field_probability * adjustment}.\n"
     field_probability * adjustment
   end
 
