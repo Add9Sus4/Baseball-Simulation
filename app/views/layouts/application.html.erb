@@ -8,6 +8,10 @@
 
   <style>
 
+  .additional-padding-left {
+    padding-left: 28px;
+  }
+
   .no-top-border {
     border-top: 0px !important;
   }
@@ -19,6 +23,9 @@
     padding-bottom: 5px !important;
   }
 
+  .col-md-border {
+      border-right: 1px solid #d7d7d7;
+  }
 
   #main_nav.affix {
     position: fixed;
@@ -106,9 +113,21 @@
               <li class="new_player_link"><%= link_to "Player", "/players/new", method: :get %></li>
             </ul>
           </li> -->
-          <li class="teams"><%= link_to "Standings", "/teams", method: :get %></li>
-          <li class="players"><%= link_to "Players", "/players", method: :get %></li>
-          <li class="leaders"><%= link_to "Leaders", "/pages/stats", method: :get %></li>
+          <li class="teams"><%= link_to "Standings", teams_path, method: :get %></li>
+          <!-- <li class="players"><%= link_to "Players", "/players", method: :get %></li> -->
+          <li class="leaders"><%= link_to "Leaders", seasons_path, method: :get %></li>
+          <li class="leaders"><%= link_to "Achievements", achievements_path, method: :get %></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Draft <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="draft-current"><%= link_to "Current", pages_draft_path, method: :get %></li>
+              <li class="draft-history"><%= link_to "History", drafts_path, method: :get %></li>
+            </ul>
+          </li>
+          <li class="freeAgents"><%= link_to "Free Agents", pages_freeAgents_path, method: :get %></li>
+          <!-- <li class="draft"><%= link_to "Draft", pages_draft_path, method: :get %></li> -->
           <!-- <li class="test"><%= link_to "Test", "/pages/test", method: :get %></li> -->
           <!-- <li class="games"><%= link_to "Games", games_path, method: :get %></li> -->
           <li class="users_link"><%= link_to "Users", users_path, method: :get %></li>
@@ -127,6 +146,7 @@
     <!-- <% flash.each do |message_type, message| %>
       <div class="alert alert-<%= message_type %>"><%= message %></div>
     <% end %> -->
+    <h1></h1>
     <div class="main_content">
       <%= yield %>
     </div>

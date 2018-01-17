@@ -1,0 +1,356 @@
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<%= stylesheet_link_tag "jquery-ui.min", 'data-turbolinks-track' => true %>
+<%= javascript_include_tag "jquery-ui.min", 'data-turbolinks-track' =>true %>
+<%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
+<%= javascript_include_tag 'moment.min', 'data-turbolinks-track' => true %>
+<%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
+
+<style media="screen">
+  .starting {
+    font-weight: bold;
+  }
+  .ui-checkboxradio-label {
+    font-size: 12px !important;
+    padding: 5px;
+  }
+
+  #lineup-table {
+    width: 400px !important;
+  }
+
+  .ui-checkboxradio {
+    padding: 5px;
+  }
+
+  .ui-checkboxradio-checked {
+    background-color: #0047b3;
+    border-color: #80b3ff;
+  }
+  .ui-sortable tr {
+    cursor: move;
+  }
+  .ui-sortable-helper {
+    display: table;
+}
+</style>
+
+<div class="container-fluid">
+  <div class="row">
+    <div id="team_name_div" class="col-md-2 col-md-border">
+      <%= render 'teamSidebar' %>
+    </div>
+    <div class="col-md-10">
+      <%= render 'teamNav' %>
+      <h4>Edit Lineup <small>(drag to reorder)</small></h4>
+      <hr>
+      <%= render 'viewModeSelect' %>
+      <table id="lineup-table" class="table lineup-table custom-smaller-table">
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>Pos</th>
+            <th>Player</th>
+            <th>Nat. Pos.</th>
+            <th class="info_cell">Age</th>
+            <th class="info_cell">Height</th>
+            <th class="info_cell">Weight</th>
+            <th class="info_cell">Bats</th>
+            <th class="info_cell">Throws</th>
+            <th class="info_cell">Salary</th>
+            <th class="attribute_cell tooltip_enable" title="Batting Average">Bat</th>
+            <th class="attribute_cell tooltip_enable" title="Power">Pow</th>
+            <th class="attribute_cell tooltip_enable" title="Contact">Con</th>
+            <th class="attribute_cell tooltip_enable" title="Plate Vision">Ptv</th>
+            <th class="attribute_cell tooltip_enable" title="Patience">Pat</th>
+            <th class="attribute_cell tooltip_enable" title="Pull Amount">Pul</th>
+            <th class="attribute_cell tooltip_enable" title="Uppercut Amount">Upp</th>
+            <th class="attribute_cell tooltip_enable" title="Speed">Spd</th>
+            <th class="attribute_cell tooltip_enable" title="Agility">Agl</th>
+            <th class="attribute_cell tooltip_enable" title="Reaction Time">Rct</th>
+            <th class="attribute_cell tooltip_enable" title="Arm Strength">Arm</th>
+            <th class="attribute_cell tooltip_enable" title="Fielding">Fld</th>
+            <th class="attribute_cell tooltip_enable" title="Throwing">Thr</th>
+            <th class="attribute_cell tooltip_enable" title="Intelligence">Int</th>
+            <th class="attribute_cell tooltip_enable" title="Endurance">End</th>
+            <th class="attribute_cell">Energy</th>
+            <th class="stats_cell tooltip_enable" title="At-bats">AB</th>
+            <th class="stats_cell tooltip_enable" title="Runs scored">R</th>
+            <th class="stats_cell tooltip_enable" title="Hits">H</th>
+            <th class="stats_cell tooltip_enable" title="Doubles">2B</th>
+            <th class="stats_cell tooltip_enable" title="Triples">3B</th>
+            <th class="stats_cell tooltip_enable" title="Home runs">HR</th>
+            <th class="stats_cell tooltip_enable" title="Runs batted in">RBI</th>
+            <th class="stats_cell tooltip_enable" title="Walks">BB</th>
+            <th class="stats_cell tooltip_enable" title="Strikeouts">K</th>
+            <th class="stats_cell tooltip_enable" title="Stolen bases">SB</th>
+            <th class="stats_cell tooltip_enable" title="Caught stealing">CS</th>
+            <th class="stats_cell tooltip_enable" title="Batting average">AVG</th>
+            <th class="stats_cell tooltip_enable" title="On-base percentage">OBP</th>
+            <th class="stats_cell tooltip_enable" title="Slugging percentage">SLG</th>
+            <th class="stats_cell tooltip_enable" title="On-base plus slugging percentage">OPS</th>
+          </tr>
+        </thead>
+        <% @lineup = @team.get_lineup %>
+        <tbody>
+          <% @lineup.each_with_index do |player, index| %>
+          <tr><span class="hidden-id" hidden><%= player.id %></span>
+            <td class="lineup_index"><%= index + 1 %></td>
+            <td class="lineup_pos_abbrev"><%= @team.find_position_abbreviation_of_player(player.id) %></td>
+            <td class="lineup_player_name"><%= player %></td>
+            <td><%= player.position %></td>
+            <td class="info_cell"><%= player.age %></td>
+            <td class="height info_cell"><%= player.formatted_height %></td>
+            <td class="info_cell"><%= player.weight %> lb.</td>
+            <td class="info_cell"><%= player.hitting_side.capitalize %></td>
+            <td class="info_cell"><%= player.throwing_hand.capitalize %></td>
+            <td class="info_cell"><%= number_to_currency(player.salary) %></td>
+            <td class="attribute_cell"><div class="attribute_cell hotcold"><%= player.batting_average %></div><div class="attribute_cell potentials_cell hotcold"><%= player.batting_average_potential %></div></td>
+            <td class="attribute_cell"><div class="attribute_cell hotcold"><%= player.power %></div><div class="attribute_cell potentials_cell hotcold"><%= player.power_potential %></div></td>
+            <td class="attribute_cell"><div class="attribute_cell hotcold"><%= player.contact %></div><div class="attribute_cell potentials_cell hotcold"><%= player.contact_potential %></div></td>
+            <td class="attribute_cell"><div class="attribute_cell hotcold"><%= player.plate_vision %></div><div class="attribute_cell potentials_cell hotcold"><%= player.plate_vision_potential %></div></td>
+            <td class="attribute_cell"><div class="attribute_cell hotcold"><%= player.patience %></div><div class="attribute_cell potentials_cell hotcold"><%= player.patience_potential %></div></td>
+            <td class="attribute_cell"><div class="attribute_cell hotcold"><%= player.pull_amount %></div><div class="attribute_cell potentials_cell hotcold"><%= player.pull_amount_potential %></div></td>
+            <td class="attribute_cell"><div class="attribute_cell hotcold"><%= player.uppercut_amount %></div><div class="attribute_cell potentials_cell hotcold"><%= player.uppercut_amount_potential %></div></td>
+            <td class="attribute_cell custom-border-left"><div class="attribute_cell hotcold"><%= player.speed %></div><div class="attribute_cell potentials_cell hotcold"><%= player.speed_potential %></div></td>
+            <td class="attribute_cell" class="attribute_cell"><div class="attribute_cell hotcold"><%= player.agility %></div><div class="attribute_cell potentials_cell hotcold"><%= player.agility_potential %></div></td>
+            <td class="attribute_cell"><div class="attribute_cell hotcold"><%= player.reaction_time %></div><div class="attribute_cell potentials_cell hotcold"><%= player.reaction_time_potential %></div></td>
+            <td class="attribute_cell"><div class="attribute_cell hotcold"><%= player.arm_strength %></div><div class="attribute_cell potentials_cell hotcold"><%= player.arm_strength_potential %></div></td>
+            <td class="attribute_cell"><div class="attribute_cell hotcold"><%= player.average_fielding %></div><div class="attribute_cell potentials_cell hotcold"><%= player.average_fielding_potential %></div></td>
+            <td class="attribute_cell"><div class="attribute_cell hotcold"><%= player.average_throwing %></div><div class="attribute_cell potentials_cell hotcold"><%= player.average_throwing_potential %></div></td>
+            <td class="attribute_cell"><div class="attribute_cell hotcold"><%= player.intelligence %></div><div class="attribute_cell potentials_cell hotcold"><%= player.intelligence_potential %></div></td>
+            <td class="attribute_cell"><div class="attribute_cell hotcold"><%= player.endurance %></div><div class="attribute_cell potentials_cell hotcold"><%= player.endurance_potential %></div></td>
+            <td class="attribute_cell"><div class="attribute_cell hotcold"><%= player.current_energy %></div></td>
+            <td class="stats_cell"><%= player.atbats %></td>
+            <td class="stats_cell"><%= player.runs %></td>
+            <td class="stats_cell"><%= player.hits %></td>
+            <td class="stats_cell"><%= player.doubles %></td>
+            <td class="stats_cell"><%= player.triples %></td>
+            <td class="stats_cell"><%= player.home_runs %></td>
+            <td class="stats_cell"><%= player.rbi %></td>
+            <td class="stats_cell"><%= player.walks %></td>
+            <td class="stats_cell"><%= player.strikeouts %></td>
+            <td class="stats_cell"><%= player.stolen_bases %></td>
+            <td class="stats_cell"><%= player.caught_stealing %></td>
+            <% @avg = player.hits.to_f/player.atbats.to_f %>
+            <% @obp = (player.hits + player.walks).to_f/(player.atbats + player.walks).to_f %>
+            <% @slg = (player.hits - player.doubles - player.triples - player.home_runs + 2 * player.doubles + 3 * player.triples + 4 * player.home_runs).to_f/player.atbats.to_f %>
+            <% @ops = @obp + @slg %>
+            <td class="stats_cell custom-border-left"><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></td>
+            <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
+            <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
+            <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <button id="btn-save-position-changes" class="btn btn-primary">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+
+$("#btn-bench-all").click(function() {
+  $(".position-select").each(function() {
+    $(this).val("BN");
+  });
+  lineupChanged();
+});
+
+$("#btn-reset-all").click(function() {
+  $(".position-select").each(function() {
+    var pos = $(this).closest('tr').find(".hidden-pos-abbrev").text();
+    $(this).val(pos);
+  });
+  lineupChanged();
+});
+
+function lineupChanged() {
+  boldStarters();
+  var valid = true;
+  // For each position in the lineup
+  $("#lineup-table tbody tr").each(function() {
+    var lineup_pos = $(this).find(".lineup_pos_abbrev").text();
+    var num_matches = 0;
+    // Loop through player
+    $(".position-select").each(function() {
+      // If a match is found
+      if ($(this).val() == lineup_pos) {
+        num_matches += 1;
+        name = $(this).closest("tr").find("td:first").text();
+      }
+    });
+    // Replace name in lineup
+    if (num_matches > 1) {
+      $(this).find(".lineup_player_name").text("Multiple Players");
+      $(this).find(".lineup_player_name").addClass("position-mismatch")
+      valid = false;
+    } else if (num_matches == 0) {
+      $(this).find(".lineup_player_name").text("--");
+      $(this).find(".lineup_player_name").addClass("position-mismatch")
+      valid = false;
+    } else {
+      $(this).find(".lineup_player_name").text(name);
+      $(this).find(".lineup_player_name").removeClass("position-mismatch")
+    }
+  });
+  // If there's a position mismatch (either one or more empty
+  // positions, or multiple players at a position), disable save changes button
+  $("#btn-save-position-changes").prop("disabled",!valid);
+}
+
+// When any of the position select boxes are changed
+$(".position-select").change(function() {
+  lineupChanged();
+});
+
+$(".position-select").each(function() {
+  var option = $(this).closest('tr').find(".hidden-pos-abbrev").text();
+  $(this).val(option);
+});
+
+$(".lineup-table tbody").sortable({
+  stop: function(event, ui) {
+    console.log("dragging stopped");
+    $(this).find("tr").each(function(index) {
+      $(this).find(".lineup_index").text(index + 1);
+    });
+  }
+});
+
+
+
+var change_activated = false;
+
+$("#btn-save-position-changes").click(function() {
+  var lineup = [];
+  $('#lineup-table tbody tr').each(function() {
+    lineup.push($(this).find(".lineup_pos_abbrev").text());
+  });
+  var positions = {};
+  $(".position-select").each(function() {
+    positions[$(this).val()] = $(this).closest("tr").find(".hidden-pos-id").text();
+  });
+  var location_string = window.location.href;
+  console.log("location: " + location_string.substring(0, location_string.length - 11));
+
+
+  $.ajax({
+    url: location_string.substring(0, location_string.length - 11),
+    type: 'PATCH',
+    dataType: 'json',
+    data: { "team": {
+        "lineup1": lineup[0],
+        "lineup2": lineup[1],
+        "lineup3": lineup[2],
+        "lineup4": lineup[3],
+        "lineup5": lineup[4],
+        "lineup6": lineup[5],
+        "lineup7": lineup[6],
+        "lineup8": lineup[7],
+        "lineup9": lineup[8],
+        "catcher": positions["C"],
+        "designated_hitter": positions["DH"],
+        "first_base": positions["1B"],
+        "second_base": positions["2B"],
+        "third_base": positions["3B"],
+        "shortstop": positions["SS"],
+        "left_field": positions["LF"],
+        "center_field": positions["CF"],
+        "right_field": positions["RF"]
+      }
+    },
+    success: function (data, textStatus, jqXHR) {
+      console.log("ajax request completed!");
+      location.reload();
+      $("#edit-pitching-div").hide();
+      $("#edit-defense-div").show();
+    }
+  });
+});
+
+function boldStarters() {
+  // Bold starting players
+  $(".position-select").each(function() {
+    if ($(this).val() != "BN") {
+      $(this).closest('tr').find(".player-name-cell").addClass("starting");
+      console.log("adding");
+    } else {
+      $(this).closest('tr').find(".player-name-cell").removeClass("starting");
+      console.log("removing");
+    }
+  });
+}
+boldStarters();
+  hotCold();
+
+  $("input").checkboxradio({
+      icon: false
+  });
+
+  $("#radio-info").click(function() {
+    $(".info_cell").each(function() {
+      $(this).show();
+    });
+    $(".stats_cell").each(function() {
+      $(this).hide();
+    });
+    $(".attribute_cell").each(function() {
+      $(this).hide();
+    });
+    $(".potentials_cell").each(function() {
+      $(this).hide();
+    });
+  });
+
+  $("#radio-stats").click(function() {
+    $(".info_cell").each(function() {
+      $(this).hide();
+    });
+    $(".stats_cell").each(function() {
+      $(this).show();
+    });
+    $(".attribute_cell").each(function() {
+      $(this).hide();
+    });
+    $(".potentials_cell").each(function() {
+      $(this).hide();
+    });
+  });
+
+  $("#radio-attributes").click(function() {
+    $(".info_cell").each(function() {
+      $(this).hide();
+    });
+    $(".stats_cell").each(function() {
+      $(this).hide();
+    });
+    $(".attribute_cell").each(function() {
+      $(this).show();
+    });
+    $(".potentials_cell").each(function() {
+      $(this).hide();
+    });
+  });
+
+  $("#radio-potentials").click(function() {
+    $(".info_cell").each(function() {
+      $(this).hide();
+    });
+    $(".stats_cell").each(function() {
+      $(this).hide();
+    });
+    $(".attribute_cell").each(function() {
+      $(this).show();
+    });
+    $(".potentials_cell").each(function() {
+      $(this).show();
+    });
+  });
+
+  $(".info_cell").hide();
+  $(".stats_cell").hide();
+  $(".potentials_cell").hide();
+</script>

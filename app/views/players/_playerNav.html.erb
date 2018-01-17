@@ -1,0 +1,28 @@
+<div class="content nav-wrapper player-nav">
+  <nav id="player_nav" class="navbar navbar-default">
+    <div>
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#playerNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="playerNavbar">
+        <ul class="nav navbar-nav">
+          <li class="attributes"><%= link_to "Attributes", player_path, method: :get %></li>
+          <% if @player.is_pitcher %>
+            <li class="pitching"><%= link_to "Pitching Stats", showPitchingStats_player_path, method: :get %></li>
+            <li class="pitching"><%= link_to "Pitch Locations", showPitchLocations_player_path, method: :get %></li>
+          <% else %>
+            <li class="batting"><%= link_to "Batting Stats", showBattingStats_player_path, method: :get %></li>
+          <% end %>
+          <li class="fielding"><%= link_to "Fielding Stats", showFieldingStats_player_path, method: :get %></li>
+          <li class="transactions"><%= link_to "Transactions", showTransactions_player_path, method: :get %></li>
+          <!-- <li class="gameLog"><%= link_to "Game log", showGameLog_player_path, method: :get %></li> -->
+          <li class="achievements"><%= link_to "Achievements", showAchievements_player_path, method: :get %></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>

@@ -1,0 +1,278 @@
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<%= stylesheet_link_tag "jquery-ui.min", 'data-turbolinks-track' => true %>
+<%= javascript_include_tag "jquery-ui.min", 'data-turbolinks-track' =>true %>
+<%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
+<%= javascript_include_tag 'moment.min', 'data-turbolinks-track' => true %>
+<%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
+
+<style media="screen">
+#position-player-roster-table td {
+  font-size: 12px;
+  height: 15px;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
+
+.starting {
+  font-weight: bold;
+}
+.ui-checkboxradio-label {
+  font-size: 12px !important;
+  padding: 5px;
+}
+
+.ui-checkboxradio {
+  padding: 5px;
+}
+
+.ui-checkboxradio-checked {
+  background-color: #0047b3;
+  border-color: #80b3ff;
+}
+</style>
+<div class="container-fluid">
+  <div class="row">
+    <div id="team_name_div" class="col-md-2 col-md-border">
+      <%= render 'teamSidebar' %>
+    </div>
+    <div class="col-md-10">
+      <%= render 'teamNav' %>
+      <h4>Batting</h4>
+      <hr>
+      <%= render 'viewModeSelect' %>
+      <table id="position-player-roster-table" class="table table-default custom-smaller-table">
+        <thead>
+          <th>Name</th>
+          <th class="info_cell">Drafted</th>
+          <th>Position</th>
+          <th class="info_cell">Natural Position</th>
+          <th>Age</th>
+          <th class="info_cell">Height</th>
+          <th class="info_cell">Weight</th>
+          <th class="info_cell">Bats</th>
+          <th class="info_cell">Throws</th>
+          <th class="info_cell">Salary</th>
+          <th class="attribute_cell tooltip_enable" title="Batting Average">Bat</th>
+          <th class="attribute_cell tooltip_enable" title="Power">Pow</th>
+          <th class="attribute_cell tooltip_enable" title="Contact">Con</th>
+          <th class="attribute_cell tooltip_enable" title="Plate Vision">Ptv</th>
+          <th class="attribute_cell tooltip_enable" title="Patience">Pat</th>
+          <th class="attribute_cell tooltip_enable" title="Pull Amount">Pul</th>
+          <th class="attribute_cell tooltip_enable" title="Uppercut Amount">Upp</th>
+          <th class="attribute_cell tooltip_enable" title="Speed">Spd</th>
+          <th class="attribute_cell tooltip_enable" title="Agility">Agl</th>
+          <th class="attribute_cell tooltip_enable" title="Reaction Time">Rct</th>
+          <th class="attribute_cell tooltip_enable" title="Arm Strength">Arm</th>
+          <th class="attribute_cell tooltip_enable" title="Fielding">Fld</th>
+          <th class="attribute_cell tooltip_enable" title="Throwing">Thr</th>
+          <th class="attribute_cell tooltip_enable" title="Intelligence">Int</th>
+          <th class="attribute_cell tooltip_enable" title="Endurance">End</th>
+          <th class="attribute_cell">Energy</th>
+          <th class="stats_cell tooltip_enable" title="At-bats">AB</th>
+          <th class="stats_cell tooltip_enable" title="Runs scored">R</th>
+          <th class="stats_cell tooltip_enable" title="Hits">H</th>
+          <th class="stats_cell tooltip_enable" title="Doubles">2B</th>
+          <th class="stats_cell tooltip_enable" title="Triples">3B</th>
+          <th class="stats_cell tooltip_enable" title="Home runs">HR</th>
+          <th class="stats_cell tooltip_enable" title="Runs batted in">RBI</th>
+          <th class="stats_cell tooltip_enable" title="Walks">BB</th>
+          <th class="stats_cell tooltip_enable" title="Strikeouts">K</th>
+          <th class="stats_cell tooltip_enable" title="Stolen bases">SB</th>
+          <th class="stats_cell tooltip_enable" title="Caught stealing">CS</th>
+          <th class="stats_cell tooltip_enable" title="Batting average">AVG</th>
+          <th class="stats_cell tooltip_enable" title="On-base percentage">OBP</th>
+          <th class="stats_cell tooltip_enable" title="Slugging percentage">SLG</th>
+          <th class="stats_cell tooltip_enable" title="On-base plus slugging percentage">OPS</th>
+        </thead>
+        <%
+        @total_atbats = 0
+        @total_runs = 0
+        @total_hits = 0
+        @total_doubles = 0
+        @total_triples = 0
+        @total_home_runs = 0
+        @total_rbi = 0
+        @total_walks = 0
+        @total_strikeouts = 0
+        @total_stolen_bases = 0
+        @total_caught_stealing = 0
+        %>
+        <tbody>
+          <% @team.get_batters.each do |player| %>
+          <tr>
+            <td class="player-name-cell"><%= link_to player, player, method: :get %></td>
+            <td class="info_cell">
+              <% if player.draft_year > 0 %>
+                <%= link_to player.draft_year, Draft.where("year = ?", player.draft_year).first, method: :get %> <small>(Rd. <%= player.draft_round %>, #<%= player.draft_position %>)</small>
+              <% else %>-<% end %></td>
+            <td class="position-abbrev-cell"><%= @team.find_position_abbreviation_of_player(player.id)%></td>
+            <td class="info_cell"><%= player.position %></td>
+            <td><%= player.age %></td>
+            <td class="height info_cell"><%= player.formatted_height %></td>
+            <td class="info_cell"><%= player.weight %> lb.</td>
+            <td class="info_cell"><%= player.hitting_side.capitalize %></td>
+            <td class="info_cell"><%= player.throwing_hand.capitalize %></td>
+            <td class="info_cell"><%= number_to_currency(player.salary) %></td>
+            <td class="attribute_cell hotcold custom-border-left"><%= player.batting_average %></td>
+            <td class="attribute_cell hotcold"><%= player.power %></td>
+            <td class="attribute_cell hotcold"><%= player.contact %></td>
+            <td class="attribute_cell hotcold"><%= player.plate_vision %></td>
+            <td class="attribute_cell hotcold"><%= player.patience %></td>
+            <td class="attribute_cell hotcold"><%= player.pull_amount %></td>
+            <td class="attribute_cell hotcold"><%= player.uppercut_amount %></td>
+            <td class="attribute_cell hotcold custom-border-left"><%= player.speed %></td>
+            <td class="attribute_cell hotcold"><%= player.agility %></td>
+            <td class="attribute_cell hotcold"><%= player.reaction_time %></td>
+            <td class="attribute_cell hotcold"><%= player.arm_strength %></td>
+            <td class="attribute_cell hotcold"><%= player.average_fielding %></td>
+            <td class="attribute_cell hotcold"><%= player.average_throwing %></td>
+            <td class="attribute_cell hotcold"><%= player.intelligence %></td>
+            <td class="attribute_cell hotcold"><%= player.endurance %></td>
+            <td class="attribute_cell hotcold custom-border-left"><%= player.current_energy %></td>
+            <td class="stats_cell custom-border-left"><%= player.atbats %></td><% @total_atbats += player.atbats %>
+            <td class="stats_cell"><%= player.runs %></td><% @total_runs += player.runs %>
+            <td class="stats_cell"><%= player.hits %></td><% @total_hits += player.hits %>
+            <td class="stats_cell"><%= player.doubles %></td><% @total_doubles += player.doubles %>
+            <td class="stats_cell"><%= player.triples %></td><% @total_triples += player.triples %>
+            <td class="stats_cell"><%= player.home_runs %></td><% @total_home_runs += player.home_runs %>
+            <td class="stats_cell"><%= player.rbi %></td><% @total_rbi += player.rbi %>
+            <td class="stats_cell"><%= player.walks %></td><% @total_walks += player.walks %>
+            <td class="stats_cell"><%= player.strikeouts %></td><% @total_strikeouts += player.strikeouts %>
+            <td class="stats_cell"><%= player.stolen_bases %></td><% @total_stolen_bases += player.stolen_bases %>
+            <td class="stats_cell"><%= player.caught_stealing %></td><% @total_caught_stealing += player.caught_stealing %>
+            <% @avg = player.hits.to_f/player.atbats.to_f %>
+            <% @obp = (player.hits + player.walks).to_f/(player.atbats + player.walks).to_f %>
+            <% @slg = (player.hits - player.doubles - player.triples - player.home_runs + 2 * player.doubles + 3 * player.triples + 4 * player.home_runs).to_f/player.atbats.to_f %>
+            <% @ops = @obp + @slg %>
+            <td class="stats_cell custom-border-left"><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></td>
+            <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
+            <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
+            <td class="stats_cell"><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
+          </tr>
+          <tr class="attribute_cell potentials_cell" hidden>
+            <td class="no-top-border">&nbsp;</td><td class="no-top-border">&nbsp;</td><td class="no-top-border">&nbsp;</td>
+            <td class="hotcold no-top-border custom-border-left"><%= player.batting_average_potential %></td>
+            <td class="hotcold no-top-border"><%= player.power_potential %></td>
+            <td class="hotcold no-top-border"><%= player.contact_potential %></td>
+            <td class="hotcold no-top-border"><%= player.plate_vision_potential %></td>
+            <td class="hotcold no-top-border"><%= player.patience_potential %></td>
+            <td class="hotcold no-top-border"><%= player.pull_amount_potential %></td>
+            <td class="hotcold no-top-border"><%= player.uppercut_amount_potential %></td>
+            <td class="hotcold custom-border-left no-top-border"><%= player.speed_potential %></td>
+            <td class="hotcold no-top-border"><%= player.agility_potential %></td>
+            <td class="hotcold no-top-border"><%= player.reaction_time_potential %></td>
+            <td class="hotcold no-top-border"><%= player.arm_strength_potential %></td>
+            <td class="hotcold no-top-border"><%= player.average_fielding_potential %></td>
+            <td class="hotcold no-top-border"><%= player.average_throwing_potential %></td>
+            <td class="hotcold no-top-border"><%= player.intelligence_potential %></td>
+            <td class="hotcold no-top-border"><%= player.endurance_potential %></td>
+            <td class="no-top-border custom-border-left"></td>
+          </tr>
+          <% end %>
+          <tr class="stats_cell">
+            <td><strong>Totals</strong></td>
+            <td>&nbsp;</td><td>&nbsp;</td>
+            <td><strong><%= @total_atbats %></strong></td>
+            <td><strong><%= @total_runs %></strong></td>
+            <td><strong><%= @total_hits %></strong></td>
+            <td><strong><%= @total_doubles %></strong></td>
+            <td><strong><%= @total_triples %></strong></td>
+            <td><strong><%= @total_home_runs %></strong></td>
+            <td><strong><%= @total_rbi %></strong></td>
+            <td><strong><%= @total_walks %></strong></td>
+            <td><strong><%= @total_strikeouts %></strong></td>
+            <td><strong><%= @total_stolen_bases %></strong></td>
+            <td><strong><%= @total_caught_stealing %></strong></td>
+            <% @total_avg = @total_hits.to_f/@total_atbats.to_f %>
+            <% @total_obp = (@total_hits + @total_walks).to_f/(@total_atbats + @total_walks).to_f %>
+            <% @total_slg = (@total_hits - @total_doubles - @total_triples - @total_home_runs + 2 * @total_doubles + 3 * @total_triples + 4 * @total_home_runs).to_f/@total_atbats.to_f %>
+            <% @total_ops = @total_obp + @total_slg %>
+            <td><strong><%= number_with_precision(drop_leading_zero(@total_avg), precision: 3) %></strong></td>
+            <td><strong><%= number_with_precision(drop_leading_zero(@total_obp), precision: 3) %></strong></td>
+            <td><strong><%= number_with_precision(drop_leading_zero(@total_slg), precision: 3) %></strong></td>
+            <td><strong><%= number_with_precision(drop_leading_zero(@total_ops), precision: 3) %></strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(".player-name-cell").each(function() {
+    var pos = $(this).closest('tr').find(".position-abbrev-cell").text();
+    if (pos != "BN") {
+      $(this).addClass("starting");
+    }
+  });
+
+  $("input").checkboxradio({
+      icon: false
+  });
+
+  $("#radio-info").click(function() {
+    $(".info_cell").each(function() {
+      $(this).show();
+    });
+    $(".stats_cell").each(function() {
+      $(this).hide();
+    });
+    $(".attribute_cell").each(function() {
+      $(this).hide();
+    });
+    $(".potentials_cell").each(function() {
+      $(this).hide();
+    });
+  });
+
+  $("#radio-stats").click(function() {
+    $(".info_cell").each(function() {
+      $(this).hide();
+    });
+    $(".stats_cell").each(function() {
+      $(this).show();
+    });
+    $(".attribute_cell").each(function() {
+      $(this).hide();
+    });
+    $(".potentials_cell").each(function() {
+      $(this).hide();
+    });
+  });
+
+  $("#radio-attributes").click(function() {
+    $(".info_cell").each(function() {
+      $(this).hide();
+    });
+    $(".stats_cell").each(function() {
+      $(this).hide();
+    });
+    $(".attribute_cell").each(function() {
+      $(this).show();
+    });
+    $(".potentials_cell").each(function() {
+      $(this).hide();
+    });
+  });
+
+  $("#radio-potentials").click(function() {
+    $(".info_cell").each(function() {
+      $(this).hide();
+    });
+    $(".stats_cell").each(function() {
+      $(this).hide();
+    });
+    $(".attribute_cell").each(function() {
+      $(this).show();
+    });
+    $(".potentials_cell").each(function() {
+      $(this).show();
+    });
+  });
+
+  $(".info_cell").hide();
+  $(".stats_cell").hide();
+
+  hotCold();
+</script>

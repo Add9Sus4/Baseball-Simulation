@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
+  resources :achievements
+  resources :transactions
+  resources :drafts
+  resources :season_team_stats
   resources :games
+  resources :seasons
   get 'password_resets/new'
 
   get 'password_resets/edit'
@@ -18,16 +23,50 @@ Rails.application.routes.draw do
 
   get 'pages/test'
 
+  get 'pages/leaders'
+
+  get 'pages/draft'
+
+  get 'pages/freeAgents'
+
   get 'signup' => 'users#new'
 
   get 'login' => 'sessions#new'
   post 'login' => 'sessions#create'
   delete 'logout' => 'sessions#destroy'
 
-  resources :players
+  get 'seasons/currentSeason'
+
+
+  resources :players do
+    member do
+      get 'showGameLog'
+      get 'showPitchingStats'
+      get 'showBattingStats'
+      get 'showTransactions'
+      get 'showFieldingStats'
+      get 'showAchievements'
+      get 'showPitchLocations'
+    end
+  end
   resources :teams do
     member do
       get 'edit_position'
+      get 'batters'
+      get 'pitchers'
+      get 'editPitching'
+      get 'editPositions'
+      get 'schedule'
+      get 'april'
+      get 'may'
+      get 'june'
+      get 'july'
+      get 'august'
+      get 'september'
+      get 'currentStandings'
+      get 'minors'
+      get 'transactions'
+      get 'editLineup'
     end
   end
   resources :users

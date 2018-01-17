@@ -130,4 +130,14 @@ class AttributeAdjustments
   # Pitcher control losses
   PITCHER_ENDURANCE_AFFECTS_CONTROL_MIN = 0.80 # 0 endurance -> lose 20% of control attribute
   PITCHER_ENDURANCE_AFFECTS_CONTROL_MAX = 1.0 # 100 endurance -> lose 0% of control attribute
+
+  #################### INTELLIGENCE ####################
+
+  # Attribute improvement
+  PLAYER_INTELLIGENCE_AFFECTS_ATTRIBUTE_IMPROVEMENT_MIN = 5   # 0 intelligence -> gain at most 5 pts each season
+  PLAYER_INTELLIGENCE_AFFECTS_ATTRIBUTE_IMPROVEMENT_MAX = 25  # 100 intelligence -> gain at most 25 pts each season
+
+  # Attribute decline (inverse)
+  PLAYER_INTELLIGENCE_AFFECTS_ATTRIBUTE_DECLINE_MIN = 5   # 100 intelligence -> lose at most 5 pts each season
+  PLAYER_INTELLIGENCE_AFFECTS_ATTRIBUTE_DECLINE_MAX = 25  # 0 intelligence -> lose at most 25 pts each season
 end

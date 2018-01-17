@@ -1,15 +1,17 @@
 <style media="screen">
-  .table-schedule td {
-    height: 70px;
-    font-size: 10px;
-    background-color: #FBFBFC;
-  }
+.table-schedule td {
+  height: 50px;
+  font-size: 9px;
+  background-color: #FBFBFC;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
   .table-schedule th {
     background-color: #e0e6eb;
   }
 
   .game-display {
-    font-size: 15px;
+    font-size: 12px;
     float: right;
   }
   .opponent-name {
@@ -19,12 +21,25 @@
     height: 550px;
     overflow-y: scroll;
   }
+  .ui-checkboxradio-label {
+    font-size: 12px !important;
+    padding: 5px;
+  }
+
+  .ui-checkboxradio {
+    padding: 5px;
+  }
+
+  .ui-checkboxradio-checked {
+    background-color: #0047b3;
+    border-color: #80b3ff;
+  }
 </style>
 
 
 
 <div id="calendar-div" class="container-fluid">
-  <% @months = ["April", "May", "June", "July", "August", "September"] %>
+  <% @months = ["May"] %>
   <% @months.each do |month| %>
     <h3 class="month-name"><%= month %></h3>
     <table class="table table-default table-bordered table-schedule">
@@ -35,18 +50,20 @@
       </thead>
       <tbody>
         <% (0..5).each do |index| %>
-          <% @cal_dates = @team.get_dates_array(index, month) %>
+          <% @cal_dates = @team.get_dates_array(index, month, Season.last.year) %>
           <tr>
             <% @cal_dates.each do |date| %>
               <td><%= date.nil? == true ? '-' : date.day %>
-                <% if !date.nil? && date == Season.first.current_date %><span id="current-date"><strong>Today</strong></span><% end %>
-              <br/><br/><% @game = Game.where("(home_team_id = ? OR away_team_id = ?) AND sim_date = ?", @team.id, @team.id, date).first %>
+                <% if !date.nil? && date == Season.last.current_date %><span id="current-date"><strong>Today</strong></span><% end %>
+              <br/><br/>
+              <% @current_team_id = Team.where("static_id = ?", @team.static_id).last.id %>
+              <% @game = Game.where("(home_team_id = ? OR away_team_id = ?) AND sim_date = ?", @current_team_id, @current_team_id, date).first %>
                 <% if !@game.nil? %>
-                  <% if @game.home_team_id == @team.id %>
+                  <% if @game.home_team_id == @current_team_id %>
                     <% @opponent = Team.find(@game.away_team_id) %>
                     <!-- <span class="home"></span> -->
                     <span class="opponent-name"><%= link_to @opponent.full_name, @opponent, method: :get %></span>
-                  <% elsif @game.away_team_id == @team.id %>
+                  <% elsif @game.away_team_id == @current_team_id %>
                     <% @opponent = Team.find(@game.home_team_id) %>
                     <!-- <span class="away"></span> -->
                     <span class="opponent-name">@<%= link_to @opponent.full_name, @opponent, method: :get %></span>
@@ -57,7 +74,7 @@
                 <% if !@game.nil? && !@game.attendance.nil? %>
                   <% @home_team_runs = @game.home_runs_scored.split("_").map(&:to_i).sum %>
                   <% @away_team_runs = @game.away_runs_scored.split("_").map(&:to_i).sum %>
-                  <% if @team.id == @game.home_team_id %>
+                  <% if @current_team_id == @game.home_team_id %>
                     <% if @home_team_runs > @away_team_runs %>
                     <span class="win"></span>
                       <% @game_display += "W, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>

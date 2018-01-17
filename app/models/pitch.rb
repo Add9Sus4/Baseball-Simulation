@@ -59,7 +59,7 @@
   end
 
   def determine_pitch_speed(pitcher, pitch_type)
-    armStrengthFactor = pitcher.get_armStrength.to_f/100.0
+    armStrengthFactor = pitcher.get_arm_strength.to_f/100.0
     case pitch_type
     when "FA" # 4-seam Fastball: min 80 mph, max 103 mph
       getRandomValue(0, 1, 80, 103, (103 - 80)*armStrengthFactor, 10)
@@ -142,7 +142,7 @@
       movement_factor     = 1.0 - rand()
     end
     movement_adjustment = map_attribute_to_range(pitcher.movement, AttributeAdjustments::PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MAX, true)
-    arm_strength_adjustment = map_attribute_to_range(pitcher.get_armStrength, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MAX, true)
+    arm_strength_adjustment = map_attribute_to_range(pitcher.get_arm_strength, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MAX, true)
 
     # return weighted average of adjustments
     arm_strength_adjustment*arm_strength_factor + movement_adjustment*movement_factor
@@ -215,7 +215,7 @@
     end
 
     contact_percentage *= map_attribute_to_range(@batter.contact, AttributeAdjustments::BATTER_CONTACT_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::BATTER_CONTACT_AFFECTS_CONTACT_PERCENTAGE_MAX, false)*
-      map_attribute_to_range(@pitcher.get_armStrength, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MAX, true)*
+      map_attribute_to_range(@pitcher.get_arm_strength, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_ARM_STRENGTH_AFFECTS_CONTACT_PERCENTAGE_MAX, true)*
       map_attribute_to_range(@pitcher.movement, AttributeAdjustments::PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MIN, AttributeAdjustments::PITCHER_MOVEMENT_AFFECTS_CONTACT_PERCENTAGE_MAX, true)
     # key = "#{zone_id}_#{pitcher_hand}_#{batter_hand}_#{balls}_#{strikes}_#{pitch_type}"
     # @heat_maps.contact_percentages[key]*

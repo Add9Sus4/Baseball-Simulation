@@ -1,0 +1,186 @@
+<% if !@player.is_pitcher %>
+  <div class="container-fluid">
+    <div class="col-md-8">
+      <h3 class="app_text_main">Attributes</h3>
+      <table class="table table-default">
+        <thead>
+          <tr>
+            <th>Age</th>
+            <th>Year</th>
+            <th>Team</th>
+            <th class="tooltip_enable" title="How often this player makes solid contact">Bat</th>
+            <th class="tooltip_enable" title="How far this player is able to hit the ball">Pow</th>
+            <th class="tooltip_enable" title="How well this player makes contact with the ball">Con</th>
+            <th class="tooltip_enable" title="How well this player can tell balls from strikes">Ptv</th>
+            <th class="tooltip_enable" title="How aggressive this player is at the plate">Pat</th>
+            <th class="tooltip_enable" title="How much this player tends to pull the ball">Pul</th>
+            <th class="tooltip_enable" title="How much this player tends to hit the ball in the air instead of on the ground">Upp</th>
+            <th class="tooltip_enable" title="How fast this player can run">Spd</th>
+            <th class="attribute_cell tooltip_enable" title="Agility">Agl</th>
+            <th class="attribute_cell tooltip_enable" title="Reaction Time">Rct</th>
+            <th class="attribute_cell tooltip_enable" title="Arm Strength">Arm</th>
+            <th class="attribute_cell tooltip_enable" title="Fielding">Fld</th>
+            <th class="attribute_cell tooltip_enable" title="Throwing">Thr</th>
+            <th class="attribute_cell tooltip_enable" title="Intelligence">Int</th>
+            <th class="attribute_cell tooltip_enable" title="Endurance">End</th>
+            <th class="attribute_cell">Energy</th>
+            <th class="attribute_cell">Salary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @player.season_attributes.each do |player| %>
+          <tr>
+            <td><%= player.age %></td>
+            <td><%= Season.find(player.season_id).year %></td>
+            <% @team = Team.find(player.team_id) %>
+            <td><%= link_to @team.name, @team, method: :get %></td>
+            <td class="hotcold custom-border-left"><%= player.batting_average %></td>
+            <td class="hotcold"><%= player.power %></td>
+            <td class="hotcold"><%= player.contact %></td>
+            <td class="hotcold"><%= player.plate_vision %></td>
+            <td class="hotcold"><%= player.patience %></td>
+            <td class="hotcold"><%= player.pull_amount %></td>
+            <td class="hotcold"><%= player.uppercut_amount %></td>
+            <td class="hotcold"><%= player.speed %></td>
+            <td class="hotcold custom-border-left"><%= player.agility %></td>
+            <td class="hotcold"><%= player.reaction_time %></td>
+            <td class="hotcold"><%= player.arm_strength %></td>
+            <td class="hotcold"><%= @player.average_fielding %></td>
+            <td class="hotcold"><%= @player.average_throwing %></td>
+            <td class="hotcold"><%= player.intelligence %></td>
+            <td class="hotcold"><%= player.endurance %></td>
+            <td class="hotcold custom-border-left"><%= @player.current_energy %></td>
+            <td class="custom-border-left"><%= number_to_currency(player.salary, precision: 0) %></td>
+          </tr>
+          <% end %>
+          <tr>
+            <td><%= @player.age %></td>
+            <td><%= Season.last.year %></td>
+            <td><%= link_to @player.team.name, @player.team, method: :get %></td>
+            <td class="hotcold custom-border-left"><%= @player.batting_average %></td>
+            <td class="hotcold"><%= @player.power %></td>
+            <td class="hotcold"><%= @player.contact %></td>
+            <td class="hotcold"><%= @player.plate_vision %></td>
+            <td class="hotcold"><%= @player.patience %></td>
+            <td class="hotcold"><%= @player.pull_amount %></td>
+            <td class="hotcold"><%= @player.uppercut_amount %></td>
+            <td class="hotcold"><%= @player.speed %></td>
+            <td class="hotcold custom-border-left"><%= @player.agility %></td>
+            <td class="hotcold"><%= @player.reaction_time %></td>
+            <td class="hotcold"><%= @player.arm_strength %></td>
+            <td class="hotcold"><%= @player.average_fielding %></td>
+            <td class="hotcold"><%= @player.average_throwing %></td>
+            <td class="hotcold"><%= @player.intelligence %></td>
+            <td class="hotcold"><%= @player.endurance %></td>
+            <td class="hotcold custom-border-left"><%= @player.current_energy %></td>
+            <td class="custom-border-left"><%= number_to_currency(@player.salary, precision: 0) %></td>
+          </tr>
+          <tr>
+            <td class="custom-border-top"><strong>Potentials</strong></td>
+            <td class="custom-border-top"><strong>-</strong></td>
+            <td class="custom-border-top"><strong>-</strong></td>
+            <td class="hotcold custom-border-top custom-border-left"><strong><%= @player.batting_average_potential %></strong></td>
+            <td class="hotcold custom-border-top"><strong><%= @player.power_potential %></strong></td>
+            <td class="hotcold custom-border-top"><strong><%= @player.contact_potential %></td>
+            <td class="hotcold custom-border-top"><strong><%= @player.plate_vision_potential %></strong></td>
+            <td class="hotcold custom-border-top"><strong><%= @player.patience_potential %></strong></td>
+            <td class="hotcold custom-border-top"><strong><%= @player.pull_amount_potential %></strong></td>
+            <td class="hotcold custom-border-top"><strong><%= @player.uppercut_amount_potential %></strong></td>
+            <td class="hotcold custom-border-top"><strong><%= @player.speed_potential %></strong></strong></td>
+            <td class="hotcold custom-border-top custom-border-left"><strong><%= @player.agility_potential %></strong></td>
+            <td class="hotcold custom-border-top"><strong><%= @player.reaction_time_potential %></strong></td>
+            <td class="hotcold custom-border-top"><strong><%= @player.arm_strength_potential %></strong></td>
+            <td class="hotcold custom-border-top"><strong><%= @player.average_fielding_potential %></strong></td>
+            <td class="hotcold custom-border-top"><strong><%= @player.average_throwing_potential %></strong></td>
+            <td class="hotcold custom-border-top"><strong><%= @player.intelligence_potential %></strong></td>
+            <td class="hotcold custom-border-top"><strong><%= @player.endurance_potential %></strong></td>
+            <td class="custom-border-left"></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% else %>
+  <div class="container-fluid">
+    <div class="col-md-8">
+      <h3 class="app_text_main">Attributes</h3>
+      <table class="table table-default">
+        <thead>
+          <tr>
+            <th>Age</th>
+            <th>Year</th>
+            <th>Team</th>
+            <th class="attribute_cell tooltip_enable" title="How hard this player can throw the ball">Arm</th>
+            <th class="attribute_cell tooltip_enable" title="How well this player can make a pitch deviate from its expected path">Mov</th>
+            <th class="attribute_cell tooltip_enable" title="How well this player can throw strikes instead of balls">Ctr</th>
+            <th class="attribute_cell tooltip_enable" title="How well this player can hit a specific location with a pitch">Loc</th>
+            <th class="attribute_cell tooltip_enable" title="How well this player can make quick, sudden movements">Agi</th>
+            <th class="attribute_cell tooltip_enable" title="How quickly this player reacts to a play">Rtm</th>
+            <th class="attribute_cell tooltip_enable" title="How well this player can field the ball">Fld</th>
+            <th class="attribute_cell tooltip_enable" title="How accurately this player can throw the ball">Thr</th>
+            <th class="attribute_cell tooltip_enable" title="How often this player makes the right decision for a given play">Int</th>
+            <th class="attribute_cell tooltip_enable" title="How quickly this player gets tired">End</th>
+            <th class="attribute_cell">Energy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @player.season_attributes.each do |player| %>
+          <tr>
+            <td><%= player.age %></td>
+            <td><%= Season.find(player.season_id).year %></td>
+            <% @team = Team.find(player.team_id) %>
+            <td><%= link_to @team.name, @team, method: :get %></td>
+            <td class="attribute_cell hotcold custom-border-left"><%= player.arm_strength %></td>
+            <td class="attribute_cell hotcold"><%= player.movement %></td>
+            <td class="attribute_cell hotcold"><%= player.control %></td>
+            <td class="attribute_cell hotcold"><%= player.location %></td>
+            <td class="attribute_cell hotcold custom-border-left"><%= player.agility %></td>
+            <td class="attribute_cell hotcold"><%= player.reaction_time %></td>
+            <td class="attribute_cell hotcold"><%= @player.average_fielding %></td>
+            <td class="attribute_cell hotcold"><%= @player.average_throwing %></td>
+            <td class="attribute_cell hotcold"><%= player.intelligence %></td>
+            <td class="attribute_cell hotcold"><%= player.endurance %></td>
+            <td class="hotcold custom-border-left"><%= @player.current_energy %></td>
+            <td class="custom-border-left"><%= number_to_currency(player.salary, precision: 0) %></td>
+          </tr>
+          <% end %>
+          <tr>
+            <td><%= @player.age %></td>
+            <td><%= Season.last.year %></td>
+            <td><%= link_to @player.team.name, @player.team, method: :get %></td>
+            <td class="attribute_cell hotcold custom-border-left"><%= @player.arm_strength %></td>
+            <td class="attribute_cell hotcold"><%= @player.movement %></td>
+            <td class="attribute_cell hotcold"><%= @player.control %></td>
+            <td class="attribute_cell hotcold"><%= @player.location %></td>
+            <td class="attribute_cell hotcold custom-border-left"><%= @player.agility %></td>
+            <td class="attribute_cell hotcold"><%= @player.reaction_time %></td>
+            <td class="attribute_cell hotcold"><%= @player.average_fielding %></td>
+            <td class="attribute_cell hotcold"><%= @player.average_throwing %></td>
+            <td class="attribute_cell hotcold"><%= @player.intelligence %></td>
+            <td class="attribute_cell hotcold"><%= @player.endurance %></td>
+            <td class="hotcold custom-border-left"><%= @player.current_energy %></td>
+            <td class="custom-border-left"><%= number_to_currency(@player.salary, precision: 0) %></td>
+          </tr>
+          <tr>
+            <td class="custom-border-top"><strong>Potentials</strong></td>
+            <td class="custom-border-top"><strong>-</strong></td>
+            <td class="custom-border-top"><strong>-</strong></td>
+            <td class="attribute_cell hotcold custom-border-top custom-border-left"><strong><%= @player.arm_strength_potential %></strong></td>
+            <td class="attribute_cell hotcold custom-border-top"><strong><%= @player.movement_potential %></strong></td>
+            <td class="attribute_cell hotcold custom-border-top"><strong><%= @player.control_potential %></strong></td>
+            <td class="attribute_cell hotcold custom-border-top"><strong><%= @player.location_potential %></strong></td>
+            <td class="attribute_cell hotcold custom-border-top custom-border-left"><strong><%= @player.agility_potential %></strong></td>
+            <td class="attribute_cell hotcold custom-border-top"><strong><%= @player.reaction_time_potential %></strong></td>
+            <td class="attribute_cell hotcold custom-border-top"><strong><%= @player.average_fielding_potential %></strong></td>
+            <td class="attribute_cell hotcold custom-border-top"><strong><%= @player.average_throwing_potential %></strong></td>
+            <td class="attribute_cell hotcold custom-border-top"><strong><%= @player.intelligence_potential %></strong></td>
+            <td class="attribute_cell hotcold custom-border-top"><strong><%= @player.endurance_potential %></strong></td>
+            <td class="custom-border-left"></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>

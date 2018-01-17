@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.5'
 # rake
-gem 'rake', '12.0.0'
+gem 'rake', '12.3.0'
 # will_paginate
 gem 'will_paginate', '~> 3.0.5'
 # Use bootstrap pagination styles

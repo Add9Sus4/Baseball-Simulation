@@ -19,7 +19,7 @@ class Hit
     # Batter contact slightly affects hit power (contact of 0 -> no change, contact of 100 -> 5% reduction in power)
     contact_adjustment = map_attribute_to_range(@atbat.batter.contact, AttributeAdjustments::BATTER_CONTACT_AFFECTS_HIT_POWER_MIN, AttributeAdjustments::BATTER_CONTACT_AFFECTS_HIT_POWER_MAX, true)
 
-    @power = getRandomValue(0, 1, 0, 100, average_power, 20)*contact_adjustment
+    @power = getRandomValueFromDistribution(average_power, 20)*contact_adjustment
   end
 
   # What kind of hit was it?
@@ -171,11 +171,46 @@ class Hit
     when HitType::LINE_DRIVE
       location_factor = 0.70
     when HitType::FLY_BALL
-      location_factor = 0.80
+      location_factor = 0.85
     when HitType::POP_UP
       location_factor = 0.98
     end
-    0.90*location_factor*map_attribute_to_range(@atbat.batter.batting_average, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_FIELD_PROBABILITY_MIN, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_FIELD_PROBABILITY_MAX, true)
+    0.92*location_factor*map_attribute_to_range(@atbat.batter.batting_average, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_FIELD_PROBABILITY_MIN, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_FIELD_PROBABILITY_MAX, true)
+  end
+
+  # Returns true if the fielder at the specified position reaches the ball, false if they don't
+  def fieldsBall(position_abbrev)
+    fielder = get_fielder(position_abbrev)
+    location_factor = 1
+    case @type
+    when HitType::GROUND_BALL
+      location_factor = 0.80
+    when HitType::LINE_DRIVE
+      location_factor = 0.70
+    when HitType::FLY_BALL
+      location_factor = 0.85
+    when HitType::POP_UP
+      location_factor = 0.98
+    end
+    initial_fielding_probability = 0.92*location_factor*map_attribute_to_range(@atbat.batter.batting_average, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_FIELD_PROBABILITY_MIN, AttributeAdjustments::BATTER_BATTING_AVERAGE_AFFECTS_FIELD_PROBABILITY_MAX, true)
+
+    random_num = rand()
+
+    adjusted_fielding_probability = adjust_field_probability_adjustment_based_on_position(initial_fielding_probability, position_abbrev)
+
+    if random_num < adjusted_fielding_probability # fielder fields ball
+      if random_num > initial_fielding_probability
+        @play_by_play += "\nAn average fielder would not have fielded this ball.\n"
+        fielder.records_web_gem
+      end
+      return true
+    else # fielder doesn't field ball
+      if random_num < initial_fielding_probability
+        @play_by_play += "\nAn average fielder would have fielded this ball.\n"
+        fielder.records_anti_web_gem
+      end
+      return false
+    end
   end
 
   # Result of the play
@@ -185,19 +220,19 @@ class Hit
     when HitLocation::PITCHER
       case @type
       when HitType::GROUND_BALL
-        if rand() < chanceOfReachingBall
+        if fieldsBall("P")
            hits_grounder("PITCHER")
         else
           hits_single("PITCHER")
         end
       when HitType::LINE_DRIVE
-        if rand() < chanceOfReachingBall
+        if fieldsBall("P")
           hits_liner("PITCHER")
         else
           hits_single("CENTER")
         end
       when HitType::POP_UP
-        if rand() < chanceOfReachingBall
+        if fieldsBall("P")
           hits_popup("PITCHER")
         else
           hits_single("PITCHER")
@@ -206,13 +241,13 @@ class Hit
     when HitLocation::CATCHER
       case @type
       when HitType::GROUND_BALL
-        if rand() < chanceOfReachingBall
+        if fieldsBall("C")
           hits_grounder("CATCHER")
         else
           hits_single("CATCHER")
         end
       when HitType::POP_UP
-        if rand() < chanceOfReachingBall
+        if fieldsBall("C")
           hits_popup("CATCHER")
         else
           hits_single("CATCHER")
@@ -221,7 +256,7 @@ class Hit
     when HitLocation::FIRST_BASEMAN
       case @type
       when HitType::GROUND_BALL
-        if rand() < chanceOfReachingBall
+        if fieldsBall("1B")
           hits_grounder("FIRST")
         else
           if rand() > Constants::PERCENT_SINGLES_TO_EXTRA_BASE_HITS
@@ -231,7 +266,7 @@ class Hit
           end
         end
       when HitType::LINE_DRIVE
-        if rand() < chanceOfReachingBall
+        if fieldsBall("1B")
           hits_liner("FIRST")
         else
           random = rand()
@@ -244,7 +279,7 @@ class Hit
           end
         end
       when HitType::POP_UP
-        if rand() < chanceOfReachingBall
+        if fieldsBall("1B")
           hits_popup("FIRST")
         else
           hits_single("FIRST")
@@ -253,7 +288,7 @@ class Hit
     when HitLocation::SECOND_BASEMAN
       case @type
       when HitType::GROUND_BALL
-        if rand() < chanceOfReachingBall
+        if fieldsBall("2B")
           hits_grounder("SECOND")
         else
           if rand() > 0.75
@@ -263,11 +298,11 @@ class Hit
           end
         end
       when HitType::LINE_DRIVE
-        if rand() < chanceOfReachingBall
+        if fieldsBall("2B")
           hits_liner("SECOND")
         else
           random = rand()
-          if random < 0.50
+          if random > Constants::PERCENT_SINGLES_TO_EXTRA_BASE_HITS
             if rand() > 0.75
               hits_single("RIGHT")
             else
@@ -286,7 +321,7 @@ class Hit
           end
         end
       when HitType::POP_UP
-        if rand() < chanceOfReachingBall
+        if fieldsBall("2B")
           hits_popup("SECOND")
         else
           hits_single("SECOND")
@@ -295,7 +330,7 @@ class Hit
     when HitLocation::THIRD_BASEMAN
       case @type
       when HitType::GROUND_BALL
-        if rand() < chanceOfReachingBall
+        if fieldsBall("3B")
           hits_grounder("THIRD")
         else
           if rand() > Constants::PERCENT_SINGLES_TO_EXTRA_BASE_HITS
@@ -305,7 +340,7 @@ class Hit
           end
         end
       when HitType::LINE_DRIVE
-        if rand() < chanceOfReachingBall
+        if fieldsBall("3B")
           hits_liner("THIRD")
         else
           random = rand()
@@ -318,7 +353,7 @@ class Hit
           end
         end
       when HitType::POP_UP
-        if rand() < chanceOfReachingBall
+        if fieldsBall("3B")
           hits_popup("THIRD")
         else
           hits_single("THIRD")
@@ -327,7 +362,7 @@ class Hit
     when HitLocation::SHORTSTOP
       case @type
       when HitType::GROUND_BALL
-        if rand() < chanceOfReachingBall
+        if fieldsBall("SS")
           hits_grounder("SHORT")
         else
           if rand() > 0.75
@@ -337,11 +372,11 @@ class Hit
           end
         end
       when HitType::LINE_DRIVE
-        if rand() < chanceOfReachingBall
+        if fieldsBall("SS")
           hits_liner("SHORT")
         else
           random = rand()
-          if random < 0.50
+          if random > Constants::PERCENT_SINGLES_TO_EXTRA_BASE_HITS
             if rand() > 0.75
               hits_single("LEFT")
             else
@@ -360,14 +395,14 @@ class Hit
           end
         end
       when HitType::POP_UP
-        if rand() < chanceOfReachingBall
+        if fieldsBall("SS")
           hits_popup("SHORT")
         else
           hits_single("SHORT")
         end
       end
     when HitLocation::LEFT_FIELDER
-      if rand() < chanceOfReachingBall
+      if fieldsBall("LF")
         hits_fly_ball("LEFT")
       elsif rand(60..100) < @power
         hits_home_run("LEFT")
@@ -385,7 +420,7 @@ class Hit
         end
       end
     when HitLocation::CENTER_FIELDER
-      if rand() < chanceOfReachingBall
+      if fieldsBall("CF")
         hits_fly_ball("CENTER")
       elsif rand(0..100) < @power
         hits_home_run("CENTER")
@@ -403,7 +438,7 @@ class Hit
         end
       end
     when HitLocation::RIGHT_FIELDER
-      if rand() < chanceOfReachingBall
+      if fieldsBall("RF")
         hits_fly_ball("RIGHT")
       elsif rand(0..100) < @power
         hits_home_run("RIGHT")
@@ -432,28 +467,32 @@ class Hit
   # This calculates an adjustment to field probabilty based on position and fielder attributes.
   # The three fielding attributes (agility, reactionTime, and speed) are weighed more or less depending on position.
   # This function returns a value to be multiplied with the previous field probability.
-  def calculate_field_probability_adjustment_based_on_position(fielder, position_abbrev)
+  def adjust_field_probability_adjustment_based_on_position(field_probability, position_abbrev)
+    fielder = get_fielder(position_abbrev)
     agility_factor = map_attribute_to_range(fielder.agility,
       AttributeAdjustments::FIELDER_AGILITY_AFFECTS_FIELD_PROBABILITY_MIN,
       AttributeAdjustments::FIELDER_AGILITY_AFFECTS_FIELD_PROBABILITY_MAX, false)
-    reaction_time_factor = map_attribute_to_range(fielder.reactionTime,
+    reaction_time_factor = map_attribute_to_range(fielder.reaction_time,
       AttributeAdjustments::FIELDER_REACTION_TIME_AFFECTS_FIELD_PROBABILITY_MIN,
       AttributeAdjustments::FIELDER_REACTION_TIME_AFFECTS_FIELD_PROBABILITY_MAX, false)
     speed_factor = map_attribute_to_range(fielder.speed,
       AttributeAdjustments::FIELDER_SPEED_AFFECTS_FIELD_PROBABILITY_MIN,
       AttributeAdjustments::FIELDER_SPEED_AFFECTS_FIELD_PROBABILITY_MAX, false)
+    adjustment = 1.0
     case position_abbrev
     when "C"
-      0.7*agility_factor + 0.3*reaction_time_factor
+      adjustment = 0.7*agility_factor + 0.3*reaction_time_factor
     when "P"
-      0.1*agility_factor + 0.9*reaction_time_factor
+      adjustment = 0.1*agility_factor + 0.9*reaction_time_factor
     when "1B", "3B"
-      0.45*agility_factor + 0.45*reaction_time_factor + 0.1*speed_factor
+      adjustment = 0.45*agility_factor + 0.45*reaction_time_factor + 0.1*speed_factor
     when "2B", "SS"
-      0.5*agility_factor + 0.4*reaction_time_factor + 0.1*speed_factor
+      adjustment = 0.5*agility_factor + 0.4*reaction_time_factor + 0.1*speed_factor
     when "LF", "CF", "RF"
-      0.1*agility_factor + 0.2*reaction_time_factor + 0.7*speed_factor
+      adjustment = 0.1*agility_factor + 0.2*reaction_time_factor + 0.7*speed_factor
     end
+    @play_by_play += "\nFielder: Agi = #{fielder.agility}, Rtm = #{fielder.reaction_time}, Spd = #{fielder.speed}. Original field probabilility: #{field_probability}. New field probability: #{field_probability * adjustment}.\n"
+    field_probability * adjustment
   end
 
   def hits_single(location)
@@ -504,7 +543,11 @@ class Hit
   end
 
   def get_fielder(position_abbrev)
-    @atbat.fielding_team.game_position_players[position_abbrev]
+    if position_abbrev == "P"
+      @atbat.pitcher
+    else
+      @atbat.fielding_team.game_position_players[position_abbrev]
+    end
   end
 
   def hits_fly_ball(location)

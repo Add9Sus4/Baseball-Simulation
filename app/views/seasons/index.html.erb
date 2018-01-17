@@ -1,0 +1,97 @@
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<%= stylesheet_link_tag "jquery-ui.min", 'data-turbolinks-track' => true %>
+<%= javascript_include_tag "jquery-ui.min", 'data-turbolinks-track' =>true %>
+<%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
+<%= javascript_include_tag 'moment.min', 'data-turbolinks-track' => true %>
+<%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
+
+<style media="screen">
+#json-overlay {
+    background-color: #333333;
+    opacity: 0.8;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 100;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-image: url('/assets/ajax-loader.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+    backgroun-size: 200%;
+}
+.ui-selectmenu-open {
+  font-size: 10px;
+}
+
+.ui-selectmenu-text {
+  font-size: 10px;
+}
+
+.custom-left-padding {
+  padding-left: 45px;
+}
+
+</style>
+
+<!-- This div is used to display loading gif during ajax call -->
+<div id=json-overlay hidden></div>
+
+<div class="custom-left-padding">
+  <fieldset>
+    <select id="season-select" name="season-select">
+      <% @seasons.each do |season| %>
+      <option value="<%= season.id %>"><%= season.year %></option>
+      <% end %>
+      <% @current_season = Season.last %>
+      <option value="Current" selected><%= @current_season.year %></option>
+      <option value="All">All</option>
+    </select>
+  </fieldset>
+</div>
+
+<!-- This div holds content loaded from ajax -->
+<div id="season-div" class="container-fluid"></div>
+
+<script type="text/javascript">
+
+  // Select menu to choose what year to display stats from
+  $("#season-select").selectmenu({
+    width: 60,
+    change: function(event, ui) {
+      var ajax_url = "";
+      if (ui.item.value == "Current") { // Current season
+        ajax_url = "/pages/stats";
+      } else if (ui.item.value == "All") { // All seasons
+        ajax_url = "/pages/leaders";
+      } else { // Past season
+        ajax_url = "/seasons/" + ui.item.value
+      }
+      $("#json-overlay").show();
+      $.ajax({
+        url: ajax_url,
+        cache: false,
+        success: function(html){
+          $("#season-div").empty().append(html);
+          $("#json-overlay").hide();
+        }
+      });
+    }
+  });
+
+  // By default, show current season stats
+  $(document).ready(function() {
+    $("#json-overlay").show();
+    $.ajax({
+      url: "/pages/stats",
+      cache: false,
+      success: function(html){
+        $("#season-div").empty().append(html);
+        $("#json-overlay").hide();
+      }
+    });
+  });
+
+</script>

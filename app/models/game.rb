@@ -8,18 +8,18 @@
 class Game < ActiveRecord::Base
   include Reusable
   validate :teams_must_be_different
-  attr_accessor :play_by_play, :home_team, :away_team, :inning_status, :inning_number, :over
+  attr_accessor :play_by_play, :home_team, :away_team, :inning_status, :inning_number, :over, :winning_team, :losing_team
+
+  belongs_to :season
 
   def teams_must_be_different
     errors.add(:base, "Teams cannot be the same") if home_team_id == away_team_id
   end
 
   # Prepare for the game
-  def prepare home_team, away_team, game_num, season_num
-    @game_date = Season.first.current_date
+  def prepare home_team, away_team, season_num
     @home_team = home_team
     @away_team = away_team
-    @game_number = game_num
     @season_id = season_num
 
     @over = false
@@ -164,6 +164,9 @@ class Game < ActiveRecord::Base
     # If the home team wins
     if @home_team.game_score > @away_team.game_score
 
+      @winning_team = @home_team.id
+      @losing_team = @away_team.id
+
       # Game w/l
       winning_pitcher = @home_team.in_line_for_win.id
       losing_pitcher = @away_team.in_line_for_loss.id
@@ -182,6 +185,9 @@ class Game < ActiveRecord::Base
 
     # If the away team wins
     else
+
+      @winning_team = @away_team.id
+      @losing_team = @home_team.id
 
       # Game w/l
       winning_pitcher = @away_team.in_line_for_win.id
@@ -251,6 +257,26 @@ class Game < ActiveRecord::Base
       :assists => player.assists + player.game_assists,
       :putouts => player.putouts + player.game_putouts,
       :chances => player.chances + player.game_chances)
+
+      # Check for achievements
+      if player.game_home_runs >= 4
+        Achievement.create!(achievement_type: "4+ HR", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+      end
+      if player.game_rbi >= 10
+        Achievement.create!(achievement_type: "10+ RBI", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+      end
+      if player.game_stolen_bases >= 4
+        Achievement.create!(achievement_type: "4+ SB", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+      end
+      if player.game_hits >= 6
+        Achievement.create!(achievement_type: "6+ H", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+      end
+      if player.game_walks >= 5
+        Achievement.create!(achievement_type: "5+ BB", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+      end
+      if player.game_hits > (player.game_doubles + player.game_triples + player.game_home_runs) && player.game_doubles >= 1 && player.game_triples >= 1 && player.game_home_runs >= 1
+        Achievement.create!(achievement_type: "Cycle", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+      end
     end
 
     # puts 'updating away player stats'
@@ -299,24 +325,53 @@ class Game < ActiveRecord::Base
       :assists => player.assists + player.game_assists,
       :putouts => player.putouts + player.game_putouts,
       :chances => player.chances + player.game_chances)
+
+      # Check for achievements
+      if player.game_home_runs >= 4
+        Achievement.create!(achievement_type: "4+ HR", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+      end
+      if player.game_rbi >= 10
+        Achievement.create!(achievement_type: "10+ RBI", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+      end
+      if player.game_stolen_bases >= 4
+        Achievement.create!(achievement_type: "4+ SB", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+      end
+      if player.game_hits >= 6
+        Achievement.create!(achievement_type: "6+ H", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+      end
+      if player.game_walks >= 5
+        Achievement.create!(achievement_type: "5+ BB", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+      end
+      if player.game_hits > (player.game_doubles + player.game_triples + player.game_home_runs) && player.game_doubles >= 1 && player.game_triples >= 1 && player.game_home_runs >= 1
+        Achievement.create!(achievement_type: "Cycle", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+      end
     end
 
     # puts 'updating home fielding stats'
-
+    @home_errors_committed = 0 # need this later when checking for perfect game achievement
+    @away_errors_committed = 0 # need this later when checking for perfect game achievement
     @home_team.game_position_players.each do |key, player|
-      player.update_columns(:errors_committed => player.errors_committed + player.game_errors_committed,
+      player.update_columns(:games => player.games + 1,
+        :errors_committed => player.errors_committed + player.game_errors_committed,
         :chances => player.chances + player.game_chances,
         :putouts => player.putouts + player.game_putouts,
-        :assists => player.assists + player.game_assists)
+        :assists => player.assists + player.game_assists,
+        :web_gems => player.web_gems + player.game_web_gems,
+        :anti_web_gems => player.anti_web_gems + player.game_anti_web_gems)
+        @home_errors_committed += player.game_errors_committed
     end
 
     # puts 'updating away fielding stats'
 
     @away_team.game_position_players.each do |key, player|
-      player.update_columns(:errors_committed => player.errors_committed + player.game_errors_committed,
+      player.update_columns(:games => player.games + 1,
+        :errors_committed => player.errors_committed + player.game_errors_committed,
         :chances => player.chances + player.game_chances,
         :putouts => player.putouts + player.game_putouts,
-        :assists => player.assists + player.game_assists)
+        :assists => player.assists + player.game_assists,
+        :web_gems => player.web_gems + player.game_web_gems,
+        :anti_web_gems => player.anti_web_gems + player.game_anti_web_gems)
+        @away_errors_committed += player.game_errors_committed
     end
 
     # puts 'updating home pitcher stats'
@@ -340,10 +395,13 @@ class Game < ActiveRecord::Base
       player.balls_thrown ||= 0
       player.intentional_walks_allowed ||= 0
 
-      player.update_columns(:errors_committed => player.errors_committed + player.game_errors_committed,
+      player.update_columns(:games => player.games + 1,
+      :errors_committed => player.errors_committed + player.game_errors_committed,
       :assists => player.assists + player.game_assists,
       :putouts => player.putouts + player.game_putouts,
       :chances => player.chances + player.game_chances,
+      :web_gems => player.web_gems + player.game_web_gems,
+      :anti_web_gems => player.anti_web_gems + player.game_anti_web_gems,
       :outs_recorded => player.outs_recorded + player.game_outs_recorded,
       :hits_allowed => player.hits_allowed + player.game_hits_allowed,
       :runs_allowed => player.runs_allowed + player.game_runs_allowed,
@@ -427,8 +485,19 @@ class Game < ActiveRecord::Base
       :zone_70_pitches => player.zone_70_pitches + player.zone_pitches_thrown[69],
       :zone_71_pitches => player.zone_71_pitches + player.zone_pitches_thrown[70],
       :zone_72_pitches => player.zone_72_pitches + player.zone_pitches_thrown[71],
-      :current_energy => player.game_current_energy)
+      :current_energy => 100)
 
+      # Check for achievements
+      if player.game_hits_allowed == 0 && @home_team.game_pitcher_list.length == 1
+        if player.game_walks_allowed == 0 && @home_errors_committed == 0 # Perfect game
+          Achievement.create!(achievement_type: "PG", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+        else # No-hitter
+          Achievement.create!(achievement_type: "NH", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+        end
+      end
+      if player.game_strikeouts_recorded >= 16
+        Achievement.create!(achievement_type: "16+ K", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+      end
     end
 
     # puts 'updating away pitcher stats'
@@ -451,10 +520,13 @@ class Game < ActiveRecord::Base
       player.balls_thrown ||= 0
       player.intentional_walks_allowed ||= 0
 
-      player.update_columns(:errors_committed => player.errors_committed + player.game_errors_committed,
+      player.update_columns(:games => player.games + 1,
+      :errors_committed => player.errors_committed + player.game_errors_committed,
       :assists => player.assists + player.game_assists,
       :putouts => player.putouts + player.game_putouts,
       :chances => player.chances + player.game_chances,
+      :web_gems => player.web_gems + player.game_web_gems,
+      :anti_web_gems => player.anti_web_gems + player.game_anti_web_gems,
       :outs_recorded => player.outs_recorded + player.game_outs_recorded,
       :hits_allowed => player.hits_allowed + player.game_hits_allowed,
       :runs_allowed => player.runs_allowed + player.game_runs_allowed,
@@ -538,8 +610,19 @@ class Game < ActiveRecord::Base
       :zone_70_pitches => player.zone_70_pitches + player.zone_pitches_thrown[69],
       :zone_71_pitches => player.zone_71_pitches + player.zone_pitches_thrown[70],
       :zone_72_pitches => player.zone_72_pitches + player.zone_pitches_thrown[71],
-      :current_energy => player.game_current_energy)
+      :current_energy => 100)
 
+      # Check for achievements
+      if player.game_hits_allowed == 0 && @away_team.game_pitcher_list.length == 1
+        if player.game_walks_allowed == 0 && @away_errors_committed == 0 # Perfect game
+          Achievement.create!(achievement_type: "PG", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+        else # No-hitter
+          Achievement.create!(achievement_type: "NH", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+        end
+      end
+      if player.game_strikeouts_recorded >= 16
+        Achievement.create!(achievement_type: "16+ K", player_id: player.id, team_id: player.team.id, game_id: self.id, achievement_date: self.sim_date)
+      end
     end
 
     # home batting stats
@@ -780,6 +863,10 @@ class Game < ActiveRecord::Base
 
     # puts 'updating game stats'
 
+    if @play_by_play.bytesize > 65535
+      @play_by_play = @play_by_play.byteslice(0, 65534)
+    end
+
     # Game attributes
     update_attributes(:attendance => @home_team.capacity,
     :stadium_name => @home_team.stadium,
@@ -842,12 +929,10 @@ class Game < ActiveRecord::Base
     :player_of_the_game => nil,
     :home_inning_scores => @home_team.game_inning_scores,
     :away_inning_scores => @away_team.game_inning_scores,
-    :pbp => "play_by_play", # TODO: change this back to play_by_play
+    :pbp => @play_by_play, # TODO: change this back to play_by_play
     :season_id => @season_id,
-    :game_number => @game_number,
     :winning_pitcher => winning_pitcher,
-    :losing_pitcher => losing_pitcher,
-    :sim_date => @game_date)
+    :losing_pitcher => losing_pitcher)
 
   end
 

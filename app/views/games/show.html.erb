@@ -19,6 +19,11 @@
 <!-- <%= image_tag "bases_runner_on_first.png" %> -->
 <div id="top-div">
   <p class="app_text_main">
+    <strong>Date:</strong>
+    <%= @game.sim_date.strftime("%B %e, %Y") %>
+  </p>
+
+  <p class="app_text_main">
     <strong>Stadium name:</strong>
     <%= @game.stadium_name %>
   </p>
@@ -112,8 +117,10 @@
             <th>AB</th>
             <th>R</th>
             <th>H</th>
-            <th>RBI</th>
+            <th>2B</th>
+            <th>3B</th>
             <th>HR</th>
+            <th>RBI</th>
             <th>BB</th>
             <th>K</th>
             <th>SB</th>
@@ -126,6 +133,8 @@
           <% @away_runs_scored = @game.away_runs_scored.split("_").map(&:to_i) %>
           <% @away_hits = @game.away_hits.split("_").map(&:to_i) %>
           <% @away_rbi = @game.away_RBI.split("_").map(&:to_i) %>
+          <% @away_doubles = @game.away_doubles.split("_").map(&:to_i) %>
+          <% @away_triples = @game.away_triples.split("_").map(&:to_i) %>
           <% @away_home_runs = @game.away_home_runs.split("_").map(&:to_i) %>
           <% @away_walks = @game.away_walks.split("_").map(&:to_i) %>
           <% @away_strikeouts = @game.away_strikeouts.split("_").map(&:to_i) %>
@@ -137,8 +146,10 @@
             <td><%= @away_atbats[i] %></td>
             <td><%= @away_runs_scored[i] %></td>
             <td><%= @away_hits[i] %></td>
-            <td><%= @away_rbi[i] %></td>
+            <td><%= @away_doubles[i] %></td>
+            <td><%= @away_triples[i] %></td>
             <td><%= @away_home_runs[i] %></td>
+            <td><%= @away_rbi[i] %></td>
             <td><%= @away_walks[i] %></td>
             <td><%= @away_strikeouts[i] %></td>
             <td><%= @away_stolen_bases[i] %></td>
@@ -149,8 +160,10 @@
             <td><strong><%= @away_atbats.sum %></strong></td>
             <td><strong><%= @away_runs_scored.sum %></strong></td>
             <td><strong><%= @away_hits.sum %></strong></td>
-            <td><strong><%= @away_rbi.sum %></strong></td>
+            <td><strong><%= @away_doubles.sum %></strong></td>
+            <td><strong><%= @away_triples.sum %></strong></td>
             <td><strong><%= @away_home_runs.sum %></strong></td>
+            <td><strong><%= @away_rbi.sum %></strong></td>
             <td><strong><%= @away_walks.sum %></strong></td>
             <td><strong><%= @away_strikeouts.sum %></strong></td>
             <td><strong><%= @away_stolen_bases.sum %></strong></td>
@@ -172,8 +185,10 @@
             <th>AB</th>
             <th>R</th>
             <th>H</th>
-            <th>RBI</th>
+            <th>2B</th>
+            <th>3B</th>
             <th>HR</th>
+            <th>RBI</th>
             <th>BB</th>
             <th>K</th>
             <th>SB</th>
@@ -186,6 +201,8 @@
           <% @home_runs_scored = @game.home_runs_scored.split("_").map(&:to_i) %>
           <% @home_hits = @game.home_hits.split("_").map(&:to_i) %>
           <% @home_rbi = @game.home_RBI.split("_").map(&:to_i) %>
+          <% @home_doubles = @game.home_doubles.split("_").map(&:to_i) %>
+          <% @home_triples = @game.home_triples.split("_").map(&:to_i) %>
           <% @home_home_runs = @game.home_home_runs.split("_").map(&:to_i) %>
           <% @home_walks = @game.home_walks.split("_").map(&:to_i) %>
           <% @home_strikeouts = @game.home_strikeouts.split("_").map(&:to_i) %>
@@ -197,8 +214,10 @@
             <td><%= @home_atbats[i] %></td>
             <td><%= @home_runs_scored[i] %></td>
             <td><%= @home_hits[i] %></td>
-            <td><%= @home_rbi[i] %></td>
+            <td><%= @home_doubles[i] %></td>
+            <td><%= @home_triples[i] %></td>
             <td><%= @home_home_runs[i] %></td>
+            <td><%= @home_rbi[i] %></td>
             <td><%= @home_walks[i] %></td>
             <td><%= @home_strikeouts[i] %></td>
             <td><%= @home_stolen_bases[i] %></td>
@@ -209,8 +228,10 @@
             <td><strong><%= @home_atbats.sum %></strong></td>
             <td><strong><%= @home_runs_scored.sum %></strong></td>
             <td><strong><%= @home_hits.sum %></strong></td>
-            <td><strong><%= @home_rbi.sum %></strong></td>
+            <td><strong><%= @home_doubles.sum %></strong></td>
+            <td><strong><%= @home_triples.sum %></strong></td>
             <td><strong><%= @home_home_runs.sum %></strong></td>
+            <td><strong><%= @home_rbi.sum %></strong></td>
             <td><strong><%= @home_walks.sum %></strong></td>
             <td><strong><%= @home_strikeouts.sum %></strong></td>
             <td><strong><%= @home_stolen_bases.sum %></strong></td>

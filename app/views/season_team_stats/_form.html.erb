@@ -1,0 +1,17 @@
+<%= form_for(@season_team_stat) do |f| %>
+  <% if @season_team_stat.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@season_team_stat.errors.count, "error") %> prohibited this season_team_stat from being saved:</h2>
+
+      <ul>
+      <% @season_team_stat.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

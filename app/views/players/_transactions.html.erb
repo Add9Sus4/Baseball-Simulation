@@ -1,0 +1,22 @@
+<% @transactions = Transaction.where("promoted_player_id = ? OR dropped_player_id = ? OR signed_player_id = ? OR drafted_player_id = ?", @player.id, @player.id, @player.id, @player.id) %>
+<ul>
+  <% @transactions.each do |transaction| %>
+    <% case transaction.transaction_type %>
+    <% when "Draft" %>
+      <% @drafted_player = Player.find(transaction.drafted_player_id) %>
+      <li><%= transaction.transaction_date.strftime("%B %e, %Y") %>: The <%= link_to transaction.team.full_name, transaction.team, method: :get %> draft <%= link_to @drafted_player.full_name, @drafted_player, method: :get %> (Round <%= @drafted_player.draft_round %>, #<%= @drafted_player.draft_position%>).</li>
+    <% when "Promotion" %>
+    <% @promoted_player = Player.find(transaction.promoted_player_id) %>
+    <% @dropped_player = Player.find(transaction.dropped_player_id) %>
+      <li><%= transaction.transaction_date.strftime("%B %e, %Y") %>: The <%= link_to transaction.team.full_name, transaction.team, method: :get %> promote <%= link_to @promoted_player.full_name, @promoted_player, method: :get %> and drop <%= link_to @dropped_player.full_name, @dropped_player, method: :get %>.</li>
+    <% when "Signing" %>
+    <% @signed_player = Player.find(transaction.signed_player_id) %>
+      <% if transaction.dropped_player_id != nil %>
+      <% @dropped_player = Player.find(transaction.dropped_player_id) %>
+        <li><%= transaction.transaction_date.strftime("%B %e, %Y") %>: The <%= link_to transaction.team.full_name, transaction.team, method: :get %> sign <%= link_to @signed_player.full_name, @signed_player, method: :get %> and drop <%= link_to @dropped_player.full_name, @dropped_player, method: :get %>.</li>
+      <% else %>
+      <li><%= transaction.transaction_date.strftime("%B %e, %Y") %>: The <%= link_to transaction.team.full_name, transaction.team, method: :get %> sign <%= link_to @signed_player.full_name, @signed_player, method: :get %>.</li>
+      <% end %>
+    <% end %>
+  <% end %>
+</ul>

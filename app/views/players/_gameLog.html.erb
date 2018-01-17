@@ -1,0 +1,82 @@
+<div class="col-sm-4">
+  <% if !@player.is_pitcher %><!-- Player is not a pitcher -->
+  <table class="table table-condensed table-striped table-bordered table-responsive custom-smaller-table sortable">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Opponent</th>
+        <th>Lineup</th>
+        <th>AB</th>
+        <th>R</th>
+        <th>H</th>
+        <th>RBI</th>
+        <th>HR</th>
+        <th>BB</th>
+        <th>K</th>
+        <th>SB</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @player_games.each_with_index do |game, index| %>
+      <tr>
+        <td><%= link_to game.sim_date.strftime("%B %e, %Y"), game, method: :get %></td>
+        <td><%= link_to @opponents[index].full_name, @opponents[index], method: :get %></td>
+        <td><%= @indices[index] + 1 %></td>
+        <td><%= @atbats[index] %></td>
+        <td><%= @runs_scored[index] %></td>
+        <td><%= @hits[index] %></td>
+        <td><%= @rbi[index] %></td>
+        <td><%= @home_runs[index] %></td>
+        <td><%= @walks[index] %></td>
+        <td><%= @strikeouts[index] %></td>
+        <td><%= @stolen_bases[index] %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <% else %>
+  <!-- Player is a pitcher -->
+  <table class="table table-condensed table-striped table-bordered table-responsive custom-smaller-table sortable">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Opponent</th>
+        <th>Role</th>
+        <th>W/L</th>
+        <th>IP</th>
+        <th>H</th>
+        <th>R</th>
+        <th>ER</th>
+        <th>BB</th>
+        <th>K</th>
+        <th>HR</th>
+        <th>PT</th>
+        <th>S</th>
+        <th>BB</th>
+        <th>%S</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @player_games.each_with_index do |game, index| %>
+      <tr>
+        <td><%= link_to game.sim_date.strftime("%B %e, %Y"), game, method: :get %></td>
+        <td><%= link_to @opponents[index].full_name, @opponents[index], method: :get %></td>
+        <td><% if @indices[index] == 0 %>Starter<% else %>Relief<% end %></td>
+        <td><%= @pitching_results[index] %></td>
+        <td><%= @outs_recorded[index]/3 %></td>
+        <td><%= @hits_allowed[index] %></td>
+        <td><%= @runs_allowed[index] %></td>
+        <td><%= @earned_runs_allowed[index] %></td>
+        <td><%= @walks_allowed[index] %></td>
+        <td><%= @strikeouts_recorded[index] %></td>
+        <td><%= @home_runs_allowed[index] %></td>
+        <td><%= @strikes_thrown[index] + @balls_thrown[index] %></td>
+        <td><%= @strikes_thrown[index] %></td>
+        <td><%= @balls_thrown[index] %></td>
+        <td><%= number_to_percentage(100*@strikes_thrown[index].to_f/(@strikes_thrown[index] + @balls_thrown[index]).to_f, :precision => 0) %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <% end %>
+</div>

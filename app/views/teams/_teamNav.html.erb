@@ -1,0 +1,25 @@
+<div class="content nav-wrapper team-nav">
+  <nav id="main_nav" class="navbar navbar-default">
+    <div>
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#teamNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="teamNavbar">
+        <ul class="nav navbar-nav">
+          <li class="batting"><%= link_to "Batting", batters_team_path, method: :get %></li>
+          <li class="pitching"><%= link_to "Pitching", pitchers_team_path, method: :get %></li>
+          <li class="edit-positions"><%= link_to "Edit Positions", editPositions_team_path, method: :get %></li>
+          <li class="edit-positions"><%= link_to "Edit Lineup", editLineup_team_path, method: :get %></li>
+          <li class="edit-pitching"><%= link_to "Edit Pitching", editPitching_team_path, method: :get %></li>
+          <li class="minors"><%= link_to "Minors", minors_team_path, method: :get %></li>
+          <li class="transactions"><%= link_to "Transactions", transactions_team_path, method: :get %></li>
+          <!-- <li class="schedule"><%= link_to "Schedule", schedule_team_path, method: :get %></li> -->
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>

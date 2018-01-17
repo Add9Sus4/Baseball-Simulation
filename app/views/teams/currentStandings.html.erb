@@ -1,0 +1,58 @@
+<h3>CURRENT STANDINGS</h3>
+<div id="standings-div">
+  <p id="notice"><%= notice %></p>
+
+  <h2 class="">Standings</h2>
+
+  <% leagues = ["NL", "AL"] %>
+  <% leagues_full = ["National League", "American League"] %>
+  <% divisions = ["East", "Central", "West"] %>
+
+  <% leagues.each_with_index do |league, index| %>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title"><%= leagues_full[index.to_i] %></h4>
+      </div>
+      <div class="panel-body">
+      <% divisions.each do |division| %>
+      <div class="col-lg-4">
+          <h4><%= division %></h4>
+          <table class="table table-striped table-bordered table-sm table-responsive sortable">
+            <thead class="thead-default">
+              <tr>
+                <th id=team_name_column_header>Name</th>
+                <th data-defaultsort="desc">W</th>
+                <th>L</th>
+                <th>RS</th>
+                <th>RA</th>
+                <th>+/-</th>
+                <th>Streak</th>
+                <!-- <th>Last 10</th> -->
+              </tr>
+            </thead>
+
+            <tbody>
+              <% @teams.where(:league => league, :division => division).each do |team| %>
+                <tr>
+                  <td><%= link_to team.full_name, team, method: :get %></td>
+                  <td><%= team.wins %></td>
+                  <td><%= team.losses %></td>
+                  <td><%= team.runs_scored %></td>
+                  <td><%= team.runs_allowed %></td>
+                  <% @plus_minus = (team.runs_scored - team.runs_allowed).to_s %>
+                  <% if @plus_minus.to_i > 0 %>
+                    <% @plus_minus.prepend("+") %>
+                  <% end %>
+                  <td class="plus-minus"><%= @plus_minus %></td>
+                  <td><%= team.streak_display %></td>
+                  <!-- <td>TODO</td> -->
+                </tr>
+              <% end %><!-- end teams loop -->
+            </tbody>
+          </table></br>
+        </div>
+      <% end %><!-- end divisions loop -->
+    </div>
+  </div>
+  <% end %><!-- end leagues loop -->
+</div>

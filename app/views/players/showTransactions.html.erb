@@ -1,0 +1,19 @@
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<%= stylesheet_link_tag "jquery-ui.min", 'data-turbolinks-track' => true %>
+<%= javascript_include_tag "jquery-ui.min", 'data-turbolinks-track' =>true %>
+<%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
+<%= javascript_include_tag 'moment.min', 'data-turbolinks-track' => true %>
+<%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 col-md-border">
+      <%= render 'playerSidebar' %>
+    </div>
+    <div class="col-md-10">
+      <%= render 'playerNav' %>
+      <%= render 'transactions' %>
+    </div>
+  </div>
+</div>

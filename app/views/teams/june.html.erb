@@ -1,0 +1,202 @@
+<style media="screen">
+.table-schedule td {
+  height: 50px;
+  font-size: 9px;
+  background-color: #FBFBFC;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
+  .table-schedule th {
+    background-color: #e0e6eb;
+  }
+
+  .game-display {
+    font-size: 12px;
+    float: right;
+  }
+  .opponent-name {
+    font-size: 12px;
+  }
+  #calendar-div {
+    height: 550px;
+    overflow-y: scroll;
+  }
+  .ui-checkboxradio-label {
+    font-size: 12px !important;
+    padding: 5px;
+  }
+
+  .ui-checkboxradio {
+    padding: 5px;
+  }
+
+  .ui-checkboxradio-checked {
+    background-color: #0047b3;
+    border-color: #80b3ff;
+  }
+</style>
+
+
+
+<div id="calendar-div" class="container-fluid">
+  <% @months = ["June"] %>
+  <% @months.each do |month| %>
+    <h3 class="month-name"><%= month %></h3>
+    <table class="table table-default table-bordered table-schedule">
+      <thead>
+        <tr>
+          <th>M</th><th>T</th><th>W</th><th>Th</th><th>F</th><th>Sa</th><th>Su</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% (0..5).each do |index| %>
+          <% @cal_dates = @team.get_dates_array(index, month, Season.last.year) %>
+          <tr>
+            <% @cal_dates.each do |date| %>
+              <td><%= date.nil? == true ? '-' : date.day %>
+                <% if !date.nil? && date == Season.last.current_date %><span id="current-date"><strong>Today</strong></span><% end %>
+              <br/><br/>
+              <% @current_team_id = Team.where("static_id = ?", @team.static_id).last.id %>
+              <% @game = Game.where("(home_team_id = ? OR away_team_id = ?) AND sim_date = ?", @current_team_id, @current_team_id, date).first %>
+                <% if !@game.nil? %>
+                  <% if @game.home_team_id == @current_team_id %>
+                    <% @opponent = Team.find(@game.away_team_id) %>
+                    <!-- <span class="home"></span> -->
+                    <span class="opponent-name"><%= link_to @opponent.full_name, @opponent, method: :get %></span>
+                  <% elsif @game.away_team_id == @current_team_id %>
+                    <% @opponent = Team.find(@game.home_team_id) %>
+                    <!-- <span class="away"></span> -->
+                    <span class="opponent-name">@<%= link_to @opponent.full_name, @opponent, method: :get %></span>
+                  <% end %>
+                <% end %>
+
+                <% @game_display = "" %>
+                <% if !@game.nil? && !@game.attendance.nil? %>
+                  <% @home_team_runs = @game.home_runs_scored.split("_").map(&:to_i).sum %>
+                  <% @away_team_runs = @game.away_runs_scored.split("_").map(&:to_i).sum %>
+                  <% if @current_team_id == @game.home_team_id %>
+                    <% if @home_team_runs > @away_team_runs %>
+                    <span class="win"></span>
+                      <% @game_display += "W, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
+                    <% else %>
+                    <span class="loss"></span>
+                      <% @game_display += "L, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
+                    <% end %>
+                  <% else %>
+                    <% if @home_team_runs > @away_team_runs %>
+                    <span class="loss"></span>
+                      <% @game_display += "L, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
+                    <% else %>
+                    <span class="win"></span>
+                      <% @game_display += "W, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
+                    <% end %>
+                  <% end %>
+                  <% @num_innings = @game.home_inning_scores.split("_").map(&:to_i).length %>
+                  <% if @num_innings > 9 %>
+                    <% @game_display += " (F/" + @num_innings.to_s + ")" %>
+                  <% end %>
+                <% end %>
+                <span class="game-display"><strong><%= link_to @game_display, @game, method: :get %></strong></span>
+
+              <% if !@game.nil? && !@game.attendance.nil? %>
+                <br/>W: <%= link_to Player.find(@game.winning_pitcher).full_name, Player.find(@game.winning_pitcher), method: :get %>
+                <br/>L: <%= link_to Player.find(@game.losing_pitcher).full_name, Player.find(@game.losing_pitcher), method: :get %>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>
+
+
+<script type="text/javascript">
+  $("#current-date").closest('td').css({"background-color":"#ffffcc","border":"4px solid black"});
+
+  $(".month-name").each(function() {
+    $(this).attr("id", $(this).text());
+  });
+
+  $(".away").each(function() {
+    $(this).closest('td').css({"background-color":"#fff7e6"});
+  });
+  $(".home").each(function() {
+    $(this).closest('td').css({"background-color":"#d6e0f5"});
+  });
+  $(".win").each(function() {
+    $(this).closest('td').css({"background-color":"#ccffcc"});
+  });
+  $(".loss").each(function() {
+    $(this).closest('td').css({"background-color":"#ffe5e5"});
+  });
+</script>
+
+
+<!-- <table id="table_with_custom_border" class="table-condensed table-striped table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Team</th>
+      <th>Result</th>
+      <th>Winning Pitcher</th>
+      <th>Losing Pitcher</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @date_array = Date.parse("1st April 2000")..Date.parse("30st September 2000") %>
+    <% @date_array.each do |date| %>
+    <tr>
+      <% @game = Game.where("(home_team_id = ? OR away_team_id = ?) AND sim_date = ?", @team.id, @team.id, date).first %>
+      <td>
+      <%= date.to_formatted_s(:short) %>
+      </td>
+      <td>
+        <% if !@game.nil? %>
+          <% if @game.home_team_id = @team.id %>
+            <% @opponent = Team.find(@game.away_team_id) %>
+            <%= link_to @opponent.full_name, @opponent, method: :get %>
+          <% elsif @game.away_team_id = @team.id %>
+            <% @opponent = Team.find(@game.home_team_id) %>
+            <%= link_to @opponent.full_name, @opponent, method: :get %>
+          <% end %>
+        <% end %>
+    </td>
+    <td>
+      <% @game_display = "" %>
+      <% if !@game.nil? && !@game.attendance.nil? %>
+        <% @home_team_runs = @game.home_runs_scored.split("_").map(&:to_i).sum %>
+        <% @away_team_runs = @game.away_runs_scored.split("_").map(&:to_i).sum %>
+        <% if @team.id == @game.home_team_id %>
+          <% if @home_team_runs > @away_team_runs %>
+            <% @game_display += "W, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
+          <% else %>
+            <% @game_display += "L, " + @home_team_runs.to_s + "-" + @away_team_runs.to_s %>
+          <% end %>
+        <% else %>
+          <% if @home_team_runs > @away_team_runs %>
+            <% @game_display += "L, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
+          <% else %>
+            <% @game_display += "W, " + @away_team_runs.to_s + "-" + @home_team_runs.to_s %>
+          <% end %>
+        <% end %>
+        <% @num_innings = @game.home_inning_scores.split("_").map(&:to_i).length %>
+        <% if @num_innings > 9 %>
+          <% @game_display += " (F/" + @num_innings.to_s + ")" %>
+        <% end %>
+      <% end %>
+      <%= link_to @game_display, @game, method: :get %>
+    </td>
+    <% if !@game.nil? && !@game.attendance.nil? %>
+    <td><%= link_to Player.find(@game.winning_pitcher).full_name, Player.find(@game.winning_pitcher), method: :get %></td>
+    <td><%= link_to Player.find(@game.losing_pitcher).full_name, Player.find(@game.losing_pitcher), method: :get %></td>
+    <% else %>
+    <td></td>
+    <td></td>
+    <% end %>
+
+    </tr>
+    <% end %>
+  </tbody>
+</table> -->

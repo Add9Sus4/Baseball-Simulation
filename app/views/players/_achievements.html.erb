@@ -1,0 +1,21 @@
+<h3 class="app_text_main">Achievements</h3>
+<table class="table table-condensed table-striped table-bordered table-responsive custom-smaller-table sortable">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Team</th>
+      <th>Achievement</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @player.achievements.each do |achievement| %>
+    <% @team = Team.find(achievement.team_id) %>
+      <tr>
+        <td><%= link_to achievement.achievement_date.strftime("%B %e, %Y"), Game.find(achievement.game_id), method: :get %></td>
+        <td><%= link_to @team.full_name, @team, method: :get %></td>
+        <td><%= link_to achievement.achievement_type, Game.find(achievement.game_id), method: :get %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -1,0 +1,122 @@
+<div class="container-fluid">
+  <div class="col-md-8">
+    <h3 class="app_text_main">Batting Stats</h3>
+    <table class="table table-default table-striped">
+      <thead>
+        <tr>
+          <th>Age</th>
+          <th>Year</th>
+          <th>Team</th>
+          <th class="tooltip_enable" title="Games">G</th>
+          <th class="tooltip_enable" title="At-bats">AB</th>
+          <th class="tooltip_enable" title="Runs scored">R</th>
+          <th class="tooltip_enable" title="Hits">H</th>
+          <th class="tooltip_enable" title="Doubles">2B</th>
+          <th class="tooltip_enable" title="Triples">3B</th>
+          <th class="tooltip_enable" title="Home runs">HR</th>
+          <th class="tooltip_enable" title="Runs batted in">RBI</th>
+          <th class="tooltip_enable" title="Walks">BB</th>
+          <th class="tooltip_enable" title="Strikeouts">K</th>
+          <th class="tooltip_enable" title="Stolen bases">SB</th>
+          <th class="tooltip_enable" title="Caught stealing">CS</th>
+          <th class="tooltip_enable" title="Batting average">AVG</th>
+          <th class="tooltip_enable" title="On-base percentage">OBP</th>
+          <th class="tooltip_enable" title="Slugging percentage">SLG</th>
+          <th class="tooltip_enable" title="On-base plus slugging percentage">OPS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @total_games = 0 %>
+        <% @total_atbats = 0 %>
+        <% @total_runs = 0 %>
+        <% @total_hits = 0 %>
+        <% @total_doubles = 0 %>
+        <% @total_triples = 0 %>
+        <% @total_home_runs = 0 %>
+        <% @total_rbi = 0 %>
+        <% @total_walks = 0 %>
+        <% @total_strikeouts = 0 %>
+        <% @total_stolen_bases = 0 %>
+        <% @total_caught_stealing = 0 %>
+        <% @player.season_batting_stats.each do |player| %>
+        <tr>
+          <td><%= SeasonAttribute.where("player_id = ? AND season_id = ?", player.player_id, player.season_id).last.age %></td>
+          <td><%= Season.find(player.season_id).year %></td>
+          <% @team = Team.find(player.team_id) %>
+          <td><%= link_to @team.name, @team, method: :get %></td>
+          <td><%= player.games %></td><% @total_games += player.games %>
+          <td><%= player.atbats %></td><% @total_atbats += player.atbats %>
+          <td><%= player.runs %></td><% @total_runs += player.runs %>
+          <td><%= player.hits %></td><% @total_hits += player.hits %>
+          <td><%= player.doubles %></td><% @total_doubles += player.doubles %>
+          <td><%= player.triples %></td><% @total_triples += player.triples %>
+          <td><%= player.home_runs %></td><% @total_home_runs += player.home_runs %>
+          <td><%= player.rbi %></td><% @total_rbi += player.rbi %>
+          <td><%= player.walks %></td><% @total_walks += player.walks %>
+          <td><%= player.strikeouts %></td><% @total_strikeouts += player.strikeouts %>
+          <td><%= player.stolen_bases %></td><% @total_stolen_bases+= player.stolen_bases %>
+          <td><%= player.caught_stealing %></td><% @total_caught_stealing += player.caught_stealing %>
+          <% @avg = player.hits.to_f/player.atbats.to_f %>
+          <% @obp = (player.hits + player.walks).to_f/(player.atbats + player.walks).to_f %>
+          <% @slg = (player.hits - player.doubles - player.triples - player.home_runs + 2 * player.doubles + 3 * player.triples + 4 * player.home_runs).to_f/player.atbats.to_f %>
+          <% @ops = @obp + @slg %>
+          <td><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></td>
+          <td><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
+          <td><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
+          <td><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
+        </tr>
+        <% end %>
+        <tr>
+          <td><%= @player.age %></td>
+          <td><%= Season.last.year %></td>
+          <td><%= link_to @player.team.name, @player.team, method: :get %></td>
+          <td><%= @player.games %></td><% @total_games += @player.games %>
+          <td><%= @player.atbats %></td><% @total_atbats += @player.atbats %>
+          <td><%= @player.runs %></td><% @total_runs += @player.runs %>
+          <td><%= @player.hits %></td><% @total_hits += @player.hits %>
+          <td><%= @player.doubles %></td><% @total_doubles += @player.doubles %>
+          <td><%= @player.triples %></td><% @total_triples += @player.triples %>
+          <td><%= @player.home_runs %></td><% @total_home_runs += @player.home_runs %>
+          <td><%= @player.rbi %></td><% @total_rbi += @player.rbi %>
+          <td><%= @player.walks %></td><% @total_walks += @player.walks %>
+          <td><%= @player.strikeouts %></td><% @total_strikeouts += @player.strikeouts %>
+          <td><%= @player.stolen_bases %></td><% @total_stolen_bases += @player.stolen_bases %>
+          <td><%= @player.caught_stealing %></td><% @total_caught_stealing += @player.caught_stealing %>
+          <% @avg = @player.hits.to_f/@player.atbats.to_f %>
+          <% @obp = (@player.hits + @player.walks).to_f/(@player.atbats + @player.walks).to_f %>
+          <% @slg = (@player.hits - @player.doubles - @player.triples - @player.home_runs + 2 * @player.doubles + 3 * @player.triples + 4 * @player.home_runs).to_f/@player.atbats.to_f %>
+          <% @ops = @obp + @slg %>
+          <td><%= number_with_precision(drop_leading_zero(@avg), precision: 3) %></td>
+          <td><%= number_with_precision(drop_leading_zero(@obp), precision: 3) %></td>
+          <td><%= number_with_precision(drop_leading_zero(@slg), precision: 3) %></td>
+          <td><%= number_with_precision(drop_leading_zero(@ops), precision: 3) %></td>
+        </tr>
+        <tr>
+          <td><strong>Totals</strong></td>
+          <td><strong>-</strong></td>
+          <td><strong>-</strong></td>
+          <td><strong><%= @total_games %></strong></td>
+          <td><strong><%= @total_atbats %></strong></td>
+          <td><strong><%= @total_runs %></strong></td>
+          <td><strong><%= @total_hits %></strong></td>
+          <td><strong><%= @total_doubles %></strong></td>
+          <td><strong><%= @total_triples %></strong></td>
+          <td><strong><%= @total_home_runs %></strong></td>
+          <td><strong><%= @total_rbi %></strong></td>
+          <td><strong><%= @total_walks %></strong></td>
+          <td><strong><%= @total_strikeouts %></strong></td>
+          <td><strong><%= @total_stolen_bases %></strong></td>
+          <td><strong><%= @total_caught_stealing %></strong></td>
+          <% @total_avg = @total_hits.to_f/@total_atbats.to_f %>
+          <% @total_obp = (@total_hits + @total_walks).to_f/(@total_atbats + @total_walks).to_f %>
+          <% @total_slg = (@total_hits - @total_doubles - @total_triples - @total_home_runs + 2 * @total_doubles + 3 * @total_triples + 4 * @total_home_runs).to_f/@total_atbats.to_f %>
+          <% @total_ops = @total_obp + @total_slg %>
+          <td><strong><%= number_with_precision(drop_leading_zero(@total_avg), precision: 3) %></strong></td>
+          <td><strong><%= number_with_precision(drop_leading_zero(@total_obp), precision: 3) %></strong></td>
+          <td><strong><%= number_with_precision(drop_leading_zero(@total_slg), precision: 3) %></strong></td>
+          <td><strong><%= number_with_precision(drop_leading_zero(@total_ops), precision: 3) %></strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

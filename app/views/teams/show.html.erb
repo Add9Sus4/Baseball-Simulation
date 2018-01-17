@@ -9,6 +9,22 @@
 
 <style>
 
+#json-overlay {
+    background-color: #333333;
+    opacity: 0.8;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 100;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-image: url('/assets/ajax-loader.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 200%;
+}
+
 .ui-checkboxradio-label {
   font-size: 12px !important;
   padding: 5px;
@@ -111,6 +127,11 @@
   cursor: pointer;
 }
 
+#sidebar {
+  background-color: black;
+  border-radius: 5px;
+  padding: 5px;
+}
 </style>
 
 <!-- <div class="col-lg-1">
@@ -121,109 +142,97 @@
     <li><a>Schedule</a></li>
   </ul>
 </div> -->
-
-  <div id="team_name_div">
-    <span id="current_user_id" hidden><%= current_user.id if current_user %></span>
-    <span id="team_id" hidden><%= @team.id %></span>
-    <span id="owner">
-    <% if @team.user_id == -1 %>
-      <% if current_user && current_user.team_id == -1 %>
-      <h2><%= @team.full_name %> <button class="btn btn-primary" id="own_team">Own this team</button></h2>
-      <% else %>
-      <h2><%= @team.full_name %> <small>(Unowned)</small></h2>
-      <% end %>
-    <% else %>
-    <h2><%= @team.full_name %> <small>Owner: <%= link_to @team.user.name, @team.user, method: :get %></small></h2>
-    <% end %>
-    </span>
-  </div>
-  <div class="container-fluid">
-  <div class="col-sm-2">
-    <p>
-      <strong>League:</strong>
-      <%= @team.league %>
-    </p>
-
-    <p>
-      <strong>Division:</strong>
-      <%= @team.division %>
-    </p>
-  </div>
-  <div class="col-sm-2">
-
-    <p>
-      <strong>Stadium:</strong>
-      <%= @team.stadium %>
-    </p>
-
-    <p>
-      <strong>Capacity:</strong>
-      <%= @team.capacity %>
-    </p>
-  </div>
-  <div class="col-sm-2">
-
-    <p>
-      <strong>Record:</strong>
-      <%= link_to @team.wins.to_s + "-" + @team.losses.to_s, "/teams", method: :get %>
-    </p>
-  </div>
-</div>
-
 <!-- <div class="container-fluid">
-
-
-  <ul id="sortable">
-  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 1</li>
-  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 2</li>
-  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 3</li>
-  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 4</li>
-  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 5</li>
-  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 6</li>
-  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 7</li>
-</ul>
+  <h4>Division Champs: <small><%= SeasonTeamStat.where("team_id = ? AND division_series_wins = 1", @team.id).map { |champ| Season.find(champ.season_id).year }.join(", ") %></small></h4>
+  <h4>League Champs: <small><%= SeasonTeamStat.where("team_id = ? AND championship_series_wins = 1", @team.id).map { |champ| Season.find(champ.season_id).year }.join(", ") %></small></h4>
+  <h4>World Champs: <small><%= SeasonTeamStat.where("team_id = ? AND world_series_wins = 1", @team.id).map { |champ| Season.find(champ.season_id).year }.join(", ") %></small></h4>
 </div> -->
+
 <div class="container-fluid">
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#teamNavbar">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-      </div>
-      <div class="collapse navbar-collapse" id="teamNavbar">
-        <ul class="nav navbar-nav">
-          <li><a id="show-roster-position-players-link">View Hitters</a></li>
-          <li><a id="show-roster-pitchers-link">View Pitchers</a></li>
-          <li><a id="edit-defense-link">Edit Defense</a></li>
-          <li><a id="edit-pitching-link">Edit Pitching</a></li>
-          <li><a id="show-schedule-link">Schedule</a></li>
-        </ul>
-      </div>
+  <div class="row">
+    <div id="team_name_div" class="col-md-2 col-md-border">
+      <%= render 'teamSidebar' %>
     </div>
-  </nav>
+    <div class="col-md-10">
+      <%= render 'teamNav' %>
+    </div>
+  </div>
 </div>
 
-<div id="view-mode-div" class="container-fluid">
-  <fieldset>
-    <label for="radio-info">Info</label>
-    <input type="radio" name="radio-view-type" id="radio-info">
-    <label for="radio-stats">Stats</label>
-    <input type="radio" name="radio-view-type" id="radio-stats">
-    <label for="radio-attributes">Actual Ratings</label>
-    <input type="radio" name="radio-view-type" id="radio-attributes" checked>
-    <label for="radio-potentials">Potential Ratings</label>
-    <input type="radio" name="radio-view-type" id="radio-potentials">
-  </fieldset>
-</div>
+<!-- <div id="sidebar" class="col-sm-1">
+  <div><a id="btn-batting" class="btn-options">Batting<span hidden>/teams/<%= @team.id %>/batters</span></a></div>
+  <div><a id="btn-pitching" class="btn-options">Pitching<span hidden>/teams/<%= @team.id %>/pitchers</span></a></div>
+  <div><a id="btn-edit-positions" class="btn-options">Edit Positions/Lineup<span hidden>/teams/<%= @team.id %>/editPositions</span></a></div>
+  <div><a id="btn-edit-pitching" class="btn-options">Edit Pitching<span hidden>/teams/<%= @team.id %>/editPitching</span></a></div>
+  <%= link_to "Minors", minors_team_path, method: :get %>
+  <%= link_to "Transactions", transactions_team_path, method: :get %>
+  <div><a id="btn-schedule" class="btn-schedule">Schedule<span hidden>/teams/<%= @team.id %>/schedule</span></a></div>
+</div> -->
 
-<div id="show-roster-position-players-partial"><%= render partial: "showRosterPositionPlayers" %></div>
-<div id="show-roster-pitchers-partial" hidden><%= render partial: "showRosterPitchers" %></div>
-<div id="edit-pitching-partial" hidden><%= render partial: "editPitching" %></div>
-<div id="edit-defense-partial" hidden><%= render partial: "editPositions" %></div>
-<div id="show-schedule-partial" hidden><%= render partial: "showSchedule" %></div>
+
+  <!-- <div id="view-mode-div" class="col-sm-5">
+    <fieldset>
+      <label for="radio-info">Info</label>
+      <input type="radio" name="radio-view-type" id="radio-info">
+      <label for="radio-stats">Stats</label>
+      <input type="radio" name="radio-view-type" id="radio-stats">
+      <label for="radio-attributes">Actual Ratings</label>
+      <input type="radio" name="radio-view-type" id="radio-attributes" checked>
+      <label for="radio-potentials">Potential Ratings</label>
+      <input type="radio" name="radio-view-type" id="radio-potentials">
+    </fieldset>
+  </div>
+
+  <div id="month-select-div" class="col-sm-5">
+    <fieldset>
+      <label for="radio-april">April</label>
+      <input type="radio" name="radio-month-select" class="radio-month" id="radio-april" checked>
+      <label for="radio-may">May</label>
+      <input type="radio" name="radio-month-select" class="radio-month" id="radio-may">
+      <label for="radio-june">June</label>
+      <input type="radio" name="radio-month-select" class="radio-month" id="radio-june">
+      <label for="radio-july">July</label>
+      <input type="radio" name="radio-month-select" class="radio-month" id="radio-july">
+      <label for="radio-august">August</label>
+      <input type="radio" name="radio-month-select" class="radio-month" id="radio-august">
+      <label for="radio-september">September</label>
+      <input type="radio" name="radio-month-select" class="radio-month" id="radio-september">
+    </fieldset>
+    <span id="current-month" hidden><%= Season.last.current_date.strftime("%B").downcase %></span>
+  </div>
+</div> -->
+
+<!-- <div id="content-div"></div> -->
+
+<script type="text/javascript">
+
+// $("#btn-schedule").click(function() {
+//   selectMonth();
+//   $("#view-mode-div").hide();
+//   $("#month-select-div").show();
+// });
+//
+// $(".btn-options").click(function() {
+//   if (!$(this).hasClass("btn-schedule")) {
+//     $("#month-select-div").hide();
+//   }
+//   $("#json-overlay").show();
+//   var str = $(this).find('span').text();
+//   var btn = $(this);
+//   $.ajax({
+//     url: str,
+//     cache: false,
+//     success: function(html){
+//       $("#content-div").empty();
+//       $("#content-div").append(html);
+//       hideCells();
+//       $("#view-mode-div").show();
+//       $("#json-overlay").hide();
+//     }
+//   });
+// });
+
+</script>
 
 <style media="screen">
   .position-highlight {
@@ -244,138 +253,152 @@
 
 <script>
 
-$("input").checkboxradio({
-    icon: false
-});
+// $("input").checkboxradio({
+//     icon: false
+// });
+//
+// $(".radio-month").click(function() {
+//   $("#json-overlay").show();
+//   var label = $("label[for='"+$(this).attr('id')+"']").html().toLowerCase();
+//   var str = window.location.href + "/" + label;
+//   var btn = $(this);
+//   $.ajax({
+//     url: str,
+//     cache: false,
+//     success: function(html){
+//       console.log("ajax success!");
+//       $("#content-div").empty();
+//       $("#content-div").append(html);
+//       $("#json-overlay").hide();
+//     }
+//   });
+// });
+//
+// $("#radio-info").click(function() {
+//   $(".info_cell").each(function() {
+//     $(this).show();
+//   });
+//   $(".stats_cell").each(function() {
+//     $(this).hide();
+//   });
+//   $(".attribute_cell").each(function() {
+//     $(this).hide();
+//   });
+//   $(".potentials_cell").each(function() {
+//     $(this).hide();
+//   });
+// });
+//
+// $("#radio-stats").click(function() {
+//   $(".info_cell").each(function() {
+//     $(this).hide();
+//   });
+//   $(".stats_cell").each(function() {
+//     $(this).show();
+//   });
+//   $(".attribute_cell").each(function() {
+//     $(this).hide();
+//   });
+//   $(".potentials_cell").each(function() {
+//     $(this).hide();
+//   });
+// });
+//
+// $("#radio-attributes").click(function() {
+//   $(".info_cell").each(function() {
+//     $(this).hide();
+//   });
+//   $(".stats_cell").each(function() {
+//     $(this).hide();
+//   });
+//   $(".attribute_cell").each(function() {
+//     $(this).show();
+//   });
+//   $(".potentials_cell").each(function() {
+//     $(this).hide();
+//   });
+// });
+//
+// $("#radio-potentials").click(function() {
+//   $(".info_cell").each(function() {
+//     $(this).hide();
+//   });
+//   $(".stats_cell").each(function() {
+//     $(this).hide();
+//   });
+//   $(".attribute_cell").each(function() {
+//     $(this).show();
+//   });
+//   $(".potentials_cell").each(function() {
+//     $(this).show();
+//   });
+// });
+//
+// $(".info_cell").hide();
+// $(".stats_cell").hide();
+//
+// hotCold();
 
-$("#radio-info").click(function() {
-  $(".info_cell").each(function() {
-    $(this).show();
-  });
-  $(".stats_cell").each(function() {
-    $(this).hide();
-  });
-  $(".attribute_cell").each(function() {
-    $(this).hide();
-  });
-  $(".potentials_cell").each(function() {
-    $(this).hide();
-  });
-});
-
-$("#radio-stats").click(function() {
-  $(".info_cell").each(function() {
-    $(this).hide();
-  });
-  $(".stats_cell").each(function() {
-    $(this).show();
-  });
-  $(".attribute_cell").each(function() {
-    $(this).hide();
-  });
-  $(".potentials_cell").each(function() {
-    $(this).hide();
-  });
-});
-
-$("#radio-attributes").click(function() {
-  $(".info_cell").each(function() {
-    $(this).hide();
-  });
-  $(".stats_cell").each(function() {
-    $(this).hide();
-  });
-  $(".attribute_cell").each(function() {
-    $(this).show();
-  });
-  $(".potentials_cell").each(function() {
-    $(this).hide();
-  });
-});
-
-$("#radio-potentials").click(function() {
-  $(".info_cell").each(function() {
-    $(this).hide();
-  });
-  $(".stats_cell").each(function() {
-    $(this).hide();
-  });
-  $(".attribute_cell").each(function() {
-    $(this).show();
-  });
-  $(".potentials_cell").each(function() {
-    $(this).show();
-  });
-});
-
-$("#show-schedule-link").click(function() {
-  $("#edit-pitching-partial").hide();
-  $("#edit-defense-partial").hide();
-  $("#show-roster-position-players-partial").hide();
-  $("#show-roster-pitchers-partial").hide();
-  $("#show-schedule-partial").show();
-  $("#view-mode-div").hide();
-});
-
-$("#show-roster-position-players-link").click(function() {
-  $("#edit-pitching-partial").hide();
-  $("#edit-defense-partial").hide();
-  $("#show-roster-position-players-partial").show();
-  $("#show-roster-pitchers-partial").hide();
-  $("#show-schedule-partial").hide();
-  $("#view-mode-div").show();
-});
-
-$("#show-roster-pitchers-link").click(function() {
-  $("#edit-pitching-partial").hide();
-  $("#edit-defense-partial").hide();
-  $("#show-roster-position-players-partial").hide();
-  $("#show-roster-pitchers-partial").show();
-  $("#show-schedule-partial").hide();
-  $("#view-mode-div").show();
-});
-
-$("#edit-pitching-link").click(function() {
-  $("#edit-pitching-partial").show();
-  $("#edit-defense-partial").hide();
-  $("#show-roster-position-players-partial").hide();
-  $("#show-roster-pitchers-partial").hide();
-  $("#show-schedule-partial").hide();
-  $("#view-mode-div").show();
-});
-
-$("#edit-defense-link").click(function() {
-  $("#edit-pitching-partial").hide();
-  $("#edit-defense-partial").show();
-  $("#show-roster-position-players-partial").hide();
-  $("#show-roster-pitchers-partial").hide();
-  $("#show-schedule-partial").hide();
-  $("#view-mode-div").show();
-});
-
-$(".info_cell").hide();
-$(".stats_cell").hide();
-
-function hotCold() {
-  $('.hotcold').each(function() {
-    var val = $(this).text();
-    var red;
-    var blue;
-    var green;
-    if (val > 50) {
-      green = 0;
-      blue = 0;
-      red = (val - 50)*255/50;
-    } else {
-      green = 0;
-      red = 0;
-      blue = (50 - val)*255/50
-    }
-    var rgb = "rgb(" + Math.floor(red) + "," + Math.floor(green) + "," + Math.floor(blue) + ")";
-    $(this).css({"color":rgb});
-  });
-}
-hotCold();
+// function hideCells() {
+//   console.log("testing...");
+//   if ($("#radio-info").is(":checked")) {
+//     console.log("info is checked");
+//     $(".info_cell").each(function() {
+//       $(this).show();
+//     });
+//     $(".stats_cell").each(function() {
+//       $(this).hide();
+//     });
+//     $(".attribute_cell").each(function() {
+//       $(this).hide();
+//     });
+//     $(".potentials_cell").each(function() {
+//       $(this).hide();
+//     });
+//   } else if ($("#radio-stats").is(":checked")) {
+//     console.log("stats is checked");
+//     $(".info_cell").each(function() {
+//       $(this).hide();
+//     });
+//     $(".stats_cell").each(function() {
+//       $(this).show();
+//     });
+//     $(".attribute_cell").each(function() {
+//       $(this).hide();
+//     });
+//     $(".potentials_cell").each(function() {
+//       $(this).hide();
+//     });
+//   } else if ($("#radio-attributes").is(":checked")) {
+//     console.log("attributes is checked");
+//     $(".info_cell").each(function() {
+//       $(this).hide();
+//     });
+//     $(".stats_cell").each(function() {
+//       $(this).hide();
+//     });
+//     $(".attribute_cell").each(function() {
+//       $(this).show();
+//     });
+//     $(".potentials_cell").each(function() {
+//       $(this).hide();
+//     });
+//   } else if ($("#radio-potentials").is(":checked")) {
+//     console.log("potentials is checked");
+//     $(".info_cell").each(function() {
+//       $(this).hide();
+//     });
+//     $(".stats_cell").each(function() {
+//       $(this).hide();
+//     });
+//     $(".attribute_cell").each(function() {
+//       $(this).show();
+//     });
+//     $(".potentials_cell").each(function() {
+//       $(this).show();
+//     });
+//   }
+// }
 
 $(function() {
   $(".tooltip_enable").tooltip({
@@ -414,73 +437,165 @@ $('#own_team').click(function() {
   });
 });
 
-function formatData() {
-  $('.position').each(function() {
-    var positionSymbol = $(this).text();
-    var position = '';
-    switch (positionSymbol.toLowerCase()) {
-      case 'p':
-      $(this).attr('data-value',1);
-      position = 'Pitcher';
-      break;
-      case 'c':
-      $(this).attr('data-value',2);
-      position = 'Catcher';
-      break;
-      case '1b':
-      $(this).attr('data-value',3);
-      position = 'First Base';
-      break;
-      case '2b':
-      $(this).attr('data-value',4);
-      position = 'Second Base';
-      break;
-      case '3b':
-      $(this).attr('data-value',5);
-      position = 'Third Base';
-      break;
-      case 'ss':
-      $(this).attr('data-value',6);
-      position = 'Shortstop';
-      break;
-      case 'lf':
-      $(this).attr('data-value',7);
-      position = 'Left Field';
-      break;
-      case 'cf':
-      $(this).attr('data-value',8);
-      position = 'Center Field';
-      break;
-      case 'rf':
-      $(this).attr('data-value',9);
-      position = 'Right Field';
-      break;
-    }
-    $(this).text(position);
-  });
+// function formatData() {
+//   $('.position').each(function() {
+//     var positionSymbol = $(this).text();
+//     var position = '';
+//     switch (positionSymbol.toLowerCase()) {
+//       case 'p':
+//       $(this).attr('data-value',1);
+//       position = 'Pitcher';
+//       break;
+//       case 'c':
+//       $(this).attr('data-value',2);
+//       position = 'Catcher';
+//       break;
+//       case '1b':
+//       $(this).attr('data-value',3);
+//       position = 'First Base';
+//       break;
+//       case '2b':
+//       $(this).attr('data-value',4);
+//       position = 'Second Base';
+//       break;
+//       case '3b':
+//       $(this).attr('data-value',5);
+//       position = 'Third Base';
+//       break;
+//       case 'ss':
+//       $(this).attr('data-value',6);
+//       position = 'Shortstop';
+//       break;
+//       case 'lf':
+//       $(this).attr('data-value',7);
+//       position = 'Left Field';
+//       break;
+//       case 'cf':
+//       $(this).attr('data-value',8);
+//       position = 'Center Field';
+//       break;
+//       case 'rf':
+//       $(this).attr('data-value',9);
+//       position = 'Right Field';
+//       break;
+//     }
+//     $(this).text(position);
+//   });
+//
+//   $('.salary').each(function() {
+//     var item = $(this).text();
+//     var num = localeString(Number(item), ',', 3);
+//
+//     if(Number(item) < 0) {
+//       num = num.replace('-','');
+//       $(this).addClass('negMoney');
+//     } else {
+//       $(this).addClass('enMoney');
+//     }
+//     $(this).text(num);
+//   });
+//
+//   $('.salary').each(function() {
+//     $(this).attr('data-value', salaryToInteger($(this).text()));
+//   });
+// }
+// formatData();
 
-  $('.salary').each(function() {
-    var item = $(this).text();
-    var num = localeString(Number(item), ',', 3);
+// function salaryToInteger(salary) {
+//   var condensedSalary = salary.replace(/[$,.]/g,''); // Get rid of dollar signs and commas
+//   return parseInt(condensedSalary);
+// }
 
-    if(Number(item) < 0) {
-      num = num.replace('-','');
-      $(this).addClass('negMoney');
-    } else {
-      $(this).addClass('enMoney');
-    }
-    $(this).text(num);
-  });
+// function selectMonth() {
+//   $("#json-overlay").show();
+//   var current_month = $("#current-month").text();
+//   if (current_month == "october") {
+//     current_month = "september";
+//     $("#radio-april").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-may").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-june").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-july").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-august").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-september").prop("checked", true).checkboxradio("refresh");
+//   } else if (current_month == "april") {
+//     $("#radio-april").prop("checked", true).checkboxradio("refresh");
+//     $("#radio-may").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-june").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-july").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-august").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-september").prop("checked", false).checkboxradio("refresh");
+//   }
+//   else if (current_month == "may") {
+//     $("#radio-april").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-may").prop("checked", true).checkboxradio("refresh");
+//     $("#radio-june").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-july").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-august").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-september").prop("checked", false).checkboxradio("refresh");
+//   }
+//   else if (current_month == "june") {
+//     $("#radio-april").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-may").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-june").prop("checked", true).checkboxradio("refresh");
+//     $("#radio-july").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-august").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-september").prop("checked", false).checkboxradio("refresh");
+//   }
+//   else if (current_month == "july") {
+//     $("#radio-april").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-may").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-june").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-july").prop("checked", true).checkboxradio("refresh");
+//     $("#radio-august").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-september").prop("checked", false).checkboxradio("refresh");
+//   }
+//   else if (current_month == "august") {
+//     $("#radio-april").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-may").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-june").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-july").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-august").prop("checked", true).checkboxradio("refresh");
+//     $("#radio-september").prop("checked", false).checkboxradio("refresh");
+//   }
+//   else if (current_month == "september") {
+//     $("#radio-april").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-may").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-june").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-july").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-august").prop("checked", false).checkboxradio("refresh");
+//     $("#radio-september").prop("checked", true).checkboxradio("refresh");
+//   }
+//   var str = window.location.href + "/" + current_month;
+//   var btn = $(this);
+//   $.ajax({
+//     url: str,
+//     cache: false,
+//     success: function(html){
+//       console.log("ajax success!");
+//       $("#content-div").empty();
+//       $("#content-div").append(html);
+//       $("#json-overlay").hide();
+//     }
+//   });
+// }
 
-  $('.salary').each(function() {
-    $(this).attr('data-value', salaryToInteger($(this).text()));
-  });
-}
-formatData();
-
-function salaryToInteger(salary) {
-  var condensedSalary = salary.replace(/[$,.]/g,''); // Get rid of dollar signs and commas
-  return parseInt(condensedSalary);
-}
+// $(document).ready(function() {
+//   if (!$(this).hasClass("btn-schedule")) {
+//     $("#month-select-div").hide();
+//   }
+//   $("#json-overlay").show();
+//   var str = $("#btn-batting").find('span').text();
+//   $.ajax({
+//     url: str,
+//     cache: false,
+//     success: function(html){
+//       $("#content-div").empty();
+//       $("#content-div").append(html);
+//       hideCells();
+//       $("#view-mode-div").show();
+//       $("#json-overlay").hide();
+//     }
+//   });
+// });
 
 </script>

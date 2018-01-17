@@ -1,0 +1,35 @@
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<%= stylesheet_link_tag "jquery-ui.min", 'data-turbolinks-track' => true %>
+<%= javascript_include_tag "jquery-ui.min", 'data-turbolinks-track' =>true %>
+<%= javascript_include_tag 'bootstrap-sortable', 'data-turbolinks-track' => true %>
+<%= javascript_include_tag 'moment.min', 'data-turbolinks-track' => true %>
+<%= stylesheet_link_tag    'bootstrap-sortable', 'data-turbolinks-track' => true %>
+
+<div class="container-fluid">
+  <h3><%= @draft.year %> draft</h3>
+</div>
+<div class="col-sm-4">
+  <h4>Round 1</h4>
+  <ol>
+    <% @players[0..29].each do |player| %>
+      <li><%= link_to player.team.full_name, player.team, method: :get %>: <%= link_to "#{player.full_name}, #{player.position}", player, method: :get %></li>
+    <% end %>
+  </ol>
+</div>
+<div class="col-sm-4">
+  <h4>Round 2</h4>
+  <ol>
+    <% @players[30..59].each do |player| %>
+      <li><%= link_to player.team.full_name, player.team, method: :get %>: <%= link_to "#{player.full_name}, #{player.position}", player, method: :get %></li>
+    <% end %>
+  </ol>
+</div>
+<div class="col-sm-4">
+  <h4>Round 3</h4>
+  <ol>
+    <% @players[60..89].each do |player| %>
+      <li><%= link_to player.team.full_name, player.team, method: :get %>: <%= link_to "#{player.full_name}, #{player.position}", player, method: :get %></li>
+    <% end %>
+  </ol>
+</div>

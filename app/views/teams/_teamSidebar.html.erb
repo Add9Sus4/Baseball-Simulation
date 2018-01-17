@@ -1,0 +1,57 @@
+<style media="screen">
+  .team-sidebar {
+    padding: 15px;
+    border-radius: 5px;
+    /*background-color: #f2f2f3;*/
+  }
+</style>
+
+<div class="team-sidebar navbar navbar-default">
+  <span id="current_user_id" hidden><%= current_user.id if current_user %></span>
+  <span id="team_id" hidden><%= @team.id %></span>
+  <span id="owner">
+  <% if @team.user_id == -1 %>
+    <% if current_user && current_user.team_id == -1 %>
+    <h4><%= @team.full_name %> <button class="btn btn-primary" id="own_team">Own this team</button></h4>
+    <% else %>
+    <h4><%= @team.full_name %> <small>(Unowned)</small></h4>
+    <% end %>
+  <% else %>
+  <h4><%= @team.full_name %> <small>Owner: <%= link_to @team.user.name, @team.user, method: :get %></small></h4>
+  <% end %>
+  </span>
+
+  <hr>
+
+  <p>
+    <strong>League:</strong>
+    <small><%= @team.league %></small>
+  </p>
+  <p>
+    <strong>Division:</strong>
+    <small><%= @team.division %></small>
+  </p>
+  <p>
+    <strong>Stadium:</strong>
+    <small><%= @team.stadium %></small>
+  </p>
+  <p>
+    <strong>Capacity:</strong>
+    <small><%= @team.capacity %></small>
+  </p>
+  <p>
+    <strong>Record:</strong>
+    <small><%= link_to @team.wins.to_s + "-" + @team.losses.to_s, "/teams", method: :get %></small>
+  </p>
+  <p>
+    <strong>Payroll:</strong>
+    <small><%= number_to_currency(@team.get_total_payroll, precision: 0) %></small>
+  </p>
+
+  <hr>
+
+  <p><strong>Division Champs:</strong> <small><%= SeasonTeamStat.where("team_id = ? AND division_series_wins = 1", @team.id).map { |champ| Season.find(champ.season_id).year }.join(", ") %></small></p>
+  <p><strong>League Champs:</strong> <small><%= SeasonTeamStat.where("team_id = ? AND championship_series_wins = 1", @team.id).map { |champ| Season.find(champ.season_id).year }.join(", ") %></small></p>
+  <p><strong>World Champs:</strong> <small><%= SeasonTeamStat.where("team_id = ? AND world_series_wins = 1", @team.id).map { |champ| Season.find(champ.season_id).year }.join(", ") %></small></p>
+
+</div>

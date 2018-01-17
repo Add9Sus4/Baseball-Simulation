@@ -1,0 +1,44 @@
+<div class="container-fluid">
+  <div class="col-md-8">
+    <h3 class="app_text_main">Fielding Stats</h3>
+    <table class="table table-default table-striped">
+      <thead>
+        <tr>
+          <th>Age</th>
+          <th>Year</th>
+          <th>Team</th>
+          <th class="tooltip_enable" title="Web Gems">WG</th>
+          <th class="tooltip_enable" title="Anti Web Gems">AWG</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @total_web_gems = 0 %>
+        <% @total_anti_web_gems = 0 %>
+        <% @player.season_fielding_stats.each do |player| %>
+        <tr>
+          <td><%= SeasonAttribute.where("player_id = ? AND season_id = ?", player.player_id, player.season_id).last.age %></td>
+          <td><%= Season.find(player.season_id).year %></td>
+          <% @team = Team.find(player.team_id) %>
+          <td><%= link_to @team.name, @team, method: :get %></td>
+          <td><%= player.web_gems %></td><% @total_web_gems += player.web_gems %>
+          <td><%= player.anti_web_gems %></td><% @total_anti_web_gems += player.anti_web_gems %>
+        </tr>
+        <% end %>
+        <tr>
+          <td><%= @player.age %></td>
+          <td><%= Season.last.year %></td>
+          <td><%= link_to @player.team.name, @player.team, method: :get %></td>
+          <td><%= @player.web_gems %></td><% @total_web_gems += @player.web_gems %>
+          <td><%= @player.anti_web_gems %></td><% @total_anti_web_gems += @player.anti_web_gems %>
+        </tr>
+        <tr>
+          <td><strong>Totals</strong></td>
+          <td><strong>-</strong></td>
+          <td><strong>-</strong></td>
+          <td><strong><%= @total_web_gems %></strong></td>
+          <td><strong><%= @total_anti_web_gems %></strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

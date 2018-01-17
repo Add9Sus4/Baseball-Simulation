@@ -1,0 +1,93 @@
+<div class="container-fluid">
+  <div class="col-md-8">
+    <h3 class="app_text_main">Pitching Stats</h3>
+    <table class="table table-default table-striped">
+      <thead>
+        <tr>
+          <th>Age</th>
+          <th>Year</th>
+          <th>Team</th>
+          <th class="tooltip_enable" title="Wins">W</th>
+          <th class="tooltip_enable" title="Losses">L</th>
+          <th class="tooltip_enable" title="Innings pitched">IP</th>
+          <th class="tooltip_enable" title="Hits allowed">H</th>
+          <th class="tooltip_enable" title="Runs allowed">R</th>
+          <th class="tooltip_enable" title="Earned runs allowed">ER</th>
+          <th class="tooltip_enable" title="Home runs allowed">HR</th>
+          <th class="tooltip_enable" title="Walks allowed">BB</th>
+          <th class="tooltip_enable" title="Strikeouts recorded">K</th>
+          <th class="tooltip_enable" title="Earned run average">ERA</th>
+          <th class="tooltip_enable" title="Walks plus hits per inning pitched">WHIP</th>
+          <th class="tooltip_enable" title="Percent of pitches thrown that were strikes">%S</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @total_wins = 0 %>
+        <% @total_losses = 0 %>
+        <% @total_outs_recorded = 0 %>
+        <% @total_hits_allowed = 0 %>
+        <% @total_runs_allowed = 0 %>
+        <% @total_earned_runs_allowed = 0 %>
+        <% @total_home_runs_allowed = 0 %>
+        <% @total_walks_allowed = 0 %>
+        <% @total_strikeouts_recorded = 0 %>
+        <% @total_strikes_thrown = 0 %>
+        <% @total_total_pitches = 0 %>
+        <% @player.season_pitching_stats.each do |player| %>
+        <tr>
+          <td><%= SeasonAttribute.where("player_id = ? AND season_id = ?", player.player_id, player.season_id).last.age %></td>
+          <td><%= Season.find(player.season_id).year %></td>
+          <% @team = Team.find(player.team_id) %>
+          <td><%= link_to @team.name, @team, method: :get %></td>
+          <td><%= player.wins %></td><% @total_wins += player.wins %>
+          <td><%= player.losses %></td><% @total_losses += player.losses %>
+          <td><%= number_with_precision(player.outs_recorded.to_f/3, precision: 1) %></td><% @total_outs_recorded += player.outs_recorded %>
+          <td class="tooltip_enable" title="<%= number_with_precision(player.hits_allowed.to_f*27/player.outs_recorded.to_f, precision: 2) %> H/9"><%= player.hits_allowed %></td><% @total_hits_allowed += player.hits_allowed %>
+          <td><%= player.runs_allowed %></td><% @total_runs_allowed += player.runs_allowed %>
+          <td class="tooltip_enable"><%= player.earned_runs_allowed %></td><% @total_earned_runs_allowed += player.earned_runs_allowed %>
+          <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(player.home_runs_allowed.to_f*27/player.outs_recorded.to_f, precision: 2) %> HR/9"><%= player.home_runs_allowed %></td><% @total_home_runs_allowed += player.home_runs_allowed %>
+          <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(player.walks_allowed.to_f*27/player.outs_recorded.to_f, precision: 2) %> BB/9"><%= player.walks_allowed %></td><% @total_walks_allowed += player.walks_allowed %>
+          <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(player.strikeouts_recorded.to_f*27/player.outs_recorded.to_f, precision: 2) %> K/9"><%= player.strikeouts_recorded %></td><% @total_strikeouts_recorded += player.strikeouts_recorded %>
+          <td><%= number_with_precision(zero_if_nan(player.earned_runs_allowed.to_f*27/player.outs_recorded.to_f), precision: 2) %></td>
+          <td><%= number_with_precision(zero_if_nan((player.walks_allowed + player.hits_allowed).to_f*3/player.outs_recorded.to_f), precision: 2) %></td>
+          <td><%= number_to_percentage(100*player.strikes_thrown.to_f/player.total_pitches.to_f, :precision => 2) %></td><% @total_strikes_thrown += player.strikes_thrown %><% @total_total_pitches += player.total_pitches %>
+        </tr>
+        <% end %>
+        <tr>
+          <td><%= @player.age %></td>
+          <td><%= Season.last.year %></td>
+          <td><%= link_to @player.team.name, @player.team, method: :get %></td>
+          <td><%= @player.wins %></td><% @total_wins += @player.wins %>
+          <td><%= @player.losses %></td><% @total_losses += @player.losses %>
+          <td><%= number_with_precision(@player.outs_recorded.to_f/3, precision: 1) %></td><% @total_outs_recorded += @player.outs_recorded %>
+          <td class="tooltip_enable" title="<%= number_with_precision(@player.hits_allowed.to_f*27/@player.outs_recorded.to_f, precision: 2) %> H/9"><%= @player.hits_allowed %></td><% @total_hits_allowed += @player.hits_allowed %>
+          <td><%= @player.runs_allowed %></td><% @total_runs_allowed += @player.runs_allowed %>
+          <td class="tooltip_enable"><%= @player.earned_runs_allowed %></td><% @total_earned_runs_allowed += @player.earned_runs_allowed %>
+          <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(@player.home_runs_allowed.to_f*27/@player.outs_recorded.to_f, precision: 2) %> HR/9"><%= @player.home_runs_allowed %></td><% @total_home_runs_allowed += @player.home_runs_allowed %>
+          <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(@player.walks_allowed.to_f*27/@player.outs_recorded.to_f, precision: 2) %> BB/9"><%= @player.walks_allowed %></td><% @total_walks_allowed += @player.walks_allowed %>
+          <td class="tooltip_enable" class="tooltip_enable" title="<%= number_with_precision(@player.strikeouts_recorded.to_f*27/@player.outs_recorded.to_f, precision: 2) %> K/9"><%= @player.strikeouts_recorded %></td><% @total_strikeouts_recorded += @player.strikeouts_recorded %>
+          <td><%= number_with_precision(zero_if_nan(@player.earned_runs_allowed.to_f*27/@player.outs_recorded.to_f), precision: 2) %></td>
+          <td><%= number_with_precision(zero_if_nan((@player.walks_allowed + @player.hits_allowed).to_f*3/@player.outs_recorded.to_f), precision: 2) %></td>
+          <td><%= number_to_percentage(100*@player.strikes_thrown.to_f/@player.total_pitches.to_f, :precision => 2) %></td><% @total_strikes_thrown += @player.strikes_thrown %><% @total_total_pitches += @player.total_pitches %>
+        </tr>
+        <tr>
+          <td><strong>Totals</strong></td>
+          <td><strong>-</strong></td>
+          <td><strong>-</strong></td>
+          <td><strong><%= @total_wins %></strong></td>
+          <td><strong><%= @total_losses %></strong></td>
+          <td><strong><%= number_with_precision(@total_outs_recorded.to_f/3, precision: 1) %></strong></td>
+          <td><strong><%= @total_hits_allowed %></strong></td>
+          <td><strong><%= @total_runs_allowed %></strong></td>
+          <td><strong><%= @total_earned_runs_allowed %></strong></td>
+          <td><strong><%= @total_home_runs_allowed %></strong></td>
+          <td><strong><%= @total_walks_allowed %></strong></td>
+          <td><strong><%= @total_strikeouts_recorded %></strong></td>
+          <td><strong><%= number_with_precision(zero_if_nan(@total_earned_runs_allowed.to_f*27/@total_outs_recorded.to_f), precision: 2) %></strong></td>
+          <td><strong><%= number_with_precision(zero_if_nan((@total_walks_allowed + @total_hits_allowed).to_f*3/@total_outs_recorded.to_f), precision: 2) %></strong></td>
+          <td><strong><%= number_to_percentage(100*@total_strikes_thrown.to_f/@total_total_pitches.to_f, :precision => 2) %></strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

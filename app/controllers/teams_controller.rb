@@ -10,9 +10,89 @@ class TeamsController < ApplicationController
     @team = Team.find(params[:id])
   end
 
+  def batters
+    @team = Team.find(params[:id])
+  end
+
+  def pitchers
+    @team = Team.find(params[:id])
+  end
+
+  def editPitching
+    @team = Team.find(params[:id])
+  end
+
+  def editPositions
+    @team = Team.find(params[:id])
+  end
+
+  def editLineup
+    @team = Team.find(params[:id])
+  end
+
+  def minors
+    @team = Team.find(params[:id])
+    @pitchers = Player.where("team_id = ? AND level = ? AND position = ?", @team.id, "Minors", "P")
+    @position_players = Player.where("team_id = ? AND level = ? AND position != ?", @team.id, "Minors", "P")
+    # if @pitchers.length == 0
+    #   @pitchers = []
+    # end
+    # if @position_players.length == 0
+    #   @position_players = []
+    # end
+  end
+
+  def transactions
+    @transactions = Team.find(params[:id]).transactions
+    @team = Team.find(params[:id])
+  end
+
+  def schedule
+    @team = Team.find(params[:id])
+  end
+
+  def april
+    @team = Team.find(params[:id])
+    render :layout => false
+  end
+
+  def may
+    @team = Team.find(params[:id])
+    render :layout => false
+  end
+
+  def june
+    @team = Team.find(params[:id])
+    render :layout => false
+  end
+
+  def july
+    @team = Team.find(params[:id])
+    render :layout => false
+  end
+
+  def august
+    @team = Team.find(params[:id])
+    render :layout => false
+  end
+
+  def september
+    @team = Team.find(params[:id])
+    render :layout => false
+  end
+
+  def currentStandings
+    @teams = Team.all
+  end
+
   # GET /teams/1
   # GET /teams/1.json
   def show
+    puts "show method called in controller"
+    if params[:id].to_i < 3
+      puts "redirecting to free agent list..."
+      redirect_to "/pages/freeAgents"
+    end
   end
 
   # GET /teams/new
